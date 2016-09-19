@@ -6,10 +6,10 @@ App Academy was an intense, unique, "once in a lifetime" experience that involve
 
 ### Functionality & MVP
 
-- [ ] Users can login, save status, and make post comments on the forums.
 - [ ] Sleep, happiness, and concentration meters update realtime.
 - [ ] Code snippets for "homework" and "assessments" evaluated through API calls to the REPL.IT server
 - [ ] Users play mini-games such as: "don't fall asleep during lecture", "hyper tic-tac-toe", "myTowersOf Hanoi""pair-programming" and "debugger"
+- [ ] Users can login, save status, and make post comments on the forums.
 
 
 ### Wireframes
@@ -22,7 +22,7 @@ This simulation will be written mostly in React.js with some vanilla JavaScript 
 
 The primary technical challenges will be:
 
-- Planning to intricate simulation logic, which is still far from complete as of the writing of this document.
+- Planning simulation logic, which is still far from complete as of the writing of this document.
 - Remembering how to create a backend in Rails.
 - Remembering how to use React.js.
 - Figuring out how to use the REPL.IT API.
