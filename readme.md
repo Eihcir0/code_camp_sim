@@ -14,7 +14,7 @@ App Academy was an intense, unique, "once in a lifetime" experience that involve
 
 ### Wireframes
 
-![wireframes]("docs/wireframe.jpg")
+![wireframes](https://github.com/Eihcir0/code_camp_sim/blob/master/docs/wireframe.jpg)
 
 ### Technologies & Technical Challenges
 
