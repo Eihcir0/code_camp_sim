@@ -1,0 +1,134 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	font-family: 'Exo 2', sans-serif;
+	line-height: 1;
+  background-color: black;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+.game-title {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 48px;
+  font-weight: bolder;
+  text-align: center;
+  display: block;
+  margin: 15px;
+  padding: 15px;
+  color: blanchedalmond;
+  width: 600px;
+  outline: 1px solid blanchedalmond;
+  margin-left: 300px;
+}
+
+.game-middle-container {
+  display: flex;
+}
+
+.game-buttons {
+  height: 500px;
+  width: 150px;
+  background-color: lightgrey;
+  margin: 20px;
+}
+
+.game-center-screen {
+  background-image: image("/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/floor.png");
+  height: 500px;
+  width: 800px;
+  background-color: grey;
+  margin: 20px;
+}
+
+.game-right-side {
+  height: 480px;
+  width: 150px;
+  background-color: lightgrey;
+  margin: 20px;
+  padding: 10px;
+}
+
+.game-messages {
+  color: blanchedalmond;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 24px;
+  display: inline-block;
+  width: 800px;
+  padding: 15px;
+  line-height: normal;
+  outline: 1px solid blanchedalmond;
+  margin-left: 200px;
+
+}
+
+.stats-bar {
+  display: inline-block;
+}
+.icon {
+  display: inline-block;
+  width: 10%;
+  padding: 8px;
+}
+
+.score {
+  font-size: 36px;
+  display: inline-block;
+  padding-top: 20px;
+  padding-left: 20px;
+}
+.player-title {
+  display: inline-block;
+  text-align: center;
+  margin-left: 45px
+}
+
+.player-pic {
+  width: 93%;
+  height: 93%;
+}
+
+button {
+  width: 120px;
+  padding: 15px;
+  margin: 10px;
+	border-radius: 6px;
+	background-color: silver;
+
+}
