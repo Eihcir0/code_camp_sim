@@ -26,7 +26,8 @@ class Fire extends Moveable {
     this.moves = 0;
     this.done = false;
     this.times = 0;
-    this.maxTimes = Math.floor(Math.random()*25)+10;
+    this.maxTimes = Math.floor(Math.random()*10)+10;
+    console.log("MAX TIMES " + this.maxTimes);
   }
 
 
@@ -40,9 +41,9 @@ class Fire extends Moveable {
           this.times++;
           this.sound.play();
 
+        if (this.times === this.maxTimes - 1) {this.animNumFrames = 15;}
+        if (this.times === this.maxTimes ) {this.done = true;}
         }
-        if (this.times === this.maxTimes - 2) {this.animNumFrames = 15;}
-        if (this.times === this.maxTimes -1 ) {this.done = true;}
       }
     }
 

@@ -21473,7 +21473,7 @@
 	
 	    var _this = _possibleConstructorReturn(this, (GameMain.__proto__ || Object.getPrototypeOf(GameMain)).call(this));
 	
-	    _this.player = { session: 0, currentPos: 0, lastCurrentPos: null, message: "" };
+	    _this.player = { session: 0, currentPos: 0, lastCurrentPos: null, message: "", lastIconTime: 0 };
 	    _this.currentFaceImage = _this.currentFaceImage.bind(_this);
 	    // this.undo = this.undo.bind(this);
 	
@@ -22528,13 +22528,16 @@
 	      this.sprites.push(d);
 	      d = new _player_anim2.default({ player: this.props.player, canvas: this.canvas, ctx: this.ctx });
 	      this.sprites.push(d);
-	      this.addFire();
+	      // this.addFire();
 	    }
 	  }, {
 	    key: 'addStudyIcon',
 	    value: function addStudyIcon() {
-	      var d = new _study_icon_anim2.default({ canvas: this.canvas, ctx: this.ctx });
-	      this.sprites.push(d);
+	      if (Date.now() - this.props.player.lastIconTime > 20) {
+	        var d = new _study_icon_anim2.default({ canvas: this.canvas, ctx: this.ctx });
+	        this.sprites.push(d);
+	        this.props.player.lastIconTime = Date.now();
+	      }
 	    }
 	  }, {
 	    key: 'addFire',
@@ -22551,13 +22554,14 @@
 	        this.addStudyIcon();
 	      }
 	      var newSprites = this.sprites.slice(0);
-	      if (Math.floor(Math.random() * 5000) < 10 && this.props.player.currentPos === 11) {
+	      if (Math.floor(Math.random() * 5000) < 10 && this.props.player.currentPos === 11 && !this.props.player.onFire) {
 	        this.addFire();
 	      }
 	      var newSprites = this.sprites.slice(0);
 	      for (var i = 0; i < this.sprites.length; i++) {
 	        if (this.sprites[i].done) {
 	          if (this.sprites[i].type === "fire") {
+	            console.log("here");
 	            this.props.player.onFire = false;
 	            this.props.player.message = "";
 	          }
@@ -23192,7 +23196,8 @@
 	    _this.moves = 0;
 	    _this.done = false;
 	    _this.times = 0;
-	    _this.maxTimes = Math.floor(Math.random() * 25) + 10;
+	    _this.maxTimes = Math.floor(Math.random() * 10) + 10;
+	    console.log("MAX TIMES " + _this.maxTimes);
 	    return _this;
 	  }
 	
@@ -23207,12 +23212,13 @@
 	          this.animFrame = 0;
 	          this.times++;
 	          this.sound.play();
-	        }
-	        if (this.times === this.maxTimes - 2) {
-	          this.animNumFrames = 15;
-	        }
-	        if (this.times === this.maxTimes - 1) {
-	          this.done = true;
+	
+	          if (this.times === this.maxTimes - 1) {
+	            this.animNumFrames = 15;
+	          }
+	          if (this.times === this.maxTimes) {
+	            this.done = true;
+	          }
 	        }
 	      }
 	    }

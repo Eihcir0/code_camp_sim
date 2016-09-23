@@ -96,13 +96,16 @@ class OpenSesh extends React.Component {
       this.sprites.push(d);
       d = new PlayerAnim({player: this.props.player, canvas: this.canvas, ctx: this.ctx});
       this.sprites.push(d);
-      this.addFire();
+      // this.addFire();
 
     }
 
     addStudyIcon () {
+      if ((Date.now() - this.props.player.lastIconTime) > 20) {
       var d = new StudyIconAnim({canvas: this.canvas, ctx: this.ctx});
       this.sprites.push(d);
+      this.props.player.lastIconTime = Date.now();
+      }
     }
     addFire () {
       var d = new Fire({canvas: this.canvas, ctx: this.ctx});
@@ -112,14 +115,16 @@ class OpenSesh extends React.Component {
     }
 
     update (dt) {
-        if (((Math.floor(Math.random()*1000) - (this.props.player.onFire ? 50 : 0)) < 10) && this.props.player.currentPos===11) {this.addStudyIcon();}
+        if (((Math.floor(Math.random()*1000) - (this.props.player.onFire ? 50 : 0)) < 10) && this.props.player.currentPos===11 ) {this.addStudyIcon();}
         var newSprites = this.sprites.slice(0);
-        if (Math.floor(Math.random()*5000) < 10 && this.props.player.currentPos===11) {this.addFire();}
+        if (Math.floor(Math.random()*5000) < 10 && this.props.player.currentPos===11 && !(this.props.player.onFire)) {this.addFire();}
         var newSprites = this.sprites.slice(0);
         for (var i = 0; i < this.sprites.length; i++) {
           if (this.sprites[i].done) {
             if (this.sprites[i].type === "fire")
-            { this.props.player.onFire = false;
+            {
+              console.log("here");
+            this.props.player.onFire = false;
             this.props.player.message = "";
           }
             newSprites.splice(i);

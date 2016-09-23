@@ -7,7 +7,7 @@ import OpenSeshScreen from './open_sesh_screen.jsx';
 class GameMain extends React.Component {
   constructor() {
     super();
-    this.player = {session: 0, currentPos: 0, lastCurrentPos: null, message: ""};
+    this.player = {session: 0, currentPos: 0, lastCurrentPos: null, message: "", lastIconTime: 0};
     this.currentFaceImage = this.currentFaceImage.bind(this);
     // this.undo = this.undo.bind(this);
 
