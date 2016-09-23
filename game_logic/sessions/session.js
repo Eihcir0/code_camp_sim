@@ -20,7 +20,6 @@ class Session {
     console.log(`${this.player.name}`);
     console.log(`session: ${this.player.session}`);
     console.log(`day: w${this.player.week}d${this.player.day / 7}`);
-    debugger;
   }
 
   handleInput() {

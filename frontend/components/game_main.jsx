@@ -2,17 +2,58 @@ import React from 'react';
 // import someother component from './somewhere';
 // import someother component from './somewhere';
 import Game from './../../game_logic/game.js';
+import OpenSeshScreen from './open_sesh_screen.jsx';
 
 class GameMain extends React.Component {
   constructor() {
     super();
-
+    this.player = {session: 0, currentPos: 0, lastCurrentPos: null, message: ""};
+    this.currentFaceImage = this.currentFaceImage.bind(this);
     // this.undo = this.undo.bind(this);
 
     this.state = {
+      currentFace: "happy1",
       // game: new Game
     };
+    window.setInterval(()=>this.updateCurrentFace(),200);
   }
+
+  updateCurrentFace() {
+    if (Math.floor(Math.random()*20)===1) {
+      this.setState({currentFace: "happy1"});
+    } else {
+      this.setState({currentFace: "happy2"});
+    }
+  }
+
+  currentFaceImage() {
+    if (this.state.currentFace === "happy1") {
+      return (
+        <img className="player-pic" src="./app/assets/images/frontface3.png"></img>
+      );
+    } else {return (
+      <img className="player-pic" src="./app/assets/images/frontface2.png"></img>
+
+    );}
+  }
+
+  sesh() {
+    if (this.player.session===0) { return (
+      <OpenSeshScreen className="open-sesh" player={this.player}/>
+    );} else {
+      return (
+        <div>ANOTHER SESSION</div>
+        );
+    }
+  }
+
+  message() {
+    if (this.player.currentPos === 10) { //change this
+      return "What do you want asshole?";
+    }
+    else {return this.player.message;}
+  }
+
 
   render() {
     //{array} or <component className="" onClick={}
@@ -29,25 +70,30 @@ class GameMain extends React.Component {
 
 
           </div>
-          <div className="game-center-screen">GAMESCREEN</div>
+          {this.sesh()}
           <div className="game-right-side">
             <div>8:37am  w1d2</div>
             <div className="stats-bar">
               <meter value="95" min="0" max="100" low="30" high="70" optimum="100"/>
               <img className="icon" src="./app/assets/images/bed.png" />
               <meter value="55" min="0" max="100" low="30" high="70" optimum="100"/>
-              <img className="icon" src="./app/assets/images/bed.png" />
+              <img className="icon" src="./app/assets/images/happy.jpeg" />
               <meter value="25" min="0" max="100" low="30" high="70" optimum="100"/>
               <img className="icon" src="./app/assets/images/star.png" />
               <span className="score">95,555</span>
-              <span className="player-title"><br/>n00B</span>
+              <span className="player-title"><br/>LEVEL: n00B</span>
+              <br/><br/>
+              <span className="current-subject"><img className="icon" src="./app/assets/images/ruby.png" /> 37% <br/></span>
+              <br/><span className="strikes">STRIKES: ✘✘✘✘✘✘✘✘</span>
+              <br/>
+              <br/>
+              {this.currentFaceImage()}
             </div>
-            <div ><br/><br/><br/><br/><br/><br/>
-              <img className="player-pic" src="./app/assets/images/Untitled.png" />
+            <div className="player-pic-holder">
             </div>
           </div>
         </div>
-        <div className="game-messages">MESSAGES Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </div>
+        <div className="game-messages">{this.message()} </div>
       </section>
     );
   }

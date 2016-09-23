@@ -94,9 +94,10 @@ table {
   padding: 15px;
   line-height: normal;
   outline: 1px solid blanchedalmond;
-  margin-left: 200px;
+  margin-left: 180px;
 
 }
+
 
 .stats-bar {
   display: inline-block;
@@ -116,7 +117,7 @@ table {
 .player-title {
   display: inline-block;
   text-align: center;
-  margin-left: 45px
+  margin-left: 25px
 }
 
 .player-pic {
@@ -131,4 +132,12 @@ button {
 	border-radius: 6px;
 	background-color: silver;
 
+}
+
+#canvas {
+	color: white;
+	width: 800px;
+	height: 500px;
+	margin-top: 20px;
+	margin-bottom: 30px;
 }
