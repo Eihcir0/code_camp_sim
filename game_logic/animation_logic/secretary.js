@@ -6,6 +6,7 @@ class Secretary {
     this.height = 128;
     this.width = 128;
     this.pos = [30,360];
+    this.done = false;
   }
   update() {
     return;

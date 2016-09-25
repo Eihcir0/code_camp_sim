@@ -2,11 +2,8 @@ import Player from './player.js';
 import Week from './week.js';
 
 class Game {
-  constructor (player, name) {
-    this.player = player || new Player();
-
-    this.main();
-
+  constructor (player) {
+    this.player = player;
   }
 
   main () {
@@ -29,3 +26,5 @@ class Game {
   }
 
 }//end class
+
+export default Game;

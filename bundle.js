@@ -21450,6 +21450,14 @@
 	
 	var _game2 = _interopRequireDefault(_game);
 	
+	var _player = __webpack_require__(174);
+	
+	var _player2 = _interopRequireDefault(_player);
+	
+	var _player_anim = __webpack_require__(193);
+	
+	var _player_anim2 = _interopRequireDefault(_player_anim);
+	
 	var _open_sesh_screen = __webpack_require__(189);
 	
 	var _open_sesh_screen2 = _interopRequireDefault(_open_sesh_screen);
@@ -21465,6 +21473,9 @@
 	// import someother component from './somewhere';
 	
 	
+	//before this I will have a modal that asks for the player name
+	//and asks if they want to create an account
+	
 	var GameMain = function (_React$Component) {
 	  _inherits(GameMain, _React$Component);
 	
@@ -21473,26 +21484,39 @@
 	
 	    var _this = _possibleConstructorReturn(this, (GameMain.__proto__ || Object.getPrototypeOf(GameMain)).call(this));
 	
-	    _this.player = { session: 0, currentPos: 0, lastCurrentPos: null, message: "", lastIconTime: 0 };
-	    _this.currentFaceImage = _this.currentFaceImage.bind(_this);
-	    // this.undo = this.undo.bind(this);
-	
 	    _this.state = {
-	      currentFace: "happy1"
+	      currentFace: "happy1",
+	      player: new _player2.default(),
+	      playerAnim: {}
 	    };
-	    window.setInterval(function () {
-	      return _this.updateCurrentFace();
-	    }, 200);
+	    _this.currentFaceImage = _this.currentFaceImage.bind(_this);
+	    _this.buttons = _this.buttons.bind(_this);
+	    _this.game = new _game2.default(_this.state.player);
+	
+	    // window.setInterval(()=>this.updateCurrentFace(),200);
 	    return _this;
 	  }
 	
 	  _createClass(GameMain, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.setState({ playerAnim: new _player_anim2.default({ player: this.state.player }) });
+	    }
+	  }, {
 	    key: 'updateCurrentFace',
 	    value: function updateCurrentFace() {
-	      if (Math.floor(Math.random() * 20) === 1) {
-	        this.setState({ currentFace: "happy1" });
-	      } else {
-	        this.setState({ currentFace: "happy2" });
+	      switch (this.state.player.currentEmotion) {
+	        case "excited":
+	          var t = Math.random();
+	          if (t < 0.2) {
+	            this.setState({ currentFace: "happy2" });
+	          } else {
+	            this.setState({ currentFace: "happy1" });
+	          }
+	          break;
+	        default:
+	          break;
+	
 	      }
 	    }
 	  }, {
@@ -21507,8 +21531,10 @@
 	  }, {
 	    key: 'sesh',
 	    value: function sesh() {
-	      if (this.player.session === 0) {
-	        return _react2.default.createElement(_open_sesh_screen2.default, { className: 'open-sesh', player: this.player });
+	      if ([0, 2, 4].includes(this.state.player.session)) {
+	        return _react2.default.createElement(_open_sesh_screen2.default, { className: 'open-sesh',
+	          player: this.state.player,
+	          playerAnim: this.state.playerAnim });
 	      } else {
 	        return _react2.default.createElement(
 	          'div',
@@ -21520,11 +21546,26 @@
 	  }, {
 	    key: 'message',
 	    value: function message() {
-	      if (this.player.currentPos === 10) {
+	      if (this.state.player.currentPos === 10) {
 	        //change this
-	        return "What do you want asshole?";
+	        return "CLICK ON THE OPEN WORK STATION RIGHT THERE TO START PROGRAMMING!";
+	      } else if (this.state.player.onFire) {
+	        return "YOU'RE ON FIRE!";
 	      } else {
-	        return this.player.message;
+	        return this.state.player.message;
+	      }
+	    }
+	  }, {
+	    key: 'buttons',
+	    value: function buttons() {
+	      if (this.state.player.currentPos === 11) {
+	        return _react2.default.createElement(
+	          'button',
+	          { className: 'left-sidebar', onClick: function onClick() {
+	              return true;
+	            } },
+	          'QUIT'
+	        );
 	      }
 	    }
 	  }, {
@@ -21545,31 +21586,7 @@
 	          _react2.default.createElement(
 	            'div',
 	            { className: 'game-buttons' },
-	            _react2.default.createElement(
-	              'button',
-	              null,
-	              'TALK TO SECRETARY'
-	            ),
-	            _react2.default.createElement(
-	              'button',
-	              null,
-	              'WORKSTATION'
-	            ),
-	            _react2.default.createElement(
-	              'button',
-	              null,
-	              'LECTURE'
-	            ),
-	            _react2.default.createElement(
-	              'button',
-	              null,
-	              'KITCHEN'
-	            ),
-	            _react2.default.createElement(
-	              'button',
-	              null,
-	              'QUIT'
-	            )
+	            this.buttons()
 	          ),
 	          this.sesh(),
 	          _react2.default.createElement(
@@ -21583,22 +21600,23 @@
 	            _react2.default.createElement(
 	              'div',
 	              { className: 'stats-bar' },
-	              _react2.default.createElement('meter', { value: '95', min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
+	              _react2.default.createElement('meter', { value: this.state.player.sleepBank, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
 	              _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/bed.png' }),
-	              _react2.default.createElement('meter', { value: '55', min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
+	              _react2.default.createElement('meter', { value: this.state.player.happiness, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
 	              _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/happy.jpeg' }),
-	              _react2.default.createElement('meter', { value: '25', min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
+	              _react2.default.createElement('meter', { value: this.state.player.focus, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
 	              _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/star.png' }),
 	              _react2.default.createElement(
 	                'span',
 	                { className: 'score' },
-	                '95,555'
+	                this.state.player.score
 	              ),
 	              _react2.default.createElement(
 	                'span',
 	                { className: 'player-title' },
 	                _react2.default.createElement('br', null),
-	                'LEVEL: n00B'
+	                'LEVEL: ',
+	                this.state.player.scoreTitle()
 	              ),
 	              _react2.default.createElement('br', null),
 	              _react2.default.createElement('br', null),
@@ -21613,7 +21631,8 @@
 	              _react2.default.createElement(
 	                'span',
 	                { className: 'strikes' },
-	                'STRIKES: ✘✘✘✘✘✘✘✘'
+	                'STRIKES: ',
+	                this.state.player.strikes
 	              ),
 	              _react2.default.createElement('br', null),
 	              _react2.default.createElement('br', null),
@@ -21643,6 +21662,10 @@
 
 	'use strict';
 	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _player = __webpack_require__(174);
@@ -21658,12 +21681,10 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Game = function () {
-	  function Game(player, name) {
+	  function Game(player) {
 	    _classCallCheck(this, Game);
 	
-	    this.player = player || new _player2.default();
-	
-	    this.main();
+	    this.player = player;
 	  }
 	
 	  _createClass(Game, [{
@@ -21694,6 +21715,8 @@
 	
 	  return Game;
 	}(); //end class
+	
+	exports.default = Game;
 
 /***/ },
 /* 174 */
@@ -21705,42 +21728,61 @@
 	  value: true
 	});
 	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var Player = function Player(obj, name) {
-	  _classCallCheck(this, Player);
+	var Player = function () {
+	  function Player(obj, name) {
+	    _classCallCheck(this, Player);
 	
-	  this.name = name || "Richie";
-	  this.currentEmotion = obj ? obj.currentEmotion : "excited";
-	  this.info = obj ? obj.info : "";
-	  this.sleepBank = obj ? obj.sleepBank : 100;
-	  this.happiness = obj ? obj.happiness : 100;
-	  this.focus = obj ? obj.focus : 100;
-	  this.liked = obj ? obj.liked : 50;
-	  this.score = obj ? obj.score : 0;
-	  this.session = obj ? obj.session : 0; //
-	  // 0 = morning
-	  // 1 = lecture/assessment
-	  // 2 = lunch
-	  // 3 = pairs/solo project
-	  // 4 = evening
-	  // 5 = night
-	  this.day = obj ? obj.day : 1;
-	  this.session = obj ? obj.session : 0;
-	  this.week = Math.floor(this.day / 7) + 1;
-	  this.weekDay = this.day % 7;
-	  this.skills = obj ? obj.skill : {
-	    Ruby: 0,
-	    Rails: 0,
-	    SQL: 0,
-	    JavaScript: 0,
-	    React: 0,
-	    Redux: 0
-	  };
-	} // end constructor
+	    this.name = name || "Richie";
+	    this.currentEmotion = obj ? obj.currentEmotion : "excited";
+	    this.info = obj ? obj.info : "";
+	    this.sleepBank = obj ? obj.sleepBank : 100;
+	    this.happiness = obj ? obj.happiness : 100;
+	    this.focus = obj ? obj.focus : 100;
+	    this.score = obj ? obj.score : 0;
+	    this.liked = obj ? obj.liked : 50;
+	    this.currentPos = obj ? obj.currentPos : 0;
+	    this.lastCurrentPos = obj ? obj.lastCurrentPos : -1;
+	    this.message = obj ? obj.message : "";
+	    this.lastIconTime = obj ? obj.lastIcontTime : 0;
+	    this.onFire = obj ? obj.onFire : false;
+	    this.strikes = obj ? obj.strikes : "XXXXXXXX";
+	    this.session = obj ? obj.session : 0; //
+	    this.pos = obj ? obj.pos : [280, 300];
+	    // 0 = morning
+	    // 1 = lecture/assessment
+	    // 2 = lunch
+	    // 3 = pairs/solo project
+	    // 4 = evening
+	    // 5 = night
+	    this.day = obj ? obj.day : 1;
+	    this.session = obj ? obj.session : 0;
+	    this.week = Math.floor(this.day / 7) + 1;
+	    this.weekDay = this.day % 7;
+	    this.skills = obj ? obj.skill : {
+	      Ruby: 0,
+	      Rails: 0,
+	      SQL: 0,
+	      JavaScript: 0,
+	      React: 0,
+	      Redux: 0
+	    };
+	  } // end constructor
 	
+	  _createClass(Player, [{
+	    key: "scoreTitle",
+	    value: function scoreTitle() {
+	      if (this.score < 100000) {
+	        return "n00b";
+	      }
+	    }
+	  }]);
 	
-	; //end player class
+	  return Player;
+	}(); //end player class
 	
 	exports.default = Player;
 
@@ -22408,14 +22450,6 @@
 	
 	var _desk2 = _interopRequireDefault(_desk);
 	
-	var _kitchen = __webpack_require__(192);
-	
-	var _kitchen2 = _interopRequireDefault(_kitchen);
-	
-	var _player_anim = __webpack_require__(193);
-	
-	var _player_anim2 = _interopRequireDefault(_player_anim);
-	
 	var _study_icon_anim = __webpack_require__(195);
 	
 	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
@@ -22445,7 +22479,15 @@
 	    var _this = _possibleConstructorReturn(this, (OpenSesh.__proto__ || Object.getPrototypeOf(OpenSesh)).call(this, props));
 	
 	    _this.main = _this.main.bind(_this);
+	    _this.renderSprites = _this.renderSprites.bind(_this);
+	    _this.update = _this.update.bind(_this);
+	    _this.render = _this.render.bind(_this);
+	    _this.checkForDoneSprites = _this.checkForDoneSprites.bind(_this);
+	    _this.checkForDoneSprites = _this.checkForDoneSprites.bind(_this);
 	    _this.handleClick = _this.handleClick.bind(_this);
+	    _this.handleClick = _this.handleClick.bind(_this);
+	    _this.initializeSprites = _this.initializeSprites.bind(_this);
+	
 	    _this.background = new Image();
 	    _this.background.src = './app/assets/images/newfloor.png';
 	    _this.sprites = [];
@@ -22467,55 +22509,14 @@
 	      this.canvas.height = 500;
 	      this.canvas.width = 800;
 	      this.ctx = this.canvas.getContext("2d");
-	      this.initialize();
+	      this.initializeSprites();
 	      this.background.onload = function () {
 	        return _this2.main();
 	      };
 	    }
 	  }, {
-	    key: 'main',
-	    value: function main() {
-	      var dt = Date.now() - this.lastTime;
-	      this.lastTime = Date.now();
-	
-	      this.ctx.drawImage(this.background, -28, 0);
-	      this.update(dt);
-	      this.renderSprites();
-	
-	      window.requestAnimationFrame(this.main);
-	    }
-	  }, {
-	    key: 'handleClick',
-	    value: function handleClick(e) {
-	      console.log("click");
-	      console.log(e.pageX);
-	      console.log(e.pageY);
-	      var y = e.pageY;
-	      var x = e.pageX;
-	      if (y > 500 && x < 305) {
-	        // execute animation for walking to secretary
-	        this.props.player.currentPos = 10;
-	      }
-	
-	      if (x > 470 && x < 550 && y > 430 && y < 520) {
-	        // animation walking to desk
-	        this.props.player.currentPos = 11;
-	      }
-	
-	      if (x < 321 && y > 273 && y < 418) {
-	        // animation walking to kitchen
-	        this.props.player.currentPos = 9;
-	      }
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	
-	      return _react2.default.createElement('canvas', { id: 'canvas', width: '800', height: '520', onClick: this.handleClick });
-	    }
-	  }, {
-	    key: 'initialize',
-	    value: function initialize() {
+	    key: 'initializeSprites',
+	    value: function initializeSprites() {
 	      this.sprites.push(new _secretary2.default());
 	      var d = new _desk2.default(1);
 	      d.pos = [220, 70];
@@ -22526,71 +22527,127 @@
 	      d = new _desk2.default(3);
 	      d.pos = [300, 320];
 	      this.sprites.push(d);
-	      d = new _player_anim2.default({ player: this.props.player, canvas: this.canvas, ctx: this.ctx });
-	      this.sprites.push(d);
-	      // this.addFire();
 	    }
 	  }, {
-	    key: 'addStudyIcon',
-	    value: function addStudyIcon() {
-	      if (Date.now() - this.props.player.lastIconTime > 20) {
-	        var d = new _study_icon_anim2.default({ canvas: this.canvas, ctx: this.ctx });
-	        this.sprites.push(d);
-	        this.props.player.lastIconTime = Date.now();
+	    key: 'main',
+	    value: function main() {
+	      var dt = Date.now() - this.lastTime;
+	      this.lastTime = Date.now();
+	
+	      this.ctx.drawImage(this.background, -28, 0);
+	      this.props.playerAnim.ctx = this.ctx;
+	      this.props.playerAnim.canvas = this.canvas;
+	      this.update(dt);
+	      this.renderSprites();
+	
+	      window.requestAnimationFrame(this.main);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement('canvas', { id: 'canvas', width: '800', height: '520', onClick: this.handleClick });
+	    }
+	  }, {
+	    key: 'handleClick',
+	    value: function handleClick(e) {
+	      console.log("click");
+	      console.log(e.pageX);
+	      console.log(e.pageY);
+	      var y = e.pageY;
+	      var x = e.pageX;
+	
+	      if (y > 500 && x < 305) {
+	        // execute animation for walking to secretary
+	        this.props.player.currentPos = 10;
 	      }
-	    }
-	  }, {
-	    key: 'addFire',
-	    value: function addFire() {
-	      var d = new _fire2.default({ canvas: this.canvas, ctx: this.ctx });
-	      this.sprites.push(d);
-	      this.props.player.onFire = true;
-	      this.props.player.message = "YOU'RE ON FIRE!";
-	    }
+	
+	      if (x > 470 && x < 550 && y > 430 && y < 520) {
+	        // animation walking to desk with move()
+	        this.props.player.currentPos = 11;
+	      }
+	
+	      if (x < 321 && y > 273 && y < 418) {
+	        // animation walking to kitchen
+	        this.props.player.currentPos = 9;
+	      }
+	    } //end handle click
+	
 	  }, {
 	    key: 'update',
 	    value: function update(dt) {
-	      if (Math.floor(Math.random() * 1000) - (this.props.player.onFire ? 50 : 0) < 10 && this.props.player.currentPos === 11) {
-	        this.addStudyIcon();
-	      }
-	      var newSprites = this.sprites.slice(0);
-	      if (Math.floor(Math.random() * 5000) < 10 && this.props.player.currentPos === 11 && !this.props.player.onFire) {
-	        this.addFire();
-	      }
-	      var newSprites = this.sprites.slice(0);
-	      for (var i = 0; i < this.sprites.length; i++) {
-	        if (this.sprites[i].done) {
-	          if (this.sprites[i].type === "fire") {
-	            console.log("here");
-	            this.props.player.onFire = false;
-	            this.props.player.message = "";
-	          }
-	          newSprites.splice(i);
-	        }
-	      }
-	      this.sprites = newSprites;
+	      this.props.playerAnim.update(dt);
+	      this.checkForDoneSprites();
 	      this.sprites.forEach(function (sprite) {
 	        return sprite.update(dt);
 	      });
+	      this.randomFire();
+	      this.randomIcon();
 	    }
 	  }, {
 	    key: 'renderSprites',
 	    value: function renderSprites() {
 	      var _this3 = this;
 	
-	      var hero;
 	      this.sprites.forEach(function (sprite) {
-	        if (sprite.type === "hero") {
-	          hero = sprite;
-	        } else if (sprite.type === "study icon" || sprite.type === "fire") {
+	        if (sprite.type === "study icon" || sprite.type === "fire") {
 	          sprite.render();
 	        } else {
 	          _this3.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
 	        }
-	        if (hero) {
-	          hero.render();
-	        }
+	        _this3.props.playerAnim.render(); // render player
 	      });
+	    }
+	  }, {
+	    key: 'checkForDoneSprites',
+	    value: function checkForDoneSprites() {
+	
+	      for (var i = 0; i < this.sprites.length; i++) {
+	        var sprite = this.sprites[i];
+	        if (sprite.type === "fire") {
+	          if (sprite.times >= sprite.maxTimes) {
+	            this.props.player.onFire = false;
+	            sprite.done = true;
+	          }
+	        }
+	        if (sprite.done) {
+	          this.sprites.splice(i);
+	          i -= 1;
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'randomFire',
+	    value: function randomFire() {
+	      //this goes away
+	      if (Math.floor(Math.random() * 5000) < 5 && this.props.player.currentPos === 11 && this.props.player.onFire === false) {
+	        this.addFire();
+	      }
+	    }
+	  }, {
+	    key: 'addFire',
+	    value: function addFire() {
+	      var d = new _fire2.default({ canvas: this.canvas, ctx: this.ctx,
+	        player: this.props.player });
+	      this.sprites.push(d);
+	      this.props.player.onFire = true;
+	      this.props.player.message = "YOU'RE ON FIRE!";
+	    }
+	  }, {
+	    key: 'randomIcon',
+	    value: function randomIcon() {
+	      //this goes away
+	      if (Math.floor(Math.random() * 1000) - (this.props.player.onFire ? 50 : 0) < 10 && this.props.player.currentPos === 11) {
+	        this.addStudyIcon();
+	      }
+	    }
+	  }, {
+	    key: 'addStudyIcon',
+	    value: function addStudyIcon() {
+	      if (Date.now() - this.props.player.lastIconTime > 70) {
+	        var d = new _study_icon_anim2.default({ canvas: this.canvas, ctx: this.ctx });
+	        this.sprites.push(d);
+	        this.props.player.lastIconTime = Date.now();
+	      }
 	    }
 	  }]);
 	
@@ -22623,6 +22680,7 @@
 	    this.height = 128;
 	    this.width = 128;
 	    this.pos = [30, 360];
+	    this.done = false;
 	  }
 	
 	  _createClass(Secretary, [{
@@ -22668,6 +22726,7 @@
 	    this.height = 75;
 	    this.width = 856;
 	    this.pos = [0, 150];
+	    this.done = false;
 	  }
 	
 	  _createClass(Desk, [{
@@ -22683,43 +22742,7 @@
 	exports.default = Desk;
 
 /***/ },
-/* 192 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var Kitchen = function () {
-	  function Kitchen(id) {
-	    _classCallCheck(this, Kitchen);
-	
-	    this.image = new Image();
-	    this.image.src = "./app/assets/images/kitchen.png";
-	    this.height = 200;
-	    this.width = 141;
-	    this.pos = [0, 100];
-	  }
-	
-	  _createClass(Kitchen, [{
-	    key: "update",
-	    value: function update() {
-	      return;
-	    }
-	  }]);
-	
-	  return Kitchen;
-	}();
-	
-	exports.default = Kitchen;
-
-/***/ },
+/* 192 */,
 /* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -22753,7 +22776,7 @@
 	
 	    _this.type = "hero";
 	    _this.player = obj.player;
-	
+	    _this.render = _this.render.bind(_this);
 	    _this.moving = 0;
 	    // 0 = at center
 	    // 1 = walking to secretary
@@ -22781,6 +22804,44 @@
 	  }
 	
 	  _createClass(PlayerAnim, [{
+	    key: "moveTo",
+	    value: function moveTo(newPos, callback) {
+	      if (this.player.currentPos === 11 && newPos === 0) {
+	        this.player.currentPos = 4;
+	        //call the walking to secretary and pass callback which would
+	        //likely be either a change in a position or another moveTo with change position
+	        callback(); // <== temporary
+	      }
+	    }
+	  }, {
+	    key: "updateAnim",
+	    value: function updateAnim(elapsed) {
+	      if (this.animationOn) {
+	        this.animTimer += elapsed;
+	
+	        if (this.animTimer >= this.animDelay) {
+	          this.animTimer = 0;
+	          // ++this.animFrame;
+	          this.animFrame = Math.floor(Math.random() * 3);
+	          if (this.animFrame === 1) {
+	            this.soundTyping.play();
+	          }
+	          if (this.animFrame >= this.animNumFrames) {
+	            this.animFrame = 0;
+	          }
+	        }
+	      }
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      //
+	      // this.ctx.fillStyle = "rgb(51, 118, 36)";
+	      // this.ctx.fillRect(300,300,50,50);
+	      //
+	      this.ctx.drawImage(this.image, this.currentSprite(), this.spriteYoffset, this.width, this.height, this.pos[0], this.pos[1], this.width, this.height);
+	    }
+	  }, {
 	    key: "updateAnimSet",
 	    value: function updateAnimSet() {
 	      //should refactor this with a const array?
@@ -22856,32 +22917,6 @@
 	            break;
 	        }
 	      }
-	    }
-	  }, {
-	    key: "updateAnim",
-	    value: function updateAnim(elapsed) {
-	      if (this.animationOn) {
-	        this.animTimer += elapsed;
-	
-	        if (this.animTimer >= this.animDelay) {
-	          this.animTimer = 0;
-	          // ++this.animFrame;
-	          this.animFrame = Math.floor(Math.random() * 3);
-	          if (this.animFrame === 1) {
-	            console.log("sound");this.soundTyping.play();
-	          }
-	          if (this.animFrame >= this.animNumFrames) {
-	            this.animFrame = 0;
-	          }
-	        }
-	      }
-	    }
-	  }, {
-	    key: "render",
-	    value: function render() {
-	      // this.ctx.fillStyle = "rgb(51, 118, 36)";
-	      // this.ctx.fillRect(300,300,50,50);
-	      this.ctx.drawImage(this.image, this.currentSprite(), this.spriteYoffset, this.width, this.height, this.pos[0], this.pos[1], this.width, this.height);
 	    }
 	  }]);
 	
@@ -22965,85 +23000,6 @@
 	      }
 	      this.pos = newPos;
 	    } //end move()
-	
-	
-	    // updateAnim(elapsed) {
-	    //
-	    //     this.animTimer += elapsed;
-	    //
-	    //     if (this.animTimer >= this.animDelay) {
-	    //       if (this.automover) {
-	    //         ++this.currentMovement;
-	    //
-	    //         if (this.currentMovement >= this.numMovements - 1) {
-	    //           this.currentMovement = 0;
-	    //         }
-	    //         this.facing = (this.movements[this.currentMovement]);
-	    //       }
-	    //       this.animTimer = 0;
-	    //       if (this.animationOn) {++this.animFrame;
-	    //         if (this.animFrame >= this.animNumFrames) {
-	    //             this.animFrame = 0;
-	    //         }
-	    //
-	    //         }
-	    //     }
-	    //   }
-	
-	
-	    // stop() {
-	    //   if (this.facing !== "STOP") {
-	    //   this.lastDir = this.facing;}
-	    //   this.facing = "STOP";
-	    //   this.animationOn = false;
-	    // }
-	
-	  }, {
-	    key: "go",
-	    value: function go(dir) {}
-	    // this.facing = dir;
-	    // this.animationOn = true;
-	    // this.speed = this.Maxspeed;
-	    // this.updateAnimSet();
-	
-	
-	    // render() {
-	    //   if (this.name === 'FIREBALL') {console.log(this);}
-	    //     this.ctx.drawImage(
-	    // 		this.image,
-	    // 		this.currentSprite(),
-	    //     this.spriteYoffset*this.height,
-	    //     this.width,
-	    //     this.height,
-	    // 		this.pos[0],
-	    //     this.pos[1],
-	    //     this.width,
-	    // 		this.height
-	    //   );
-	    // }
-	
-	    // preventOutOfBounds() {
-	    //   let northern = this.boardDimensions[0][1];
-	    //   let western = this.boardDimensions[0][0];
-	    //   let southern = this.boardDimensions[1][1] - this.height;
-	    //   let eastern = this.boardDimensions[1][0] - this.width;
-	    //   this.pos[0] = Math.max(this.pos[0], western);
-	    //   this.pos[0] = Math.min(this.pos[0], eastern);
-	    //   this.pos[1] = Math.max(this.pos[1], northern);
-	    //   this.pos[1] = Math.min(this.pos[1], southern);
-	    // }
-	
-	    // isOutOfBounds() {
-	    //   let northern = this.boardDimensions[0][1];
-	    //   let western = this.boardDimensions[0][0];
-	    //   let southern = this.boardDimensions[1][1] - this.height;
-	    //   let eastern = this.boardDimensions[1][0] - this.width;
-	    //   return (
-	    //     this.pos[0]< western ||
-	    //     this.pos[0]> eastern ||
-	    //     this.pos[1]< northern ||
-	    //     this.pos[1]> southern);
-	    // }
 	
 	
 	  }]);
@@ -23174,6 +23130,8 @@
 	
 	    var _this = _possibleConstructorReturn(this, (Fire.__proto__ || Object.getPrototypeOf(Fire)).call(this, obj));
 	
+	    _this.player = obj.player;
+	    _this.type = "fire";
 	    _this.width = 93;
 	    _this.height = 200;
 	    _this.pos = [285, 210];
@@ -23190,13 +23148,13 @@
 	    _this.imageReady = false;
 	    _this.image = new Image();
 	    _this.image.src = "./app/assets/images/fire.png";
-	    _this.type = "fire";
 	    _this.sound = new Audio("./app/assets/sounds/fire.wav");
 	    _this.sound.play();
 	    _this.moves = 0;
 	    _this.done = false;
 	    _this.times = 0;
-	    _this.maxTimes = Math.floor(Math.random() * 10) + 10;
+	    // this.maxTimes = Math.floor(Math.random()*10)+10;
+	    _this.maxTimes = 10;
 	    console.log("MAX TIMES " + _this.maxTimes);
 	    return _this;
 	  }
@@ -23205,19 +23163,19 @@
 	    key: "updateAnim",
 	    value: function updateAnim(elapsed) {
 	      this.animTimer += elapsed;
-	      if (this.animTimer > this.animDelay) {
-	        ++this.animFrame;
+	      if (this.animTimer > this.animDelay && this.done === false) {
+	        this.animFrame++;
 	        this.animTimer = 0;
+	
 	        if (this.animFrame > this.animNumFrames) {
+	          if (this.times % 2 === 0) {
+	            this.sound.play();
+	          }
 	          this.animFrame = 0;
-	          this.times++;
-	          this.sound.play();
+	          this.times += 1;
 	
 	          if (this.times === this.maxTimes - 1) {
 	            this.animNumFrames = 15;
-	          }
-	          if (this.times === this.maxTimes) {
-	            this.done = true;
 	          }
 	        }
 	      }

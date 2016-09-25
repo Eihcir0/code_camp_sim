@@ -5,7 +5,7 @@ class PlayerAnim extends Moveable {
     super(obj);
     this.type = "hero";
     this.player=obj.player;
-
+    this.render = this.render.bind(this);
     this.moving = 0;
     // 0 = at center
     // 1 = walking to secretary
@@ -34,6 +34,49 @@ class PlayerAnim extends Moveable {
 
   }
 
+  moveTo(newPos, callback) {
+    if (this.player.currentPos === 11 && newPos===0) {
+      this.player.currentPos = 4;
+      //call the walking to secretary and pass callback which would
+      //likely be either a change in a position or another moveTo with change position
+      callback(); // <== temporary
+    }
+  }
+
+  updateAnim(elapsed) {
+    if (this.animationOn) {
+      this.animTimer += elapsed;
+
+      if (this.animTimer >= this.animDelay) {
+        this.animTimer = 0;
+        // ++this.animFrame;
+        this.animFrame = Math.floor(Math.random()*3);
+        if (this.animFrame===1) {
+          this.soundTyping.play();}
+        if (this.animFrame >= this.animNumFrames) {
+            this.animFrame = 0;
+          }
+        }
+      }
+    }
+
+  render() {
+    //
+    // this.ctx.fillStyle = "rgb(51, 118, 36)";
+    // this.ctx.fillRect(300,300,50,50);
+    //
+      this.ctx.drawImage(
+  		this.image,
+  		this.currentSprite(),
+      this.spriteYoffset,
+      this.width,
+      this.height,
+  		this.pos[0],
+      this.pos[1],
+      this.width,
+  		this.height
+    );
+    }
 
   updateAnimSet() {  //should refactor this with a const array?
     if (this.player.currentPos !== this.player.lastCurrentPos) {
@@ -110,40 +153,6 @@ class PlayerAnim extends Moveable {
     }
   }
 
-
-
-  updateAnim(elapsed) {
-    if (this.animationOn) {
-      this.animTimer += elapsed;
-
-      if (this.animTimer >= this.animDelay) {
-        this.animTimer = 0;
-        // ++this.animFrame;
-        this.animFrame = Math.floor(Math.random()*3);
-        if (this.animFrame===1) {
-          console.log("sound");this.soundTyping.play();}
-        if (this.animFrame >= this.animNumFrames) {
-            this.animFrame = 0;
-          }
-        }
-      }
-    }
-
-  render() {
-    // this.ctx.fillStyle = "rgb(51, 118, 36)";
-    // this.ctx.fillRect(300,300,50,50);
-      this.ctx.drawImage(
-  		this.image,
-  		this.currentSprite(),
-      this.spriteYoffset,
-      this.width,
-      this.height,
-  		this.pos[0],
-      this.pos[1],
-      this.width,
-  		this.height
-      );
-    }
 
 } //end class
 

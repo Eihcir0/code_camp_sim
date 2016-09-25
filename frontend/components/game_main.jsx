@@ -2,27 +2,45 @@ import React from 'react';
 // import someother component from './somewhere';
 // import someother component from './somewhere';
 import Game from './../../game_logic/game.js';
+import Player from './../../game_logic/player.js';
+import playerAnim from './../../game_logic/animation_logic/player_anim.js';
 import OpenSeshScreen from './open_sesh_screen.jsx';
+
+//before this I will have a modal that asks for the player name
+//and asks if they want to create an account
 
 class GameMain extends React.Component {
   constructor() {
     super();
-    this.player = {session: 0, currentPos: 0, lastCurrentPos: null, message: "", lastIconTime: 0};
-    this.currentFaceImage = this.currentFaceImage.bind(this);
-    // this.undo = this.undo.bind(this);
-
     this.state = {
       currentFace: "happy1",
-      // game: new Game
+      player: new Player(),
+      playerAnim: {}
     };
-    window.setInterval(()=>this.updateCurrentFace(),200);
+    this.currentFaceImage = this.currentFaceImage.bind(this);
+    this.buttons = this.buttons.bind(this);
+    this.game = new Game(this.state.player);
+
+    // window.setInterval(()=>this.updateCurrentFace(),200);
+  }
+
+  componentDidMount() {
+    this.setState({playerAnim: new playerAnim({player: this.state.player})});
   }
 
   updateCurrentFace() {
-    if (Math.floor(Math.random()*20)===1) {
-      this.setState({currentFace: "happy1"});
-    } else {
-      this.setState({currentFace: "happy2"});
+    switch (this.state.player.currentEmotion) {
+      case "excited":
+      var t = Math.random();
+      if (t < 0.2) {
+        this.setState({currentFace: "happy2"});
+      } else {
+        this.setState({currentFace: "happy1"});
+      }
+        break;
+      default:
+        break;
+
     }
   }
 
@@ -38,9 +56,13 @@ class GameMain extends React.Component {
   }
 
   sesh() {
-    if (this.player.session===0) { return (
-      <OpenSeshScreen className="open-sesh" player={this.player}/>
-    );} else {
+    if ([0,2,4].includes(this.state.player.session)) {
+      return (
+        <OpenSeshScreen className="open-sesh"
+          player={this.state.player}
+          playerAnim ={this.state.playerAnim}/>
+      );
+    } else {
       return (
         <div>ANOTHER SESSION</div>
         );
@@ -48,10 +70,21 @@ class GameMain extends React.Component {
   }
 
   message() {
-    if (this.player.currentPos === 10) { //change this
-      return "What do you want asshole?";
+    if (this.state.player.currentPos === 10) { //change this
+      return "CLICK ON THE OPEN WORK STATION RIGHT THERE TO START PROGRAMMING!";
     }
-    else {return this.player.message;}
+    else if (this.state.player.onFire) {
+      return "YOU'RE ON FIRE!";
+    }
+    else {
+      return this.state.player.message;
+    }
+  }
+
+  buttons() {
+    if (this.state.player.currentPos === 11)  {
+      return (<button className="left-sidebar" onClick={()=>true}>QUIT</button>);
+      }
   }
 
 
@@ -62,11 +95,8 @@ class GameMain extends React.Component {
         <span className="game-title">CODE CAMP SIM</span>
         <div className="game-middle-container">
           <div className="game-buttons">
-            <button>TALK TO SECRETARY</button>
-            <button>WORKSTATION</button>
-            <button>LECTURE</button>
-            <button>KITCHEN</button>
-            <button>QUIT</button>
+
+            {this.buttons()}
 
 
           </div>
@@ -74,17 +104,17 @@ class GameMain extends React.Component {
           <div className="game-right-side">
             <div>8:37am  w1d2</div>
             <div className="stats-bar">
-              <meter value="95" min="0" max="100" low="30" high="70" optimum="100"/>
+              <meter value={this.state.player.sleepBank} min="0" max="100" low="30" high="70" optimum="100"/>
               <img className="icon" src="./app/assets/images/bed.png" />
-              <meter value="55" min="0" max="100" low="30" high="70" optimum="100"/>
+              <meter value={this.state.player.happiness} min="0" max="100" low="30" high="70" optimum="100"/>
               <img className="icon" src="./app/assets/images/happy.jpeg" />
-              <meter value="25" min="0" max="100" low="30" high="70" optimum="100"/>
+              <meter value={this.state.player.focus} min="0" max="100" low="30" high="70" optimum="100"/>
               <img className="icon" src="./app/assets/images/star.png" />
-              <span className="score">95,555</span>
-              <span className="player-title"><br/>LEVEL: n00B</span>
+              <span className="score">{this.state.player.score}</span>
+              <span className="player-title"><br/>LEVEL: {this.state.player.scoreTitle()}</span>
               <br/><br/>
               <span className="current-subject"><img className="icon" src="./app/assets/images/ruby.png" /> 37% <br/></span>
-              <br/><span className="strikes">STRIKES: ✘✘✘✘✘✘✘✘</span>
+              <br/><span className="strikes">STRIKES: {this.state.player.strikes}</span>
               <br/>
               <br/>
               {this.currentFaceImage()}

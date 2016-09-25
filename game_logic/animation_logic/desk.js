@@ -7,7 +7,8 @@ class Desk {
     if (id===3) {this.image.src = "./app/assets/images/newdesks3.png";}
     this.height = 75;
     this.width = 856;
-    this.pos = [0,150]
+    this.pos = [0,150];
+    this.done = false;
 
   }
   update() {

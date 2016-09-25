@@ -3,6 +3,8 @@ import Moveable from './moveable.js';
 class Fire extends Moveable {
   constructor(obj) {
     super(obj);
+    this.player = obj.player;
+    this.type = "fire";
     this.width = 93;
     this.height = 200;
     this.pos = [285, 210];
@@ -20,29 +22,29 @@ class Fire extends Moveable {
     this.image = new Image();
     this.image.src =
     "./app/assets/images/fire.png";
-    this.type = "fire";
     this.sound = new Audio("./app/assets/sounds/fire.wav");
     this.sound.play();
     this.moves = 0;
     this.done = false;
     this.times = 0;
-    this.maxTimes = Math.floor(Math.random()*10)+10;
+    // this.maxTimes = Math.floor(Math.random()*10)+10;
+    this.maxTimes = 10;
     console.log("MAX TIMES " + this.maxTimes);
   }
 
 
   updateAnim(elapsed) {
       this.animTimer += elapsed;
-      if (this.animTimer > this.animDelay) {
-        ++this.animFrame;
+      if (this.animTimer > this.animDelay && this.done === false) {
+        this.animFrame++;
         this.animTimer = 0;
+
         if (this.animFrame > this.animNumFrames) {
+          if (this.times % 2 === 0) {this.sound.play();}
           this.animFrame = 0;
-          this.times++;
-          this.sound.play();
+          this.times += 1;
 
         if (this.times === this.maxTimes - 1) {this.animNumFrames = 15;}
-        if (this.times === this.maxTimes ) {this.done = true;}
         }
       }
     }

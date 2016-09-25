@@ -7,9 +7,16 @@ class Player {
     this.sleepBank = obj ? obj.sleepBank : 100;
     this.happiness = obj ? obj.happiness : 100;
     this.focus = obj ? obj.focus : 100;
-    this.liked = obj ? obj.liked : 50;
     this.score = obj ? obj.score : 0;
+    this.liked = obj ? obj.liked : 50;
+    this.currentPos = obj ? obj.currentPos : 0;
+    this.lastCurrentPos = obj ? obj.lastCurrentPos : -1;
+    this.message = obj ? obj.message : "";
+    this.lastIconTime = obj ? obj.lastIcontTime : 0;
+    this.onFire = obj ? obj.onFire : false;
+    this.strikes = obj ? obj.strikes : "XXXXXXXX";
     this.session = obj ? obj.session : 0; //
+    this.pos = obj ? obj.pos : [280,300];
     // 0 = morning
     // 1 = lecture/assessment
     // 2 = lunch
@@ -30,6 +37,10 @@ class Player {
     };
 
   } // end constructor
+
+  scoreTitle() {
+    if (this.score < 100000) {return "n00b";}
+  }
 
 
 } //end player class
