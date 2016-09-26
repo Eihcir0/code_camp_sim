@@ -92,9 +92,10 @@ table {
   display: inline-block;
   width: 800px;
   padding: 15px;
+	margin-left: 200px;
   line-height: normal;
   /*outline: 1px solid blanchedalmond;*/
-  margin-left: 180px;
+  margin-left: 280px;
 
 }
 
@@ -126,12 +127,14 @@ table {
 }
 
 button {
-  width: 120px;
-  padding: 15px;
-  margin: 10px;
-	border-radius: 6px;
-	background-color: silver;
-
+		box-shadow: 1px 2px 2px 2px;
+    width: 120px;
+    position: absolute;
+    top: 539px;
+    left: 528px;
+    margin: 10px;
+    border-radius: 6px;
+    background-color: silver;
 }
 
 #canvas {
@@ -171,6 +174,7 @@ button {
 	width: 800px;
 	height: 400px;
 	margin: 0 auto;
+	margin-left: 300px;
 	background: black;
 	color: red;
 	font-size: 720px;
@@ -184,6 +188,7 @@ button {
 	background: black;
 	color: green;
 	font-size: 72px;
+	padding-top: 200px;
 }
 
 .faint-meter-bar {
@@ -194,10 +199,15 @@ button {
 .close-eyes-button {
   width: 200px;
 	font-size: 18px;
-	background-color: yellow;
   padding: 15px;
-  margin-left: 350px;
 	border-radius: 6px;
-	background-color: silver;
+	background-color: mediumspringgreen;
 
+}
+
+.teacher-image {
+		position: absolute;
+    width: 158px;
+    top: 400px;
+    left: 888px;
 }

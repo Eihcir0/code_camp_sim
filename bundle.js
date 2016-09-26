@@ -21454,27 +21454,31 @@
 	
 	var _player2 = _interopRequireDefault(_player);
 	
-	var _clock = __webpack_require__(202);
+	var _clock = __webpack_require__(189);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _player_anim = __webpack_require__(189);
+	var _player_anim = __webpack_require__(190);
 	
 	var _player_anim2 = _interopRequireDefault(_player_anim);
 	
-	var _open_sesh_screen = __webpack_require__(191);
+	var _open_sesh_screen = __webpack_require__(192);
 	
 	var _open_sesh_screen2 = _interopRequireDefault(_open_sesh_screen);
 	
-	var _lecture_sesh_screen = __webpack_require__(196);
+	var _lecture_sesh_screen = __webpack_require__(197);
 	
 	var _lecture_sesh_screen2 = _interopRequireDefault(_lecture_sesh_screen);
 	
-	var _strike_screen = __webpack_require__(224);
+	var _pairs_sesh_screen = __webpack_require__(201);
+	
+	var _pairs_sesh_screen2 = _interopRequireDefault(_pairs_sesh_screen);
+	
+	var _strike_screen = __webpack_require__(199);
 	
 	var _strike_screen2 = _interopRequireDefault(_strike_screen);
 	
-	var _congrats_screen = __webpack_require__(225);
+	var _congrats_screen = __webpack_require__(200);
 	
 	var _congrats_screen2 = _interopRequireDefault(_congrats_screen);
 	
@@ -21838,7 +21842,7 @@
 	    this.name = name || "Richie";
 	    this.currentEmotion = obj ? obj.currentEmotion : "excited";
 	    this.info = obj ? obj.info : "";
-	    this.sleepBank = obj ? obj.sleepBank : 50;
+	    this.sleepBank = obj ? obj.sleepBank : 100;
 	    this.happiness = obj ? obj.happiness : 100;
 	    this.focus = obj ? obj.focus : 100;
 	    this.score = obj ? obj.score : 0;
@@ -22527,6 +22531,65 @@
 
 /***/ },
 /* 189 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Clock = function () {
+	  function Clock(start) {
+	    var speed = arguments.length <= 1 || arguments[1] === undefined ? 60 : arguments[1];
+	
+	    _classCallCheck(this, Clock);
+	
+	    this.start = start;
+	    this.systemClockAtStart = Date.now();
+	    this.speed = speed;
+	    this.paused = false;
+	    this.pauseOffset = 0;
+	  }
+	
+	  _createClass(Clock, [{
+	    key: "time",
+	    value: function time() {
+	      var now = Date.now();
+	      var elapsed = (now - this.systemClockAtStart) * this.speed / 1000;
+	      var newTime = [];
+	      var hours = this.start[0] + Math.floor(elapsed / 3600);
+	      // debugger;
+	      if (hours > 11 && hours < 24) {
+	        newTime[2] = "pm";
+	      } else {
+	        newTime[2] = "am";
+	      }
+	      hours = hours > 12 ? hours - 12 : hours;
+	      hours = hours > 12 ? hours - 12 : hours;
+	      newTime[0] = hours.toString();
+	      var minutes = this.start[1] + Math.floor(elapsed % 3600 / 60);
+	      if (minutes < 10) {
+	        newTime[1] = "0" + minutes;
+	      } else {
+	        newTime[1] = minutes.toString();
+	      }
+	
+	      return newTime;
+	    }
+	  }]);
+	
+	  return Clock;
+	}(); //end class
+	
+	exports.default = Clock;
+
+/***/ },
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22537,7 +22600,7 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _moveable = __webpack_require__(190);
+	var _moveable = __webpack_require__(191);
 	
 	var _moveable2 = _interopRequireDefault(_moveable);
 	
@@ -22710,7 +22773,7 @@
 	exports.default = PlayerAnim;
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22794,7 +22857,7 @@
 	exports.default = Moveable;
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22809,19 +22872,19 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _secretary = __webpack_require__(192);
+	var _secretary = __webpack_require__(193);
 	
 	var _secretary2 = _interopRequireDefault(_secretary);
 	
-	var _desk = __webpack_require__(193);
+	var _desk = __webpack_require__(194);
 	
 	var _desk2 = _interopRequireDefault(_desk);
 	
-	var _study_icon_anim = __webpack_require__(194);
+	var _study_icon_anim = __webpack_require__(195);
 	
 	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
 	
-	var _fire = __webpack_require__(195);
+	var _fire = __webpack_require__(196);
 	
 	var _fire2 = _interopRequireDefault(_fire);
 	
@@ -23029,7 +23092,7 @@
 	exports.default = OpenSesh;
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -23067,7 +23130,7 @@
 	exports.default = Secretary;
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -23113,7 +23176,7 @@
 	exports.default = Desk;
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23124,7 +23187,7 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _moveable = __webpack_require__(190);
+	var _moveable = __webpack_require__(191);
 	
 	var _moveable2 = _interopRequireDefault(_moveable);
 	
@@ -23202,7 +23265,7 @@
 	exports.default = StudyIcon;
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23213,7 +23276,7 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _moveable = __webpack_require__(190);
+	var _moveable = __webpack_require__(191);
 	
 	var _moveable2 = _interopRequireDefault(_moveable);
 	
@@ -23298,7 +23361,7 @@
 	exports.default = Fire;
 
 /***/ },
-/* 196 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23313,11 +23376,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _sleep_minigame = __webpack_require__(223);
+	var _sleep_minigame = __webpack_require__(198);
 	
 	var _sleep_minigame2 = _interopRequireDefault(_sleep_minigame);
 	
-	var _clock = __webpack_require__(202);
+	var _clock = __webpack_require__(189);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
@@ -23345,9 +23408,6 @@
 	    _this.eyesClosedTimer = 0;
 	    _this.state = {
 	      currentSlide: 1,
-	      white: 0,
-	      black: 0,
-	      phase: 3,
 	      eyesClosed: false,
 	      focus: _this.props.player.focus,
 	      faintMeter: 0,
@@ -23421,13 +23481,13 @@
 	        this.faintMeter--;
 	        this.faintMeter--;
 	        this.faintMeter--;
-	        this.faintMeter--;
 	        if (this.faintMeter <= 0) {
 	          this.faintMeter = 0;
 	          this.faintMeterOn = false;
 	        }
 	      } else {
 	        if (this.props.player.focus <= 0) {
+	          this.faintMeter++;
 	          this.faintMeter++;
 	          if (this.faintMeter >= this.faintMeterMax) {
 	            clearInterval(this.xxinterval);
@@ -23443,8 +23503,14 @@
 	  }, {
 	    key: 'updateFocus',
 	    value: function updateFocus() {
+	      var time = this.props.player.clock.time();
 	      if (!this.state.eyesClosed) {
 	        this.props.player.focus--;
+	
+	        if (time[0] === "11" && parseInt(time[1]) > 45) {
+	          this.props.player.focus--;
+	        }
+	
 	        if (this.props.player.focus < 30 && !this.state.eyesClosed) {
 	          this.props.player.message = "OH NO!  You're losing focus!  You might pass out soon...........  (PRESS AND HOLD THE BUTTON TO CLOSE EYES AND REGAIN FOCUS)";
 	          this.faintMeterOn = true;
@@ -23471,15 +23537,15 @@
 	      var time = this.props.player.clock.time();
 	      if (time[0] === "9") {
 	        if (parseInt(time[1]) < 30) {
-	          return ["One of the hardest parts of an intensive bootcamp like this is getting enough sleep - and staying awake during lectures! "];
+	          return ["One of the hardest parts of an intensive bootcamp like this is getting enough sleep...", "", "...and staying awake during lectures! "];
 	        } else {
-	          return ["Stare at the lecture too long, you lose focus and you'll eventually lose consciousness...To regain focus, you need to close your eyes."];
+	          return ["Stare at the lecture too long, you lose focus and you'll eventually lose consciousness...", "", "To regain focus, you need to close your eyes."];
 	        }
 	      } else if (time[0] === "10") {
 	        if (parseInt(time[1]) < 30) {
-	          return ["But if you keep your eyes closed too long then you'll fall asleep.  Losing consciousness gets you a strike. 10 strikes and you're OUT!)."];
+	          return ["But if you keep your eyes closed too long then you'll fall asleep.", "", "Losing consciousness gets you a strike.", "", "10 strikes and you're OUT!!!!"];
 	        } else {
-	          return ["OK, with that out of the way, we will begin learning Ruby. Take a look at this code:"];
+	          return ["OK, with that out of the way, we will begin learning Ruby!", "", " Take a look at this code:"];
 	        }
 	      } else {
 	        return ["def my_each", "..i = 0", "..while i < self.length", "....yield self[i]", "....i += 1", "..end", "..self[0]", "end"];
@@ -23500,7 +23566,8 @@
 	                line,
 	                _react2.default.createElement('br', null)
 	              );
-	            })
+	            }),
+	            _react2.default.createElement('img', { src: './app/assets/images/ned3-blur.png', className: 'teacher-image' })
 	          );
 	        } else {
 	          return _react2.default.createElement(
@@ -23513,7 +23580,8 @@
 	                line,
 	                _react2.default.createElement('br', null)
 	              );
-	            })
+	            }),
+	            _react2.default.createElement('img', { src: './app/assets/images/ned3.png', className: 'teacher-image' })
 	          );
 	        }
 	      } else {
@@ -23559,8 +23627,6 @@
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'lecture-slide-container' },
-	        _react2.default.createElement('div', { className: 'white-front', opacity: this.state.white }),
-	        _react2.default.createElement('div', { className: 'black-front', opacity: this.state.black }),
 	        this.lectureSlide(),
 	        _react2.default.createElement('meter', { className: 'faint-meter-bar', value: this.state.faintMeter, min: '0', max: this.faintMeterMax, low: this.faintMeterMax - 1, high: this.faintMeterMax - 0.5, optimum: this.faintMeterMax }),
 	        _react2.default.createElement(
@@ -23579,91 +23645,7 @@
 	exports.default = LectureSeshScreen;
 
 /***/ },
-/* 197 */,
-/* 198 */,
-/* 199 */,
-/* 200 */,
-/* 201 */,
-/* 202 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var Clock = function () {
-	  function Clock(start) {
-	    var speed = arguments.length <= 1 || arguments[1] === undefined ? 60 : arguments[1];
-	
-	    _classCallCheck(this, Clock);
-	
-	    this.start = start;
-	    this.systemClockAtStart = Date.now();
-	    this.speed = speed;
-	    this.paused = false;
-	    this.pauseOffset = 0;
-	  }
-	
-	  _createClass(Clock, [{
-	    key: "time",
-	    value: function time() {
-	      var now = Date.now();
-	      var elapsed = (now - this.systemClockAtStart) * this.speed / 1000;
-	      var newTime = [];
-	      var hours = this.start[0] + Math.floor(elapsed / 3600);
-	      // debugger;
-	      if (hours > 11 && hours < 24) {
-	        newTime[2] = "pm";
-	      } else {
-	        newTime[2] = "am";
-	      }
-	      hours = hours > 12 ? hours - 12 : hours;
-	      hours = hours > 12 ? hours - 12 : hours;
-	      newTime[0] = hours.toString();
-	      var minutes = this.start[1] + Math.floor(elapsed % 3600 / 60);
-	      if (minutes < 10) {
-	        newTime[1] = "0" + minutes;
-	      } else {
-	        newTime[1] = minutes.toString();
-	      }
-	
-	      return newTime;
-	    }
-	  }]);
-	
-	  return Clock;
-	}(); //end class
-	
-	exports.default = Clock;
-
-/***/ },
-/* 203 */,
-/* 204 */,
-/* 205 */,
-/* 206 */,
-/* 207 */,
-/* 208 */,
-/* 209 */,
-/* 210 */,
-/* 211 */,
-/* 212 */,
-/* 213 */,
-/* 214 */,
-/* 215 */,
-/* 216 */,
-/* 217 */,
-/* 218 */,
-/* 219 */,
-/* 220 */,
-/* 221 */,
-/* 222 */,
-/* 223 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23723,7 +23705,7 @@
 	exports.default = SleepMinigame;
 
 /***/ },
-/* 224 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23738,7 +23720,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _clock = __webpack_require__(202);
+	var _clock = __webpack_require__(189);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
@@ -23761,7 +23743,7 @@
 	    _this.buzzerSound = new Audio("./app/assets/sounds/buzzer.mp3");
 	    _this.buzzerSound.play();
 	    _this.props.player.strikes = _this.props.player.strikes + "X";
-	    _this.props.player.message = 'You received a strike for passing out during lecture. You now have ' + _this.props.player.strikes.length + ' strike' + (_this.props.player.strikes.length > 1 ? "s" : "") + '!';
+	    _this.props.player.message = 'You received a strike for passing out during lecture.\n    You now have ' + _this.props.player.strikes.length + '\n    strike' + (_this.props.player.strikes.length > 1 ? "s" : "") + '!';
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    // this.main = this.main.bind(this);
 	    _this.state = {
@@ -23796,7 +23778,7 @@
 	exports.default = StrikeScreen;
 
 /***/ },
-/* 225 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23811,7 +23793,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _clock = __webpack_require__(202);
+	var _clock = __webpack_require__(189);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
@@ -23867,6 +23849,71 @@
 	
 	
 	exports.default = StrikeScreen;
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _clock = __webpack_require__(189);
+	
+	var _clock2 = _interopRequireDefault(_clock);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var PairsSeshScreen = function (_React$Component) {
+	  _inherits(PairsSeshScreen, _React$Component);
+	
+	  function PairsSeshScreen(props) {
+	    _classCallCheck(this, PairsSeshScreen);
+	
+	    // this.main = this.main.bind(this);
+	
+	    var _this = _possibleConstructorReturn(this, (PairsSeshScreen.__proto__ || Object.getPrototypeOf(PairsSeshScreen)).call(this, props));
+	
+	    _this.state = {};
+	    // this.onClick = this.onClick.bind(this);
+	    _this.yyinterval = setInterval(function () {
+	      return _this.tick();
+	    }, 50);
+	    return _this;
+	  }
+	
+	  _createClass(PairsSeshScreen, [{
+	    key: 'tick',
+	    value: function tick() {}
+	  }, {
+	    key: 'checkOver',
+	    value: function checkOver(time) {}
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement('div', { className: '' });
+	    }
+	  }]);
+	
+	  return PairsSeshScreen;
+	}(_react2.default.Component); //end component
+	
+	
+	exports.default = PairsSeshScreen;
 
 /***/ }
 /******/ ]);

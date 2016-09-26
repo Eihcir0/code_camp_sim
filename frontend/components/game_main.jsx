@@ -7,6 +7,7 @@ import Clock from './../../game_logic/clock.js';
 import playerAnim from './../../game_logic/animation_logic/player_anim.js';
 import OpenSeshScreen from './open_sesh_screen.jsx';
 import LectureSeshScreen from './lecture_sesh_screen.jsx';
+import PairsSeshScreen from './pairs_sesh_screen.jsx';
 import StrikeScreen from './strike_screen.jsx';
 import CongratsScreen from './congrats_screen.jsx';
 

@@ -8,7 +8,9 @@ class StrikeScreen extends React.Component {
     this.buzzerSound.play();
     this.props.player.strikes = this.props.player.strikes + "X";
     this.props.player.message =
-    `You received a strike for passing out during lecture. You now have ${this.props.player.strikes.length} strike${this.props.player.strikes.length>1 ? "s" : ""}!`;
+    `You received a strike for passing out during lecture.
+    You now have ${this.props.player.strikes.length}
+    strike${this.props.player.strikes.length>1 ? "s" : ""}!`;
     this.handleClick = this.handleClick.bind(this);
     // this.main = this.main.bind(this);
     this.state= {

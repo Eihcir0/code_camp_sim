@@ -4,7 +4,7 @@ class Player {
     this.name = name || "Richie";
     this.currentEmotion = obj ? obj.currentEmotion : "excited";
     this.info = obj ? obj.info : "";
-    this.sleepBank = obj ? obj.sleepBank : 50;
+    this.sleepBank = obj ? obj.sleepBank : 100;
     this.happiness = obj ? obj.happiness : 100;
     this.focus = obj ? obj.focus : 100;
     this.score = obj ? obj.score : 0;
