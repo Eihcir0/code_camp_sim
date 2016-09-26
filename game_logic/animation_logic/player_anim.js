@@ -19,6 +19,7 @@ class PlayerAnim extends Moveable {
     // 9 = at KITCHEN
     // 10 = at secretary
     // 11 at computer
+    // 12 at lecture
 
     this.imageSheet = new Image();
     this.imageSheet.src =

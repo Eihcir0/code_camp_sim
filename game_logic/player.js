@@ -4,7 +4,7 @@ class Player {
     this.name = name || "Richie";
     this.currentEmotion = obj ? obj.currentEmotion : "excited";
     this.info = obj ? obj.info : "";
-    this.sleepBank = obj ? obj.sleepBank : 100;
+    this.sleepBank = obj ? obj.sleepBank : 50;
     this.happiness = obj ? obj.happiness : 100;
     this.focus = obj ? obj.focus : 100;
     this.score = obj ? obj.score : 0;
@@ -14,7 +14,7 @@ class Player {
     this.message = obj ? obj.message : "";
     this.lastIconTime = obj ? obj.lastIcontTime : 0;
     this.onFire = obj ? obj.onFire : false;
-    this.strikes = obj ? obj.strikes : "XXXXXXXX";
+    this.strikes = obj ? obj.strikes : "";
     this.session = obj ? obj.session : 0; //
     this.pos = obj ? obj.pos : [280,300];
     // 0 = morning

@@ -17,8 +17,6 @@ class OpenSesh extends React.Component {
     this.update = this.update.bind(this);
     this.render = this.render.bind(this);
     this.checkForDoneSprites = this.checkForDoneSprites.bind(this);
-    this.checkForDoneSprites = this.checkForDoneSprites.bind(this);
-    this.handleClick = this.handleClick.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.initializeSprites = this.initializeSprites.bind(this);
 
@@ -46,7 +44,7 @@ class OpenSesh extends React.Component {
   initializeSprites () {
     this.sprites.push(new Secretary);
     var d = new Desk(1);
-    d.pos = [220,70];
+    d.pos = [290,90];
     this.sprites.push(d);
     d = new Desk(2);
     d.pos = [250,200];
@@ -82,19 +80,24 @@ class OpenSesh extends React.Component {
     console.log(e.pageY);
     var y = e.pageY;
     var x = e.pageX;
+    if (!(this.props.player.currentPos === 11)) {
+      if (y>500 && x<305) {
+        // execute animation for walking to secretary
+        this.props.player.currentPos = 10;}
 
-    if (y>500 && x<305) {
-      // execute animation for walking to secretary
-      this.props.player.currentPos = 10;}
+      if (x>470 && x<550 && y>430 && y<520) {
+           // animation walking to desk with move()
+        this.props.player.currentPos = 11;
+      }
 
-    if (x>470 && x<550 && y>430 && y<520) {
-         // animation walking to desk with move()
-      this.props.player.currentPos = 11;
-    }
-
-    if (x<321 && y>273 && y<418) {
-      // animation walking to kitchen
-      this.props.player.currentPos = 9;
+      if (x<321 && y>273 && y<418) {
+        // animation walking to kitchen
+        this.props.player.currentPos = 9;
+      }
+      if (x>276 && x<421 && y<186) {
+        // animation walking to kitchen
+        this.props.player.currentPos = 12;
+      }
     }
   }//end handle click
 
@@ -125,6 +128,7 @@ class OpenSesh extends React.Component {
       if (sprite.type === "fire") {
         if (sprite.times >= sprite.maxTimes) {
           this.props.player.onFire = false;
+
           sprite.done = true;
         }
       }
@@ -149,7 +153,6 @@ class OpenSesh extends React.Component {
       player: this.props.player});
     this.sprites.push(d);
     this.props.player.onFire = true;
-    this.props.player.message = "YOU'RE ON FIRE!";
   }
 
   randomIcon() {  //this goes away
@@ -167,6 +170,7 @@ class OpenSesh extends React.Component {
       var d = new StudyIconAnim({canvas: this.canvas, ctx: this.ctx});
       this.sprites.push(d);
       this.props.player.lastIconTime = Date.now();
+      this.props.player.skills.Ruby += 1;
     }
   }
 

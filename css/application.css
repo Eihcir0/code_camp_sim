@@ -64,7 +64,7 @@ table {
 
 .game-buttons {
   height: 500px;
-  width: 150px;
+  width: 156px;
   background-color: lightgrey;
   margin: 20px;
 }
@@ -93,7 +93,7 @@ table {
   width: 800px;
   padding: 15px;
   line-height: normal;
-  outline: 1px solid blanchedalmond;
+  /*outline: 1px solid blanchedalmond;*/
   margin-left: 180px;
 
 }
@@ -140,4 +140,64 @@ button {
 	height: 500px;
 	margin-top: 20px;
 	margin-bottom: 30px;
+}
+
+.lecture-slide {
+	width: 800px;
+	height: 400px;
+	margin-top: 20px;
+	padding: 50px;
+	line-height: 50px;
+	background: blanchedalmond;
+	font-size: 36px;
+}
+.blur {
+   color: transparent;
+   text-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.eyes-closed {
+	width: 800px;
+	height: 400px;
+	margin-top: 20px;
+	padding: 50px;
+	line-height: 50px;
+	background: black;
+	color: white;
+	font-size: 36px;
+}
+
+.strike {
+	width: 800px;
+	height: 400px;
+	margin: 0 auto;
+	background: black;
+	color: red;
+	font-size: 720px;
+}
+
+.congrats {
+	width: 800px;
+	margin-left: 100px;
+	height: 400px;
+	margin: 0 auto;
+	background: black;
+	color: green;
+	font-size: 72px;
+}
+
+.faint-meter-bar {
+	width: 800px;
+	margin-left: 50px;
+}
+
+.close-eyes-button {
+  width: 200px;
+	font-size: 18px;
+	background-color: yellow;
+  padding: 15px;
+  margin-left: 350px;
+	border-radius: 6px;
+	background-color: silver;
+
 }
