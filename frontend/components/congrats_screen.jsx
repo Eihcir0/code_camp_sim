@@ -4,6 +4,7 @@ import Clock from './../../game_logic/clock.js';
 class StrikeScreen extends React.Component {
   constructor (props) {
     super(props);
+    this.startTime = Date.now();
     this.buzzerSound = new Audio("./app/assets/sounds/congrats-ding.wav");
     this.buzzerSound.play();
 
@@ -19,8 +20,9 @@ class StrikeScreen extends React.Component {
   }
 
   handleClick() {
-    this.props.player.message="";
-    this.props.player.newCongrats = false;
+    if (Date.now() - this.startTime < 2000) {return;}
+    else {this.props.player.message="";
+    this.props.player.newCongrats = false;}
 
   }
 

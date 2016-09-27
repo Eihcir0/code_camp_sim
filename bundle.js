@@ -21519,8 +21519,6 @@
 	    _this.currentFaceImage = _this.currentFaceImage.bind(_this);
 	    _this.tick = _this.tick.bind(_this);
 	    _this.updateAttributes = _this.updateAttributes.bind(_this);
-	    _this.handleGetOffComputer = _this.handleGetOffComputer.bind(_this);
-	    _this.buttons = _this.buttons.bind(_this);
 	    _this.game = new _game2.default(_this.player);
 	
 	    _this.interval = window.setInterval(function () {
@@ -21621,34 +21619,6 @@
 	        return this.player.message;
 	      }
 	    }
-	  }, {
-	    key: 'handleGetOffComputer',
-	    value: function handleGetOffComputer() {
-	      var _this2 = this;
-	
-	      this.playerAnim.soundTyping.pause();
-	      this.playerAnim.moveTo(0, function () {
-	        return _this2.player.currentPos = 0;
-	      });
-	    }
-	  }, {
-	    key: 'buttons',
-	    value: function buttons() {
-	      if (this.player.currentPos === 11) {
-	        return _react2.default.createElement(
-	          'button',
-	          { className: 'left-sidebar',
-	            onClick: this.handleGetOffComputer },
-	          'GET OFF COMPUTER'
-	        );
-	      } else {
-	        return _react2.default.createElement(
-	          'div',
-	          null,
-	          'HELLO'
-	        );
-	      }
-	    }
 	
 	    // randomFace() {
 	    //   switch (this.player.currentEmotion) {
@@ -21681,11 +21651,6 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'game-middle-container' },
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'game-buttons' },
-	            this.buttons()
-	          ),
 	          this.sesh(),
 	          _react2.default.createElement(
 	            'div',
@@ -22915,6 +22880,8 @@
 	    _this.checkForDoneSprites = _this.checkForDoneSprites.bind(_this);
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.initializeSprites = _this.initializeSprites.bind(_this);
+	    _this.buttons = _this.buttons.bind(_this);
+	    _this.handleGetOffComputer = _this.handleGetOffComputer.bind(_this);
 	
 	    _this.background = new Image();
 	    _this.background.src = './app/assets/images/newfloor.png';
@@ -22971,9 +22938,26 @@
 	      window.requestAnimationFrame(this.main);
 	    }
 	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement('canvas', { id: 'canvas', width: '800', height: '520', onClick: this.handleClick });
+	    key: 'handleGetOffComputer',
+	    value: function handleGetOffComputer() {
+	      var _this3 = this;
+	
+	      this.props.playerAnim.soundTyping.pause();
+	      this.props.playerAnim.moveTo(0, function () {
+	        return _this3.props.player.currentPos = 0;
+	      });
+	    }
+	  }, {
+	    key: 'buttons',
+	    value: function buttons() {
+	      if (this.props.player.currentPos === 11) {
+	        return _react2.default.createElement(
+	          'button',
+	          { className: 'middle-button',
+	            onClick: this.handleGetOffComputer },
+	          'LEAVE WORKSTATION'
+	        );
+	      }
 	    }
 	  }, {
 	    key: 'handleClick',
@@ -22984,12 +22968,12 @@
 	      var y = e.pageY;
 	      var x = e.pageX;
 	      if (!(this.props.player.currentPos === 11)) {
-	        if (y > 500 && x < 305) {
+	        if (y > 520 && x < 553) {
 	          // execute animation for walking to secretary
 	          this.props.player.currentPos = 10;
 	        }
 	
-	        if (x > 470 && x < 550 && y > 430 && y < 520) {
+	        if (x > 315 && x < 492 && y > 430 && y < 520) {
 	          // animation walking to desk with move()
 	          this.props.player.currentPos = 11;
 	        }
@@ -22998,7 +22982,7 @@
 	          // animation walking to kitchen
 	          this.props.player.currentPos = 9;
 	        }
-	        if (x > 276 && x < 421 && y < 186) {
+	        if (x > 125 && x < 421 && y < 186) {
 	          // animation walking to kitchen
 	          this.props.player.currentPos = 12;
 	        }
@@ -23019,15 +23003,15 @@
 	  }, {
 	    key: 'renderSprites',
 	    value: function renderSprites() {
-	      var _this3 = this;
+	      var _this4 = this;
 	
 	      this.sprites.forEach(function (sprite) {
 	        if (sprite.type === "study icon" || sprite.type === "fire") {
 	          sprite.render();
 	        } else {
-	          _this3.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
+	          _this4.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
 	        }
-	        _this3.props.playerAnim.render(); // render player
+	        _this4.props.playerAnim.render(); // render player
 	      });
 	    }
 	  }, {
@@ -23082,6 +23066,19 @@
 	        this.props.player.lastIconTime = Date.now();
 	        this.props.player.skills.Ruby += 1;
 	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'canvas-container' },
+	        _react2.default.createElement('canvas', { id: 'canvas',
+	          width: '800',
+	          height: '520',
+	          onClick: this.handleClick }),
+	        this.buttons()
+	      );
 	    }
 	  }]);
 	
@@ -23608,14 +23605,14 @@
 	      if (this.props.player.focus < 30 && !this.state.eyesClosed) {
 	        return _react2.default.createElement(
 	          'button',
-	          { className: 'close-eyes-button',
+	          { className: 'middle-button',
 	            onClick: this.handleCloseEyesOn },
 	          'CLOSE EYES'
 	        );
 	      } else if (this.state.eyesClosed) {
 	        return _react2.default.createElement(
 	          'button',
-	          { className: 'close-eyes-button',
+	          { className: 'middle-button',
 	            onClick: this.handleCloseEyesOff },
 	          'OPEN EYES'
 	        );
@@ -23740,6 +23737,7 @@
 	
 	    var _this = _possibleConstructorReturn(this, (StrikeScreen.__proto__ || Object.getPrototypeOf(StrikeScreen)).call(this, props));
 	
+	    _this.startTime = Date.now();
 	    _this.buzzerSound = new Audio("./app/assets/sounds/buzzer.mp3");
 	    _this.buzzerSound.play();
 	    _this.props.player.strikes = _this.props.player.strikes + "X";
@@ -23757,8 +23755,12 @@
 	  _createClass(StrikeScreen, [{
 	    key: 'handleClick',
 	    value: function handleClick() {
-	      this.props.player.message = "";
-	      this.props.player.newStrike = false;
+	      if (Date.now() - this.startTime < 2000) {
+	        return;
+	      } else {
+	        this.props.player.message = "";
+	        this.props.player.newStrike = false;
+	      }
 	    }
 	  }, {
 	    key: 'render',
@@ -23766,7 +23768,11 @@
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'strike', onClick: this.handleClick },
-	        '  X'
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'x' },
+	          'X'
+	        )
 	      );
 	    }
 	  }]);
@@ -23813,6 +23819,7 @@
 	
 	    var _this = _possibleConstructorReturn(this, (StrikeScreen.__proto__ || Object.getPrototypeOf(StrikeScreen)).call(this, props));
 	
+	    _this.startTime = Date.now();
 	    _this.buzzerSound = new Audio("./app/assets/sounds/congrats-ding.wav");
 	    _this.buzzerSound.play();
 	
@@ -23830,8 +23837,12 @@
 	  _createClass(StrikeScreen, [{
 	    key: 'handleClick',
 	    value: function handleClick() {
-	      this.props.player.message = "";
-	      this.props.player.newCongrats = false;
+	      if (Date.now() - this.startTime < 2000) {
+	        return;
+	      } else {
+	        this.props.player.message = "";
+	        this.props.player.newCongrats = false;
+	      }
 	    }
 	  }, {
 	    key: 'render',

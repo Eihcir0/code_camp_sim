@@ -32,8 +32,6 @@ class GameMain extends React.Component {
     this.currentFaceImage = this.currentFaceImage.bind(this);
     this.tick = this.tick.bind(this);
     this.updateAttributes = this.updateAttributes.bind(this);
-    this.handleGetOffComputer = this.handleGetOffComputer.bind(this);
-    this.buttons = this.buttons.bind(this);
     this.game = new Game(this.player);
 
 
@@ -137,23 +135,7 @@ class GameMain extends React.Component {
     }
   }
 
-  handleGetOffComputer() {
-    this.playerAnim.soundTyping.pause();
-    this.playerAnim.moveTo(0, ()=>(this.player.currentPos=0));
-  }
 
-  buttons() {
-    if (this.player.currentPos === 11)  {
-      return (
-        <button className="left-sidebar"
-          onClick={this.handleGetOffComputer}>
-          GET OFF COMPUTER
-        </button>
-      );
-    }
-
-    else {return (<div>HELLO</div>);}
-  }
 
   // randomFace() {
   //   switch (this.player.currentEmotion) {
@@ -177,12 +159,6 @@ class GameMain extends React.Component {
       <section>
         <span className="game-title">CODE CAMP SIM</span>
         <div className="game-middle-container">
-          <div className="game-buttons">
-
-            {this.buttons()}
-
-
-          </div>
           {this.sesh()}
           <div className="game-right-side">
             <div>

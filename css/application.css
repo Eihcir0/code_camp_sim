@@ -55,11 +55,12 @@ table {
   color: blanchedalmond;
   width: 600px;
   outline: 1px solid blanchedalmond;
-  margin-left: 300px;
+  margin-left: 150px;
 }
 
 .game-middle-container {
   display: flex;
+	margin-left: 40px;
 }
 
 .game-buttons {
@@ -90,18 +91,21 @@ table {
   font-family: 'Exo 2', sans-serif;
   font-size: 24px;
   display: inline-block;
-  width: 800px;
+  width: 650px;
+	height: 100px;
   padding: 15px;
-	margin-left: 200px;
   line-height: normal;
   /*outline: 1px solid blanchedalmond;*/
-  margin-left: 280px;
+	margin-left: 120px;
+	margin-top: 20px;
+	border: 1px solid blanchedalmond;
 
 }
 
 
 .stats-bar {
   display: inline-block;
+	margin-left: 20px;
 }
 .icon {
   display: inline-block;
@@ -130,8 +134,8 @@ button {
 		box-shadow: 1px 2px 2px 2px;
     width: 120px;
     position: absolute;
-    top: 539px;
-    left: 528px;
+    top: 520px;
+    left: 300px;
     margin: 10px;
     border-radius: 6px;
     background-color: silver;
@@ -143,12 +147,14 @@ button {
 	height: 500px;
 	margin-top: 20px;
 	margin-bottom: 30px;
+	margin-left: 50px;
 }
 
 .lecture-slide {
-	width: 800px;
+	width: 700px;
 	height: 400px;
 	margin-top: 20px;
+	margin-left: 50px;
 	padding: 50px;
 	line-height: 50px;
 	background: blanchedalmond;
@@ -172,23 +178,19 @@ button {
 
 .strike {
 	width: 800px;
-	height: 400px;
-	margin: 0 auto;
-	margin-left: 300px;
+	margin-left: 100px;
 	background: black;
 	color: red;
-	font-size: 720px;
+	font-size: 567px;
 }
 
 .congrats {
 	width: 800px;
-	margin-left: 100px;
-	height: 400px;
-	margin: 0 auto;
 	background: black;
 	color: green;
 	font-size: 72px;
 	padding-top: 200px;
+	margin-left: 100px;
 }
 
 .faint-meter-bar {
@@ -196,12 +198,12 @@ button {
 	margin-left: 50px;
 }
 
-.close-eyes-button {
+.middle-button {
   width: 200px;
 	font-size: 18px;
-  padding: 15px;
-	border-radius: 6px;
-	background-color: mediumspringgreen;
+  padding: 10px;
+	border-radius: 8px;
+	background-color: blanchedalmond;
 
 }
 
@@ -209,5 +211,18 @@ button {
 		position: absolute;
     width: 158px;
     top: 400px;
-    left: 888px;
+    left: 715px;
+}
+
+.middle-button {
+  width: 200px;
+	font-size: 18px;
+  padding: 10px;
+	border-radius: 8px;
+	background-color: blanchedalmond;
+
+}
+
+.x {
+	margin-left: 100px;
 }

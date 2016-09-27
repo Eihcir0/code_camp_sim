@@ -180,14 +180,14 @@ class LectureSeshScreen extends React.Component {
   button() {
     if (this.props.player.focus < 30 && (!(this.state.eyesClosed)) ) {
       return (
-      <button className="close-eyes-button"
+      <button className="middle-button"
       onClick={this.handleCloseEyesOn}>
         CLOSE EYES
       </button>
       );
     } else if (this.state.eyesClosed) {
       return (
-      <button className="close-eyes-button"
+      <button className="middle-button"
       onClick={this.handleCloseEyesOff}>
         OPEN EYES
       </button>

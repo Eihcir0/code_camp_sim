@@ -19,6 +19,8 @@ class OpenSesh extends React.Component {
     this.checkForDoneSprites = this.checkForDoneSprites.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.initializeSprites = this.initializeSprites.bind(this);
+    this.buttons = this.buttons.bind(this);
+    this.handleGetOffComputer = this.handleGetOffComputer.bind(this);
 
     this.background = new Image();
     this.background.src = './app/assets/images/newfloor.png';
@@ -68,11 +70,25 @@ class OpenSesh extends React.Component {
     window.requestAnimationFrame(this.main);
   }
 
-  render () {
-    return (
-      <canvas id="canvas" width="800" height="520" onClick={this.handleClick}/>
-    );
+
+  handleGetOffComputer() {
+    this.props.playerAnim.soundTyping.pause();
+    this.props.playerAnim.moveTo(0, ()=>(this.props.player.currentPos=0));
   }
+
+
+  buttons() {
+    if (this.props.player.currentPos === 11)  {
+      return (
+        <button className="middle-button"
+          onClick={this.handleGetOffComputer}>
+          LEAVE WORKSTATION
+        </button>
+      );
+    }
+  }
+
+
 
   handleClick(e) {
     console.log("click");
@@ -81,11 +97,11 @@ class OpenSesh extends React.Component {
     var y = e.pageY;
     var x = e.pageX;
     if (!(this.props.player.currentPos === 11)) {
-      if (y>500 && x<305) {
+      if (y>520 && x<553) {
         // execute animation for walking to secretary
         this.props.player.currentPos = 10;}
 
-      if (x>470 && x<550 && y>430 && y<520) {
+      if (x>315 && x<492 && y>430 && y<520) {
            // animation walking to desk with move()
         this.props.player.currentPos = 11;
       }
@@ -94,7 +110,7 @@ class OpenSesh extends React.Component {
         // animation walking to kitchen
         this.props.player.currentPos = 9;
       }
-      if (x>276 && x<421 && y<186) {
+      if (x>125 && x<421 && y<186) {
         // animation walking to kitchen
         this.props.player.currentPos = 12;
       }
@@ -173,6 +189,20 @@ class OpenSesh extends React.Component {
       this.props.player.skills.Ruby += 1;
     }
   }
+
+  render () {
+    return (
+      <div className="canvas-container">
+        <canvas id="canvas"
+          width="800"
+          height="520"
+          onClick={this.handleClick}/>
+
+        {this.buttons()}
+      </div>
+    );
+  }
+
 
 }//end component
 
