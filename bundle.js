@@ -23760,7 +23760,7 @@
 	    // this.main = this.main.bind(this);
 	    var _this = _possibleConstructorReturn(this, (PairsSeshScreen.__proto__ || Object.getPrototypeOf(PairsSeshScreen)).call(this, props));
 	
-	    _this.sentenceTexts = ["this is a test", "this is the second test", "this is the third"];
+	    _this.sentenceTexts = ["def my_each(&prc)", "self.length.times do |i|", "prc.call(self[i])", "end", "self", "end", "def my_select(&prc)", "selects = []", "self.my_each do |item|", "if prc.call(item)", "selects << item", "end", "end", "selects", "end"];
 	    _this.sentences = [];
 	    _this.shotSound = new Audio("./app/assets/sounds/shot.wav");
 	    _this.state = {
@@ -23770,18 +23770,35 @@
 	    _this.handleSubmit = _this.handleSubmit.bind(_this);
 	    _this.initializeSentences = _this.initializeSentences.bind(_this);
 	    _this.updateSentences = _this.updateSentences.bind(_this);
+	    _this.getRandomSentence = _this.getRandomSentence.bind(_this);
+	    _this.addNewSentence = _this.addNewSentence.bind(_this);
 	    _this.pairsLines = _this.pairsLines.bind(_this);
 	    _this.yyinterval = setInterval(function () {
 	      return _this.tick();
 	    }, 50);
 	    _this.initializeSentences();
 	    _this.over = false;
-	    _this.yPosOffset = 1;
+	    _this.yPosIncrement = 6;
+	    _this.lineSpacing = 100;
 	    _this.props.player.message = "TYPE THE TEXT AS FAST AS YOU CAN!";
 	    return _this;
 	  }
 	
 	  _createClass(PairsSeshScreen, [{
+	    key: 'getRandomSentence',
+	    value: function getRandomSentence() {
+	      var a = Math.floor(Math.random() * this.sentenceTexts.length);
+	      return this.sentenceTexts[a];
+	    }
+	  }, {
+	    key: 'addNewSentence',
+	    value: function addNewSentence() {
+	      var a = this.sentences.length - 1;
+	      var newYpos = this.sentences[a].yPos + this.lineSpacing;
+	
+	      this.sentences.push({ text: this.sentences[0].text, active: false, yPos: newYpos });
+	    }
+	  }, {
 	    key: 'initializeSentences',
 	    value: function initializeSentences() {
 	      var _this2 = this;
@@ -23804,6 +23821,7 @@
 	    value: function tick() {
 	      this.checkOver();
 	      this.updateSentences();
+	      document.getElementById("pairs-input").focus();
 	    }
 	  }, {
 	    key: 'checkOver',
@@ -23821,17 +23839,17 @@
 	      if (this.currentInput === "bbr") {
 	        this.setState({ currentInput: this.sentences[0] });
 	      }
-	
 	      this.sentences.forEach(function (sentence) {
-	        sentence.yPos -= _this4.yPosOffset;
+	        sentence.yPos -= _this4.yPosIncrement;
 	      });
 	      if (this.sentences[0].yPos <= 200) {
 	        new Audio("./app/assets/sounds/missed.wav").play();
 	        this.setState({ currentInput: "" });
-	        if (this.sentences.length > 0) {
-	          this.sentences.shift();
-	          this.sentences[0].active = true;
-	        }
+	        this.addNewSentence();
+	        this.sentences.shift();
+	        this.sentences[0].active = true;
+	      } else {
+	        this.checkOver();
 	      }
 	    }
 	  }, {
@@ -23842,14 +23860,17 @@
 	        e.preventDefault();
 	      }
 	      if (e.keyCode === 13 && this.state.currentInput.length > 1) {
+	        this.setState({ currentInput: "" });
 	        if (this.state.currentInput == this.sentences[0].text) {
 	          new Audio("./app/assets/sounds/explosion.wav").play();
+	          //add explosion anim
+	          this.sentences.shift();
+	          this.sentences[0].active = true;
 	        } else {
 	          new Audio("./app/assets/sounds/missed.wav").play();
+	          this.sentences[0].active = false;
+	          this.sentences[1].active = true;
 	        }
-	        this.sentences.shift();
-	        this.sentences[0].active = true;
-	        this.setState({ currentInput: "" });
 	      } else if (e.keyCode !== 8) {
 	        if (this.sentences[0].text[this.state.currentInput.length] == e.key) {
 	          new Audio("./app/assets/sounds/shot.wav").play();
@@ -23881,13 +23902,21 @@
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'pairs-sesh' },
-	        _react2.default.createElement('div', { className: 'pairs-input-text' }),
-	        _react2.default.createElement('textarea', {
-	          value: this.state.currentInput,
-	          onKeyDown: this.handleSubmit,
-	          onChange: this.update("currentInput"),
-	          className: 'pairs-input', autoFocus: true }),
-	        this.pairsLines()
+	        _react2.default.createElement('img', { src: '/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/computer_screen2.png', className: 'pairs-computer-screen' }),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'pairs-input-text' },
+	          _react2.default.createElement('textarea', { id: 'pairs-input',
+	            value: this.state.currentInput,
+	            onKeyDown: this.handleSubmit,
+	            onChange: this.update("currentInput"),
+	            className: 'pairs-input', autoFocus: true })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'pairs-partner-area' },
+	          this.pairsLines()
+	        )
 	      );
 	    }
 	  }]);

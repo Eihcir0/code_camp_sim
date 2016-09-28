@@ -228,7 +228,7 @@ button {
 }
 
 .pairs-sesh {
-	width: 900px;
+	width: 800px;
 }
 
 .pairs-line {
@@ -239,30 +239,34 @@ button {
 
 
 .pairs-line-text {
+	font-family: 'VT323', monospace;
+	font-size: 24px;
 	padding: 5px;
 	background-color: white;
 	position: absolute;
-	left: 250px;
+	left: 180px;
 	margin: 0 auto;
-	width: 200px;
+	width: 250px;
 }
 
 
 
 textarea {
-	color: white;
-	background-color: black;
+	font-family: 'VT323', monospace;
+	color: brightgreen;
+	outline: none;
+	background-color: #efefff;;
 	display: inline-block;
 	position: absolute;
 	top: 250px;
+	border: none;
 	margin-left: 100px;
 	font-size: 24px;
-	width: 350px;
+	width: 340px;
 	height: 50px;
-	border: 1px solid white;
 	padding: 20px;
 	padding-bottom: 15px;
-
+	resize: none;
 }
 /*#lecture-slide	{
 	background:url(/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/rays.jpeg") 0 0 no-repeat;
@@ -272,4 +276,10 @@ textarea {
 	width:490px;
 	height:490px;
 	transform:scale(1) rotate(16.768rad);*/
+
+
+.pairs-computer-screen {
+	position: absolute;
+	top: 190px;
+	left: 82px;
 }
