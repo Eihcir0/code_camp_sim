@@ -21470,15 +21470,15 @@
 	
 	var _lecture_sesh_screen2 = _interopRequireDefault(_lecture_sesh_screen);
 	
-	var _pairs_sesh_screen = __webpack_require__(201);
+	var _pairs_sesh_screen = __webpack_require__(199);
 	
 	var _pairs_sesh_screen2 = _interopRequireDefault(_pairs_sesh_screen);
 	
-	var _strike_screen = __webpack_require__(199);
+	var _strike_screen = __webpack_require__(201);
 	
 	var _strike_screen2 = _interopRequireDefault(_strike_screen);
 	
-	var _congrats_screen = __webpack_require__(200);
+	var _congrats_screen = __webpack_require__(202);
 	
 	var _congrats_screen2 = _interopRequireDefault(_congrats_screen);
 	
@@ -21594,18 +21594,30 @@
 	    key: 'sesh',
 	    value: function sesh() {
 	      // change this to a switch
-	      if (this.player.newStrike) {
-	        return _react2.default.createElement(_strike_screen2.default, { player: this.player });
-	      } else if (this.player.newCongrats) {
-	        return _react2.default.createElement(_congrats_screen2.default, { player: this.player });
-	      } else if (this.state.currentPos === 12) {
-	        return _react2.default.createElement(_lecture_sesh_screen2.default, { className: 'lecture-sesh',
-	          player: this.player });
-	      } else if ([0, 2, 4].includes(this.player.session)) {
-	        return _react2.default.createElement(_open_sesh_screen2.default, { className: 'open-sesh',
-	          player: this.player,
-	          playerAnim: this.playerAnim });
-	      }
+	      return _react2.default.createElement(_pairs_sesh_screen2.default, { player: this.player });
+	      // if (this.player.newStrike) {
+	      //   return (
+	      //     <StrikeScreen player={this.player}/>
+	      //   );
+	      // }
+	      // else if (this.player.newCongrats) {
+	      //   return (
+	      //     <CongratsScreen player={this.player}/>
+	      //   );
+	      // }
+	      //
+	      // else if (this.state.currentPos === 12){
+	      //   return (
+	      //     <LectureSeshScreen className="lecture-sesh"
+	      //       player={this.player}/>
+	      //     );
+	      // } else if ([0,2,4].includes(this.player.session)) {
+	      //     return (
+	      //       <OpenSeshScreen className="open-sesh"
+	      //         player={this.player}
+	      //         playerAnim ={this.playerAnim}/>
+	      //   );
+	      // }
 	    }
 	  }, {
 	    key: 'message',
@@ -23444,6 +23456,10 @@
 	        }
 	      }
 	      this.checkWinner(time);
+	
+	      // var rays = document.getElementById("lecture-slide");
+	      // rays.setAttribute("style","-"
+	      // + "webkit-transform:rotate(" + 1 + "deg)");
 	    }
 	  }, {
 	    key: 'checkWinner',
@@ -23721,6 +23737,289 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
+	var _pairs_line = __webpack_require__(200);
+	
+	var _pairs_line2 = _interopRequireDefault(_pairs_line);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var PairsSeshScreen = function (_React$Component) {
+	  _inherits(PairsSeshScreen, _React$Component);
+	
+	  function PairsSeshScreen(props) {
+	    _classCallCheck(this, PairsSeshScreen);
+	
+	    // this.main = this.main.bind(this);
+	    var _this = _possibleConstructorReturn(this, (PairsSeshScreen.__proto__ || Object.getPrototypeOf(PairsSeshScreen)).call(this, props));
+	
+	    _this.sentenceTexts = ["this is a test", "this is the second test", "this is the third"];
+	    _this.sentences = [];
+	    _this.shotSound = new Audio("./app/assets/sounds/shot.wav");
+	    _this.state = {
+	      currentInput: ""
+	    };
+	    // this.onClick = this.onClick.bind(this);
+	    _this.handleSubmit = _this.handleSubmit.bind(_this);
+	    _this.initializeSentences = _this.initializeSentences.bind(_this);
+	    _this.updateSentences = _this.updateSentences.bind(_this);
+	    _this.pairsLines = _this.pairsLines.bind(_this);
+	    _this.yyinterval = setInterval(function () {
+	      return _this.tick();
+	    }, 50);
+	    _this.initializeSentences();
+	    _this.over = false;
+	    _this.yPosOffset = 1;
+	    _this.props.player.message = "TYPE THE TEXT AS FAST AS YOU CAN!";
+	    return _this;
+	  }
+	
+	  _createClass(PairsSeshScreen, [{
+	    key: 'initializeSentences',
+	    value: function initializeSentences() {
+	      var _this2 = this;
+	
+	      this.sentenceTexts.forEach(function (el, idx) {
+	        _this2.sentences.push({ text: el, active: idx === 0 ? true : false, yPos: 500 + idx * 100 });
+	      });
+	    }
+	  }, {
+	    key: 'update',
+	    value: function update(field) {
+	      var _this3 = this;
+	
+	      return function (e) {
+	        _this3.setState(_defineProperty({}, field, e.currentTarget.value));
+	      };
+	    }
+	  }, {
+	    key: 'tick',
+	    value: function tick() {
+	      this.checkOver();
+	      this.updateSentences();
+	    }
+	  }, {
+	    key: 'checkOver',
+	    value: function checkOver() {
+	      if (this.sentences.length === 0) {
+	        clearInterval(this.yyinterval);
+	        console.log("OVER");
+	      }
+	    }
+	  }, {
+	    key: 'updateSentences',
+	    value: function updateSentences() {
+	      var _this4 = this;
+	
+	      if (this.currentInput === "bbr") {
+	        this.setState({ currentInput: this.sentences[0] });
+	      }
+	
+	      this.sentences.forEach(function (sentence) {
+	        sentence.yPos -= _this4.yPosOffset;
+	      });
+	      if (this.sentences[0].yPos <= 200) {
+	        new Audio("./app/assets/sounds/missed.wav").play();
+	        this.setState({ currentInput: "" });
+	        if (this.sentences.length > 0) {
+	          this.sentences.shift();
+	          this.sentences[0].active = true;
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'handleSubmit',
+	    value: function handleSubmit(e) {
+	
+	      if (e.keyCode === 13) {
+	        e.preventDefault();
+	      }
+	      if (e.keyCode === 13 && this.state.currentInput.length > 1) {
+	        if (this.state.currentInput == this.sentences[0].text) {
+	          new Audio("./app/assets/sounds/explosion.wav").play();
+	        } else {
+	          new Audio("./app/assets/sounds/missed.wav").play();
+	        }
+	        this.sentences.shift();
+	        this.sentences[0].active = true;
+	        this.setState({ currentInput: "" });
+	      } else if (e.keyCode !== 8) {
+	        if (this.sentences[0].text[this.state.currentInput.length] == e.key) {
+	          new Audio("./app/assets/sounds/shot.wav").play();
+	        } else {
+	          new Audio("./app/assets/sounds/beep.wav").play();
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'pairsLines',
+	    value: function pairsLines() {
+	      var _this5 = this;
+	
+	      var results = [];
+	      this.sentences.forEach(function (sentence, idx) {
+	        if (sentence.yPos < 500) {
+	          results.push(_react2.default.createElement(
+	            'div',
+	            { className: 'pairs-line', key: idx, style: { top: sentence.yPos + "px" } },
+	            _react2.default.createElement(_pairs_line2.default, { currentLine: sentence, currentInput: _this5.state.currentInput })
+	          ));
+	        }
+	      });
+	      return results;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'pairs-sesh' },
+	        _react2.default.createElement('div', { className: 'pairs-input-text' }),
+	        _react2.default.createElement('textarea', {
+	          value: this.state.currentInput,
+	          onKeyDown: this.handleSubmit,
+	          onChange: this.update("currentInput"),
+	          className: 'pairs-input', autoFocus: true }),
+	        this.pairsLines()
+	      );
+	    }
+	  }]);
+	
+	  return PairsSeshScreen;
+	}(_react2.default.Component); //end component
+	
+	
+	exports.default = PairsSeshScreen;
+
+/***/ },
+/* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _clock = __webpack_require__(189);
+	
+	var _clock2 = _interopRequireDefault(_clock);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var PairsLine = function (_React$Component) {
+	  _inherits(PairsLine, _React$Component);
+	
+	  function PairsLine(props) {
+	    _classCallCheck(this, PairsLine);
+	
+	    // this.main = this.main.bind(this);
+	
+	    var _this = _possibleConstructorReturn(this, (PairsLine.__proto__ || Object.getPrototypeOf(PairsLine)).call(this, props));
+	
+	    _this.state = {
+	      currentInput: ""
+	    };
+	    _this.line = _this.line.bind(_this);
+	    //  this.zzinterval = setInterval(()=>this.tick(),50);
+	    return _this;
+	  }
+	
+	  _createClass(PairsLine, [{
+	    key: 'tick',
+	    value: function tick() {}
+	  }, {
+	    key: 'checkOver',
+	    value: function checkOver(time) {}
+	  }, {
+	    key: 'line',
+	    value: function line() {
+	      var _this2 = this;
+	
+	      if (!this.props.currentLine.active) {
+	        return this.props.currentLine.text;
+	      }
+	      var cl = this.props.currentLine.text;
+	      var color0 = { backgroundColor: "white" };
+	      var color1 = { backgroundColor: "green" };
+	      var color2 = { backgroundColor: "red" };
+	
+	      var style = function style(idx) {
+	        if (idx > _this2.props.currentInput.length - 1) {
+	          return color0;
+	        } else {
+	          return _this2.props.currentLine.text[idx] === _this2.props.currentInput[idx] ? color1 : color2;
+	        }
+	      };
+	
+	      var results = cl.split("").map(function (char, idx) {
+	        return _react2.default.createElement(
+	          'span',
+	          { className: 'letter',
+	            style: style(idx),
+	            key: idx },
+	          char
+	        );
+	      });
+	
+	      return results;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'pairs-line-text' },
+	        this.line()
+	      );
+	    }
+	  }]);
+	
+	  return PairsLine;
+	}(_react2.default.Component); //end component
+	
+	
+	exports.default = PairsLine;
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _clock = __webpack_require__(189);
+	
+	var _clock2 = _interopRequireDefault(_clock);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -23784,7 +24083,7 @@
 	exports.default = StrikeScreen;
 
 /***/ },
-/* 200 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23860,71 +24159,6 @@
 	
 	
 	exports.default = StrikeScreen;
-
-/***/ },
-/* 201 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _clock = __webpack_require__(189);
-	
-	var _clock2 = _interopRequireDefault(_clock);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var PairsSeshScreen = function (_React$Component) {
-	  _inherits(PairsSeshScreen, _React$Component);
-	
-	  function PairsSeshScreen(props) {
-	    _classCallCheck(this, PairsSeshScreen);
-	
-	    // this.main = this.main.bind(this);
-	
-	    var _this = _possibleConstructorReturn(this, (PairsSeshScreen.__proto__ || Object.getPrototypeOf(PairsSeshScreen)).call(this, props));
-	
-	    _this.state = {};
-	    // this.onClick = this.onClick.bind(this);
-	    _this.yyinterval = setInterval(function () {
-	      return _this.tick();
-	    }, 50);
-	    return _this;
-	  }
-	
-	  _createClass(PairsSeshScreen, [{
-	    key: 'tick',
-	    value: function tick() {}
-	  }, {
-	    key: 'checkOver',
-	    value: function checkOver(time) {}
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement('div', { className: '' });
-	    }
-	  }]);
-	
-	  return PairsSeshScreen;
-	}(_react2.default.Component); //end component
-	
-	
-	exports.default = PairsSeshScreen;
 
 /***/ }
 /******/ ]);

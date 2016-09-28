@@ -45,6 +45,11 @@ class LectureSeshScreen extends React.Component {
         if (this.state.eyesClosed) {this.updateGoesToSleepMeter();}
       }
     this.checkWinner(time);
+
+    // var rays = document.getElementById("lecture-slide");
+		// rays.setAttribute("style","-"
+    // + "webkit-transform:rotate(" + 1 + "deg)");
+
   }
 
   checkWinner(time) {

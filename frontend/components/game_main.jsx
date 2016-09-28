@@ -98,29 +98,30 @@ class GameMain extends React.Component {
   }
 
   sesh() { // change this to a switch
-    if (this.player.newStrike) {
-      return (
-        <StrikeScreen player={this.player}/>
-      );
-    }
-    else if (this.player.newCongrats) {
-      return (
-        <CongratsScreen player={this.player}/>
-      );
-    }
-
-    else if (this.state.currentPos === 12){
-      return (
-        <LectureSeshScreen className="lecture-sesh"
-          player={this.player}/>
-        );
-    } else if ([0,2,4].includes(this.player.session)) {
-        return (
-          <OpenSeshScreen className="open-sesh"
-            player={this.player}
-            playerAnim ={this.playerAnim}/>
-      );
-    }
+    return (<PairsSeshScreen player={this.player}/>);
+    // if (this.player.newStrike) {
+    //   return (
+    //     <StrikeScreen player={this.player}/>
+    //   );
+    // }
+    // else if (this.player.newCongrats) {
+    //   return (
+    //     <CongratsScreen player={this.player}/>
+    //   );
+    // }
+    //
+    // else if (this.state.currentPos === 12){
+    //   return (
+    //     <LectureSeshScreen className="lecture-sesh"
+    //       player={this.player}/>
+    //     );
+    // } else if ([0,2,4].includes(this.player.session)) {
+    //     return (
+    //       <OpenSeshScreen className="open-sesh"
+    //         player={this.player}
+    //         playerAnim ={this.playerAnim}/>
+    //   );
+    // }
   }
 
   message() {

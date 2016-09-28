@@ -226,3 +226,50 @@ button {
 .x {
 	margin-left: 100px;
 }
+
+.pairs-sesh {
+	width: 900px;
+}
+
+.pairs-line {
+	position: absolute;
+	left: 400px;
+	color: black;
+}
+
+
+.pairs-line-text {
+	padding: 5px;
+	background-color: white;
+	position: absolute;
+	left: 250px;
+	margin: 0 auto;
+	width: 200px;
+}
+
+
+
+textarea {
+	color: white;
+	background-color: black;
+	display: inline-block;
+	position: absolute;
+	top: 250px;
+	margin-left: 100px;
+	font-size: 24px;
+	width: 350px;
+	height: 50px;
+	border: 1px solid white;
+	padding: 20px;
+	padding-bottom: 15px;
+
+}
+/*#lecture-slide	{
+	background:url(/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/rays.jpeg") 0 0 no-repeat;
+	position:absolute;
+	top:0;
+	left:0;
+	width:490px;
+	height:490px;
+	transform:scale(1) rotate(16.768rad);*/
+}
