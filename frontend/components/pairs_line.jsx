@@ -13,19 +13,13 @@ class PairsLine extends React.Component {
   //  this.zzinterval = setInterval(()=>this.tick(),50);
   }
 
-  tick() {
-
-  }
-
-  checkOver(time) {
-  }
-
   line() {
-    if (!(this.props.currentLine.active)) {return this.props.currentLine.text;}
     var cl = this.props.currentLine.text;
     var color0 = {backgroundColor: "white"};
     var color1 = {backgroundColor: "green"};
     var color2 = {backgroundColor: "red"};
+    var color3 = {backgroundColor: "black"};
+    var color4 = {display: "none"};
 
     var style = (idx) => {
       if (idx > this.props.currentInput.length -1) {return color0;}
@@ -33,6 +27,15 @@ class PairsLine extends React.Component {
       ? color1
       : color2;}
     };
+
+    if (!(this.props.currentLine.active)) {
+      if (this.props.currentLine.done) {
+        return "💩".repeat(Math.floor(this.props.currentLine.text.length/3));
+        }  else {
+        return this.props.currentLine.text;
+      }
+    }
+
 
     var results = cl.split("").map((char,idx)=> {
         return (
@@ -44,12 +47,11 @@ class PairsLine extends React.Component {
       });
 
     return results;
-
-  }
+    }
 
   render () {
     return (
-      <div className="pairs-line-text">
+      <div style={this.props.currentLine.exploded ? {display: "none"} : {}} className="pairs-line-text" id={this.props.id}>
         {this.line()}
       </div>
     );
