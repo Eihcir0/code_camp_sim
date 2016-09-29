@@ -51,7 +51,7 @@ class PairsLine extends React.Component {
 
   render () {
     return (
-      <div style={this.props.currentLine.exploded ? {display: "none"} : {}} className="pairs-line-text" id={this.props.id}>
+      <div style={this.props.currentLine.exploded ? {display: "none"} : {}} className="pairs-line-text">
         {this.line()}
       </div>
     );

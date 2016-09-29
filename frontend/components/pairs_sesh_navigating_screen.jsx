@@ -1,36 +1,34 @@
 import React from 'react';
 import Clock from './../../game_logic/clock.js';
-import PairsLine from './pairs_line.jsx';
 
-class PairsSeshDrivingScreen extends React.Component {
+class PairsSeshNavigatingScreen extends React.Component {
   constructor (props) {
     super(props);
     // this.main = this.main.bind(this);
     this.sentenceTexts = ["test","def my_each(&prc)","self.length.times do |i|", "prc.call(self[i])", "end", "self", "end", "def my_select(&prc)", "selects = []", "self.my_each do |item|", "if prc.call(item)", "selects << item", "end", "end", "selects", "end"];
+    this.errorTexts = ["teAst","def my_each&prc)","self.length.times |i|", "prc,call(self[i])", "end", "self[i]", "end()", "def my_select()", "selects === []", "my_each do |item|", "unless prc.call(item)", "selects < item", "'end", "end", "!selects", "end;"];
     this.sentences = [];
     this.explosions = [];
-    this.shotSound = new Audio ("./app/assets/sounds/shot.wav");
     this.state= {
       currentInput: "",
     };
-    // this.onClick = this.onClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.initializeSentences = this.initializeSentences.bind(this);
     this.updateSentences = this.updateSentences.bind(this);
-    // this.getRandomSentence = this.getRandomSentence.bind(this);
     this.addNewSentence = this.addNewSentence.bind(this);
     this.addExplosion = this.addExplosion.bind(this);
     this.renderExplosion = this.renderExplosion.bind(this);
     this.updateExplosions = this.updateExplosions.bind(this);
     this.pairsLines = this.pairsLines.bind(this);
     this.findActive = this.findActive.bind(this);
-    this.initializeSentences();
     this.over = false;
     this.yPosIncrement = 2;
     this.lineSpacing = 100;
-    this.props.player.message = "TYPE THE TEXT AS FAST AS YOU CAN!";
+    this.props.player.message = "FIND THE BUGS AND CORRECT THE CODE AS FAST AS YOU CAN!";
     this.explosionImage = new Image ();
     this.explosionImage.src = "./app/assets/images/line_explosion.jpg";
+    this.initializeSentences();
+    // debugger;
     this.yyinterval = setInterval(()=>this.tick(),50);
   }
 
@@ -39,13 +37,14 @@ class PairsSeshDrivingScreen extends React.Component {
     this.canvas.height = 500;
     this.canvas.width = 800;
     this.ctx = this.canvas.getContext("2d");
+    this.setState({currentInput: this.sentences[0].error});
 
   }
 
   initializeSentences() {
     this.sentenceTexts.forEach((el,idx) => {
       this.sentences.push(
-        {id: idx, text: el, active: (idx===0 ? true : false), exploded: false, yPos: 500 + idx*100}
+        {id: idx, error: this.errorTexts[idx], text: el, active: (idx===0 ? true : false), done: false, exploded: false, yPos: 500 + idx*100}
       );
     });
 
@@ -96,9 +95,15 @@ class PairsSeshDrivingScreen extends React.Component {
   addNewSentence() {
     var a = this.sentences.length - 1;
     var newYpos = this.sentences[a].yPos + this.lineSpacing;
-
+    var firstOne = this.sentences[0];
     this.sentences.push(
-      {text: this.sentences[0].text, exploded: false, done: false, active: false, yPos: newYpos}
+      {error: firstOne.error,
+        text: firstOne.text,
+        exploded: false,
+        done: false,
+        active: false,
+        yPos: newYpos,
+        id: firstOne.id}
     );
   }
 
@@ -114,6 +119,7 @@ class PairsSeshDrivingScreen extends React.Component {
     clearInterval(this.yyinterval);
     console.log("OVER");}
   }
+
   updateSentences() {
 
     if (this.state.currentInput==="bbr") {
@@ -124,14 +130,15 @@ class PairsSeshDrivingScreen extends React.Component {
       sentence.yPos -= this.yPosIncrement;
     });
     if (this.sentences[0].yPos <= 200) {
-        new Audio ("./app/assets/sounds/missed.wav").play();
+        if (!(this.sentences[0].exploded) && !(this.sentences[0].done)) {
+          new Audio ("./app/assets/sounds/missed.wav").play();}
         this.addNewSentence();
         if (this.sentences[0].active) {
           this.sentences[1].active = true;
           this.sentences[0].active=false;
           this.sentences[0].exploded=false;
           this.sentences[0].done = true;
-          this.setState({currentInput: ""});
+          this.setState({currentInput: this.sentences[1].error});
         }
         this.sentences.shift();
     } else {this.checkOver();}
@@ -147,10 +154,10 @@ class PairsSeshDrivingScreen extends React.Component {
   handleSubmit(e){
 
     if (e.keyCode===13) {e.preventDefault();}
-    if (e.keyCode===13 && this.state.currentInput.length>1) {
+    if (e.keyCode===13) {
       // debugger;
       var a = this.findActive();
-      if (this.state.currentInput == this.sentences[this.findActive()].text) {
+      if (this.state.currentInput == this.sentences[a].text) {
           new Audio ("./app/assets/sounds/explosion.wav").play();
           this.addExplosion(this.sentences[a]);
           this.sentences[a+1].active = true;
@@ -160,11 +167,18 @@ class PairsSeshDrivingScreen extends React.Component {
       else {
         new Audio ("./app/assets/sounds/missed.wav").play();
         this.sentences[a].active=false;
+        this.sentences[a].text="💩".repeat(Math.floor(this.sentences[a].text.length/3));
         this.sentences[a].done = true;
         this.sentences[a+1].active=true;
       }
-        this.setState({currentInput: ""});
-    }
+        this.setState({currentInput: this.sentences[a+1].error});
+    } else if (e.keyCode!==8) {
+        if (this.sentences[this.findActive()].text[this.state.currentInput.length]==e.key) {
+          new Audio ("./app/assets/sounds/shot.wav").play();
+        } else {
+          new Audio ("./app/assets/sounds/beep.wav").play();
+        }
+      }
     }
 
   pairsLines() {
@@ -172,8 +186,10 @@ class PairsSeshDrivingScreen extends React.Component {
     this.sentences.forEach((sentence, idx) => {
     if (sentence.yPos<500) {
     results.push(
-      <div className="pairs-line" style={{top: sentence.yPos + "px"}} >
-        <PairsLine currentLine = {sentence} currentInput = {this.state.currentInput}/>
+      <div className="pairs-navigating-line" style={sentence.exploded ? {display: "none"} : {top: sentence.yPos + "px"}} >
+
+
+        {sentence.text}
       </div>
       );}
     });
@@ -207,4 +223,4 @@ class PairsSeshDrivingScreen extends React.Component {
 }//end component
 
 
-export default PairsSeshDrivingScreen;
+export default PairsSeshNavigatingScreen;
