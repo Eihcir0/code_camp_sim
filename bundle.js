@@ -21474,11 +21474,11 @@
 	
 	var _pairs_sesh_screen2 = _interopRequireDefault(_pairs_sesh_screen);
 	
-	var _strike_screen = __webpack_require__(201);
+	var _strike_screen = __webpack_require__(204);
 	
 	var _strike_screen2 = _interopRequireDefault(_strike_screen);
 	
-	var _congrats_screen = __webpack_require__(202);
+	var _congrats_screen = __webpack_require__(205);
 	
 	var _congrats_screen2 = _interopRequireDefault(_congrats_screen);
 	
@@ -23733,13 +23733,17 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _pairs_sesh_driving_screen = __webpack_require__(203);
+	var _pairs_sesh_driving_screen = __webpack_require__(200);
 	
 	var _pairs_sesh_driving_screen2 = _interopRequireDefault(_pairs_sesh_driving_screen);
 	
-	var _pairs_sesh_navigating_screen = __webpack_require__(204);
+	var _pairs_sesh_navigating_screen = __webpack_require__(202);
 	
 	var _pairs_sesh_navigating_screen2 = _interopRequireDefault(_pairs_sesh_navigating_screen);
+	
+	var _pairs_sesh_open_screen = __webpack_require__(203);
+	
+	var _pairs_sesh_open_screen2 = _interopRequireDefault(_pairs_sesh_open_screen);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -23755,11 +23759,16 @@
 	  function PairsSeshScreen(props) {
 	    _classCallCheck(this, PairsSeshScreen);
 	
+	    // this.currentSesh = this.currentSesh.bind(this);
 	    var _this = _possibleConstructorReturn(this, (PairsSeshScreen.__proto__ || Object.getPrototypeOf(PairsSeshScreen)).call(this, props));
 	
-	    _this.currentSesh = _this.currentSesh.bind(_this);
 	    _this.handleClick = _this.handleClick.bind(_this);
-	    _this.current = 0;
+	    _this.current = 1;
+	    _this.stopDriving = false;
+	    _this.stopNav = true;
+	    _this.drivingSentences = [];
+	    _this.navigatingSentences = [];
+	
 	    return _this;
 	  }
 	  //
@@ -23769,21 +23778,41 @@
 	  _createClass(PairsSeshScreen, [{
 	    key: 'handleClick',
 	    value: function handleClick() {
-	      if (this.current === 0) {
+	      if (this.current === 1) {
+	        // 1 is driving 2 is navigating
+	        this.stopDriving = true;
+	        this.stopNav = false;
+	        this.current = 2;
+	        this.props.player.message = "FIND THE BUGS AND CORRECT THE CODE AS FAST AS YOU CAN!";
+	      } else {
+	        this.stopDriving = false;
+	        this.stopNav = true;
 	        this.current = 1;
-	      } else {
-	        this.current = 0;
+	        this.props.player.message = "TYPE THE TEXT AS FAST AS YOU CAN!";
 	      }
 	    }
-	  }, {
-	    key: 'currentSesh',
-	    value: function currentSesh() {
-	      if (this.current === 0) {
-	        return _react2.default.createElement(_pairs_sesh_navigating_screen2.default, { player: this.props.player });
-	      } else {
-	        return _react2.default.createElement(_pairs_sesh_driving_screen2.default, { player: this.props.player });
-	      }
-	    }
+	
+	    // currentSesh() {
+	    //   if (this.current === 2) {
+	    //   return (
+	    //   <PairsSeshNavigatingScreen
+	    //     sentences={this.navigatingSentences}
+	    //     stopped={this.stopNav}
+	    //     player={this.props.player} />
+	    //     );
+	    //   }
+	    //   else if (this.current===1) {
+	    //     return (
+	    //       <PairsSeshDrivingScreen
+	    //         sentences={this.drivingSentences}
+	    //         stopped={this.stopDriving}
+	    //         player={this.props.player} />
+	    //     );
+	    //   } else {
+	    //     return <PairsSeshOpenScreen current={this.current}/>;
+	    //   }
+	    // }
+	
 	  }, {
 	    key: 'render',
 	    value: function render() {
@@ -23796,10 +23825,18 @@
 	          'YOU ARE',
 	          this.current === 1 ? " DRIVING" : " NAVIGATING"
 	        ),
-	        this.currentSesh(),
+	        _react2.default.createElement(_pairs_sesh_driving_screen2.default, {
+	          sentences: this.drivingSentences,
+	          stopped: this.stopDriving,
+	          player: this.props.player }),
+	        _react2.default.createElement(_pairs_sesh_navigating_screen2.default, {
+	          sentences: this.navigatingSentences,
+	          stopped: this.stopNav,
+	          player: this.props.player }),
 	        _react2.default.createElement(
 	          'button',
-	          { className: 'switch-button', onClick: this.handleClick },
+	          { className: 'switch-button',
+	            onClick: this.handleClick },
 	          'SWITCH!'
 	        )
 	      );
@@ -23814,6 +23851,304 @@
 
 /***/ },
 /* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _clock = __webpack_require__(189);
+	
+	var _clock2 = _interopRequireDefault(_clock);
+	
+	var _pairs_line = __webpack_require__(201);
+	
+	var _pairs_line2 = _interopRequireDefault(_pairs_line);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var PairsSeshDrivingScreen = function (_React$Component) {
+	  _inherits(PairsSeshDrivingScreen, _React$Component);
+	
+	  function PairsSeshDrivingScreen(props) {
+	    _classCallCheck(this, PairsSeshDrivingScreen);
+	
+	    // this.main = this.main.bind(this);
+	    var _this = _possibleConstructorReturn(this, (PairsSeshDrivingScreen.__proto__ || Object.getPrototypeOf(PairsSeshDrivingScreen)).call(this, props));
+	
+	    _this.sentenceTexts = ["test", "def my_each(&prc)", "self.length.times do |i|", "prc.call(self[i])", "end", "self", "end", "def my_select(&prc)", "selects = []", "self.my_each do |item|", "if prc.call(item)", "selects << item", "end", "end", "selects", "end"];
+	    _this.explosions = [];
+	    _this.shotSound = new Audio("./app/assets/sounds/shot.wav");
+	    _this.state = {
+	      currentInput: ""
+	    };
+	    // this.onClick = this.onClick.bind(this);
+	    _this.counter = 0;
+	    _this.handleSubmit = _this.handleSubmit.bind(_this);
+	    _this.showing = _this.showing.bind(_this);
+	    // this.showing = this.showing.bind(this);
+	    _this.initializeSentences = _this.initializeSentences.bind(_this);
+	    _this.updateSentences = _this.updateSentences.bind(_this);
+	    // this.getRandomSentence = this.getRandomSentence.bind(this);
+	    _this.addNewSentence = _this.addNewSentence.bind(_this);
+	    _this.addExplosion = _this.addExplosion.bind(_this);
+	    _this.renderExplosion = _this.renderExplosion.bind(_this);
+	    _this.updateExplosions = _this.updateExplosions.bind(_this);
+	    _this.pairsLines = _this.pairsLines.bind(_this);
+	    _this.findActive = _this.findActive.bind(_this);
+	    _this.over = false;
+	    _this.yPosIncrement = 2;
+	    _this.lineSpacing = 100;
+	    _this.explosionImage = new Image();
+	    _this.explosionImage.src = "./app/assets/images/line_explosion.jpg";
+	    _this.sentences = _this.props.sentences;
+	    _this.props.player.message = "TYPE THE TEXT AS FAST AS YOU CAN!";
+	
+	    if (_this.sentences.length === 0) {
+	      _this.initializeSentences();
+	    }
+	    console.log("driving constructor");
+	    return _this;
+	  }
+	
+	  _createClass(PairsSeshDrivingScreen, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var _this2 = this;
+	
+	      this.canvas = document.getElementById('canvas2');
+	      this.canvas.height = 500;
+	      this.canvas.width = 800;
+	      this.ctx = this.canvas.getContext("2d");
+	      this.yyinterval = setInterval(function () {
+	        return _this2.tick();
+	      }, 50);
+	    }
+	  }, {
+	    key: 'initializeSentences',
+	    value: function initializeSentences() {
+	      var _this3 = this;
+	
+	      this.sentenceTexts.forEach(function (el, idx) {
+	        _this3.sentences.push({ id: idx, text: el, active: idx === 0 ? true : false, exploded: false, yPos: 500 + idx * 100 });
+	      });
+	    }
+	  }, {
+	    key: 'tick',
+	    value: function tick() {
+	      if (!this.props.stopped) {
+	        this.updateSentences();
+	        this.updateExplosions();
+	        this.checkOver();
+	        document.getElementById("pairs-input").focus();
+	      }
+	    }
+	  }, {
+	    key: 'clearInt',
+	    value: function clearInt() {
+	      clearInterval(this.yyinterval);
+	    }
+	  }, {
+	    key: 'addExplosion',
+	    value: function addExplosion(a) {
+	      this.explosions.push({ yPos: a.yPos, timer: 0 });
+	    }
+	  }, {
+	    key: 'updateExplosions',
+	    value: function updateExplosions() {
+	
+	      for (var i = 0; i < this.explosions.length; i++) {
+	        var a = this.explosions[i];
+	        this.renderExplosion(a);
+	        a.yPos -= this.yPosIncrement * 2;
+	        a.timer++;
+	        if (a.timer === 8) {
+	          this.explosions.splice(i, 1);
+	          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	          i--;
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'renderExplosion',
+	    value: function renderExplosion(a) {
+	      // this.ctx.fillStyle = "rgb(51, 118, 36)";
+	      // this.ctx.fillRect(550, a.yPos + 310, 200, 50);
+	      var xOffset = a.timer % 3 * 75;
+	      var yOffset = Math.floor(a.timer / 3) * 75;
+	      for (var i = 0; i < 4; i++) {
+	        this.ctx.drawImage(this.explosionImage, xOffset, yOffset, 75, 75, 530 + i * 60, a.yPos - 130, 75, 75);
+	      }
+	    }
+	  }, {
+	    key: 'addNewSentence',
+	    value: function addNewSentence() {
+	      var a = this.sentences.length - 1;
+	      var newYpos = this.sentences[a].yPos + this.lineSpacing;
+	
+	      this.sentences.push({ text: this.sentences[0].text, exploded: false, done: false, active: false, yPos: newYpos });
+	    }
+	  }, {
+	    key: 'update',
+	    value: function update(field) {
+	      var _this4 = this;
+	
+	      return function (e) {
+	        _this4.setState(_defineProperty({}, field, e.currentTarget.value));
+	      };
+	    }
+	  }, {
+	    key: 'checkOver',
+	    value: function checkOver() {
+	      if (this.sentences.length === 0) {
+	        clearInterval(this.yyinterval);
+	        console.log("OVER");
+	      }
+	    }
+	  }, {
+	    key: 'updateSentences',
+	    value: function updateSentences() {
+	      var _this5 = this;
+	
+	      if (this.state.currentInput === "bbr") {
+	        this.setState({ currentInput: this.sentences[this.findActive()].text });
+	        return;
+	      }
+	      this.sentences.forEach(function (sentence) {
+	        sentence.yPos -= _this5.yPosIncrement;
+	      });
+	      if (this.sentences[0].yPos <= 200) {
+	        new Audio("./app/assets/sounds/missed.wav").play();
+	        this.addNewSentence();
+	        if (this.sentences[0].active) {
+	          this.sentences[1].active = true;
+	          this.sentences[0].active = false;
+	          this.sentences[0].exploded = false;
+	          this.sentences[0].done = true;
+	          this.setState({ currentInput: "" });
+	        }
+	        this.sentences.shift();
+	      } else {
+	        this.checkOver();
+	      }
+	    }
+	  }, {
+	    key: 'findActive',
+	    value: function findActive() {
+	      for (var i = 0; i < this.sentences.length; i++) {
+	        if (this.sentences[i].active) {
+	          return i;
+	        }
+	      }
+	      return null;
+	    }
+	  }, {
+	    key: 'handleSubmit',
+	    value: function handleSubmit(e) {
+	
+	      if (e.keyCode === 13) {
+	        e.preventDefault();
+	      }
+	      if (e.keyCode === 13 && this.state.currentInput.length > 1) {
+	        // debugger;
+	        var a = this.findActive();
+	        if (this.state.currentInput == this.sentences[this.findActive()].text) {
+	          new Audio("./app/assets/sounds/explosion.wav").play();
+	          this.addExplosion(this.sentences[a]);
+	          this.sentences[a + 1].active = true;
+	          this.sentences[a].exploded = true;
+	          this.sentences[a].active = false;
+	        } else {
+	          new Audio("./app/assets/sounds/missed.wav").play();
+	          this.sentences[a].active = false;
+	          this.sentences[a].done = true;
+	          this.sentences[a + 1].active = true;
+	        }
+	        this.setState({ currentInput: "" });
+	      } else if (e.keyCode !== 8) {
+	        if (this.sentences[this.findActive()].text[this.state.currentInput.length] == e.key) {
+	          new Audio("./app/assets/sounds/shot.wav").play();
+	        } else {
+	          new Audio("./app/assets/sounds/beep.wav").play();
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'pairsLines',
+	    value: function pairsLines() {
+	      var _this6 = this;
+	
+	      var results = [];
+	      this.sentences.forEach(function (sentence, idx) {
+	        if (sentence.yPos < 500) {
+	          results.push(_react2.default.createElement(
+	            'div',
+	            { key: ++_this6.counter, className: 'pairs-line', style: { top: sentence.yPos + "px" } },
+	            _react2.default.createElement(_pairs_line2.default, { currentLine: sentence, currentInput: _this6.state.currentInput })
+	          ));
+	        }
+	      });
+	      return results;
+	    }
+	  }, {
+	    key: 'showing',
+	    value: function showing() {
+	      if (this.props.stopped) {
+	        return { display: "none" };
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'pairs-driving-sesh', style: this.showing() },
+	        _react2.default.createElement('canvas', { id: 'canvas2',
+	          width: '800',
+	          height: '520' }),
+	        _react2.default.createElement('img', { src: '/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/computer_screen2.png', className: 'pairs-computer-screen' }),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'pairs-input-text' },
+	          _react2.default.createElement('textarea', { id: 'pairs-input',
+	            value: this.state.currentInput,
+	            onKeyDown: this.handleSubmit,
+	            onChange: this.update("currentInput"),
+	            className: 'pairs-input', autoFocus: true })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { key: ++this.counter, className: 'pairs-partner-area' },
+	          this.pairsLines()
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return PairsSeshDrivingScreen;
+	}(_react2.default.Component); //end component
+	
+	
+	exports.default = PairsSeshDrivingScreen;
+
+/***/ },
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23916,7 +24251,345 @@
 	exports.default = PairsLine;
 
 /***/ },
-/* 201 */
+/* 202 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _clock = __webpack_require__(189);
+	
+	var _clock2 = _interopRequireDefault(_clock);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var PairsSeshNavigatingScreen = function (_React$Component) {
+	  _inherits(PairsSeshNavigatingScreen, _React$Component);
+	
+	  function PairsSeshNavigatingScreen(props) {
+	    _classCallCheck(this, PairsSeshNavigatingScreen);
+	
+	    // this.main = this.main.bind(this);
+	    var _this = _possibleConstructorReturn(this, (PairsSeshNavigatingScreen.__proto__ || Object.getPrototypeOf(PairsSeshNavigatingScreen)).call(this, props));
+	
+	    _this.sentenceTexts = ["test", "def my_each(&prc)", "self.length.times do |i|", "prc.call(self[i])", "end", "self", "end", "def my_select(&prc)", "selects = []", "self.my_each do |item|", "if prc.call(item)", "selects << item", "end", "end", "selects", "end"];
+	    _this.errorTexts = ["teAst", "def my_each&prc)", "self.length.times |i|", "prc,call(self[i])", "end", "self[i]", "end()", "def my_select()", "selects === []", "my_each do |item|", "unless prc.call(item)", "selects < item", "'end", "end", "!selects", "end;"];
+	    _this.counter = 0;
+	    _this.sentences = _this.props.sentences;
+	    _this.explosions = [];
+	    _this.state = {
+	      currentInput: ""
+	    };
+	    _this.handleSubmit = _this.handleSubmit.bind(_this);
+	    _this.showing = _this.showing.bind(_this);
+	    // this.showing = this.showing.bind(this);
+	    _this.initializeSentences = _this.initializeSentences.bind(_this);
+	    _this.updateSentences = _this.updateSentences.bind(_this);
+	    _this.addNewSentence = _this.addNewSentence.bind(_this);
+	    _this.addExplosion = _this.addExplosion.bind(_this);
+	    _this.renderExplosion = _this.renderExplosion.bind(_this);
+	    _this.updateExplosions = _this.updateExplosions.bind(_this);
+	    _this.pairsLines = _this.pairsLines.bind(_this);
+	    _this.findActive = _this.findActive.bind(_this);
+	    _this.over = false;
+	    _this.yPosIncrement = 2;
+	    _this.lineSpacing = 100;
+	    _this.explosionImage = new Image();
+	    _this.explosionImage.src = "./app/assets/images/line_explosion.jpg";
+	    if (_this.sentences.length === 0) {
+	      _this.initializeSentences();
+	    }
+	    console.log("nav constructor");
+	
+	    return _this;
+	  }
+	
+	  _createClass(PairsSeshNavigatingScreen, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var _this2 = this;
+	
+	      this.canvas = document.getElementById('canvas2');
+	      this.canvas.height = 500;
+	      this.canvas.width = 800;
+	      this.ctx = this.canvas.getContext("2d");
+	      this.setState({ currentInput: this.sentences[0].error });
+	      this.yyinterval = setInterval(function () {
+	        return _this2.tick();
+	      }, 50);
+	    }
+	  }, {
+	    key: 'initializeSentences',
+	    value: function initializeSentences() {
+	      var _this3 = this;
+	
+	      this.sentenceTexts.forEach(function (el, idx) {
+	        _this3.sentences.push({ id: idx, error: _this3.errorTexts[idx], text: el, active: idx === 0 ? true : false, done: false, exploded: false, yPos: 500 + idx * 100 });
+	      });
+	    }
+	  }, {
+	    key: 'tick',
+	    value: function tick() {
+	      if (!this.props.stopped) {
+	        this.checkOver();
+	        this.updateSentences();
+	        this.updateExplosions();
+	        document.getElementById("pairs-input").focus();
+	      }
+	    }
+	  }, {
+	    key: 'clearInt',
+	    value: function clearInt() {
+	      clearInterval(this.yyinterval);
+	    }
+	  }, {
+	    key: 'addExplosion',
+	    value: function addExplosion(a) {
+	      this.explosions.push({ yPos: a.yPos, timer: 0 });
+	    }
+	  }, {
+	    key: 'updateExplosions',
+	    value: function updateExplosions() {
+	
+	      for (var i = 0; i < this.explosions.length; i++) {
+	        var a = this.explosions[i];
+	        this.renderExplosion(a);
+	        a.yPos -= this.yPosIncrement * 2;
+	        a.timer++;
+	        if (a.timer === 8) {
+	          this.explosions.splice(i, 1);
+	          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	          i--;
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'renderExplosion',
+	    value: function renderExplosion(a) {
+	      // this.ctx.fillStyle = "rgb(51, 118, 36)";
+	      // this.ctx.fillRect(550, a.yPos + 310, 200, 50);
+	      var xOffset = a.timer % 3 * 75;
+	      var yOffset = Math.floor(a.timer / 3) * 75;
+	      for (var i = 0; i < 4; i++) {
+	        this.ctx.drawImage(this.explosionImage, xOffset, yOffset, 75, 75, 530 + i * 60, a.yPos - 130, 75, 75);
+	      }
+	    }
+	  }, {
+	    key: 'addNewSentence',
+	    value: function addNewSentence() {
+	      var a = this.sentences.length - 1;
+	      var newYpos = this.sentences[a].yPos + this.lineSpacing;
+	      var firstOne = this.sentences[0];
+	      this.sentences.push({ error: firstOne.error,
+	        text: this.sentenceTexts[firstOne.id],
+	        exploded: false,
+	        done: false,
+	        active: false,
+	        yPos: newYpos,
+	        id: firstOne.id });
+	    }
+	  }, {
+	    key: 'update',
+	    value: function update(field) {
+	      var _this4 = this;
+	
+	      return function (e) {
+	        _this4.setState(_defineProperty({}, field, e.currentTarget.value));
+	      };
+	    }
+	  }, {
+	    key: 'checkOver',
+	    value: function checkOver() {
+	      if (this.sentences.length === 0) {
+	        clearInterval(this.yyinterval);
+	        console.log("OVER");
+	      }
+	    }
+	  }, {
+	    key: 'updateSentences',
+	    value: function updateSentences() {
+	      var _this5 = this;
+	
+	      if (this.state.currentInput === "bbr") {
+	        this.setState({ currentInput: this.sentences[0].text });
+	        return;
+	      }
+	      this.sentences.forEach(function (sentence) {
+	        sentence.yPos -= _this5.yPosIncrement;
+	      });
+	      if (this.sentences[0].yPos <= 200) {
+	        if (!this.sentences[0].exploded && !this.sentences[0].done) {
+	          new Audio("./app/assets/sounds/missed.wav").play();
+	        }
+	        this.addNewSentence();
+	        if (this.sentences[0].active) {
+	          this.sentences[1].active = true;
+	          this.sentences[0].active = false;
+	          this.sentences[0].exploded = false;
+	          this.sentences[0].done = true;
+	          this.setState({ currentInput: this.sentences[1].error });
+	        }
+	        this.sentences.shift();
+	      } else {
+	        this.checkOver();
+	      }
+	    }
+	  }, {
+	    key: 'findActive',
+	    value: function findActive() {
+	      for (var i = 0; i < this.sentences.length; i++) {
+	        if (this.sentences[i].active) {
+	          return i;
+	        }
+	      }
+	      return null;
+	    }
+	  }, {
+	    key: 'handleSubmit',
+	    value: function handleSubmit(e) {
+	
+	      if (e.keyCode === 13) {
+	        e.preventDefault();
+	      }
+	      if (e.keyCode === 13) {
+	        // debugger;
+	        var a = this.findActive();
+	        if (this.state.currentInput == this.sentences[a].text) {
+	          new Audio("./app/assets/sounds/explosion.wav").play();
+	          this.addExplosion(this.sentences[a]);
+	          this.sentences[a + 1].active = true;
+	          this.sentences[a].exploded = true;
+	          this.sentences[a].active = false;
+	        } else {
+	          new Audio("./app/assets/sounds/missed.wav").play();
+	          this.sentences[a].active = false;
+	          this.sentences[a].text = "💩".repeat(Math.floor(this.sentences[a].text.length / 3));
+	          this.sentences[a].done = true;
+	          this.sentences[a + 1].active = true;
+	        }
+	        this.setState({ currentInput: this.sentences[a + 1].error });
+	      }
+	    }
+	  }, {
+	    key: 'pairsLines',
+	    value: function pairsLines() {
+	      var _this6 = this;
+	
+	      var results = [];
+	      this.sentences.forEach(function (sentence, idx) {
+	        if (sentence.yPos < 500) {
+	          results.push(_react2.default.createElement(
+	            'div',
+	            { key: ++_this6.counter, className: 'pairs-navigating-line', style: sentence.exploded ? { display: "none" } : { top: sentence.yPos + "px" } },
+	            sentence.text
+	          ));
+	        }
+	      });
+	      return results;
+	    }
+	  }, {
+	    key: 'showing',
+	    value: function showing() {
+	      if (this.props.stopped) {
+	        return { display: "none" };
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'pairs-navigating-sesh', style: this.showing() },
+	        _react2.default.createElement('canvas', { id: 'canvas2',
+	          width: '800',
+	          height: '520' }),
+	        _react2.default.createElement('img', { src: '/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/computer_screen2.png', className: 'pairs-computer-screen' }),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'pairs-input-text' },
+	          _react2.default.createElement('textarea', { id: 'pairs-input',
+	            value: this.state.currentInput,
+	            onKeyDown: this.handleSubmit,
+	            onChange: this.update("currentInput"),
+	            className: 'pairs-input', autoFocus: true })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'pairs-partner-area' },
+	          this.pairsLines()
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return PairsSeshNavigatingScreen;
+	}(_react2.default.Component); //end component
+	
+	
+	exports.default = PairsSeshNavigatingScreen;
+
+/***/ },
+/* 203 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _clock = __webpack_require__(189);
+	
+	var _clock2 = _interopRequireDefault(_clock);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var PairsSeshOpenScreen = function (_React$Component) {
+	  _inherits(PairsSeshOpenScreen, _React$Component);
+	
+	  function PairsSeshOpenScreen() {
+	    _classCallCheck(this, PairsSeshOpenScreen);
+	
+	    return _possibleConstructorReturn(this, (PairsSeshOpenScreen.__proto__ || Object.getPrototypeOf(PairsSeshOpenScreen)).apply(this, arguments));
+	  }
+	
+	  return PairsSeshOpenScreen;
+	}(_react2.default.Component);
+	
+	//end component
+	
+	
+	exports.default = PairsSeshOpenScreen;
+
+/***/ },
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23998,7 +24671,7 @@
 	exports.default = StrikeScreen;
 
 /***/ },
-/* 202 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24074,563 +24747,6 @@
 	
 	
 	exports.default = StrikeScreen;
-
-/***/ },
-/* 203 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _clock = __webpack_require__(189);
-	
-	var _clock2 = _interopRequireDefault(_clock);
-	
-	var _pairs_line = __webpack_require__(200);
-	
-	var _pairs_line2 = _interopRequireDefault(_pairs_line);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var PairsSeshDrivingScreen = function (_React$Component) {
-	  _inherits(PairsSeshDrivingScreen, _React$Component);
-	
-	  function PairsSeshDrivingScreen(props) {
-	    _classCallCheck(this, PairsSeshDrivingScreen);
-	
-	    // this.main = this.main.bind(this);
-	    var _this = _possibleConstructorReturn(this, (PairsSeshDrivingScreen.__proto__ || Object.getPrototypeOf(PairsSeshDrivingScreen)).call(this, props));
-	
-	    _this.sentenceTexts = ["test", "def my_each(&prc)", "self.length.times do |i|", "prc.call(self[i])", "end", "self", "end", "def my_select(&prc)", "selects = []", "self.my_each do |item|", "if prc.call(item)", "selects << item", "end", "end", "selects", "end"];
-	    _this.sentences = [];
-	    _this.explosions = [];
-	    _this.shotSound = new Audio("./app/assets/sounds/shot.wav");
-	    _this.state = {
-	      currentInput: ""
-	    };
-	    // this.onClick = this.onClick.bind(this);
-	    _this.handleSubmit = _this.handleSubmit.bind(_this);
-	    _this.initializeSentences = _this.initializeSentences.bind(_this);
-	    _this.updateSentences = _this.updateSentences.bind(_this);
-	    // this.getRandomSentence = this.getRandomSentence.bind(this);
-	    _this.addNewSentence = _this.addNewSentence.bind(_this);
-	    _this.addExplosion = _this.addExplosion.bind(_this);
-	    _this.renderExplosion = _this.renderExplosion.bind(_this);
-	    _this.updateExplosions = _this.updateExplosions.bind(_this);
-	    _this.pairsLines = _this.pairsLines.bind(_this);
-	    _this.findActive = _this.findActive.bind(_this);
-	    _this.initializeSentences();
-	    _this.over = false;
-	    _this.yPosIncrement = 2;
-	    _this.lineSpacing = 100;
-	    _this.props.player.message = "TYPE THE TEXT AS FAST AS YOU CAN!";
-	    _this.explosionImage = new Image();
-	    _this.explosionImage.src = "./app/assets/images/line_explosion.jpg";
-	    _this.yyinterval = setInterval(function () {
-	      return _this.tick();
-	    }, 50);
-	    return _this;
-	  }
-	
-	  _createClass(PairsSeshDrivingScreen, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.canvas = document.getElementById('canvas2');
-	      this.canvas.height = 500;
-	      this.canvas.width = 800;
-	      this.ctx = this.canvas.getContext("2d");
-	    }
-	  }, {
-	    key: 'initializeSentences',
-	    value: function initializeSentences() {
-	      var _this2 = this;
-	
-	      this.sentenceTexts.forEach(function (el, idx) {
-	        _this2.sentences.push({ id: idx, text: el, active: idx === 0 ? true : false, exploded: false, yPos: 500 + idx * 100 });
-	      });
-	    }
-	  }, {
-	    key: 'tick',
-	    value: function tick() {
-	      this.checkOver();
-	      this.updateSentences();
-	      this.updateExplosions();
-	      document.getElementById("pairs-input").focus();
-	    }
-	  }, {
-	    key: 'clearInt',
-	    value: function clearInt() {
-	      clearInterval(this.yyinterval);
-	    }
-	  }, {
-	    key: 'addExplosion',
-	    value: function addExplosion(a) {
-	      this.explosions.push({ yPos: a.yPos, timer: 0 });
-	    }
-	  }, {
-	    key: 'updateExplosions',
-	    value: function updateExplosions() {
-	
-	      for (var i = 0; i < this.explosions.length; i++) {
-	        var a = this.explosions[i];
-	        this.renderExplosion(a);
-	        a.yPos -= this.yPosIncrement * 2;
-	        a.timer++;
-	        if (a.timer === 8) {
-	          this.explosions.splice(i, 1);
-	          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-	          i--;
-	        }
-	      }
-	    }
-	  }, {
-	    key: 'renderExplosion',
-	    value: function renderExplosion(a) {
-	      // this.ctx.fillStyle = "rgb(51, 118, 36)";
-	      // this.ctx.fillRect(550, a.yPos + 310, 200, 50);
-	      var xOffset = a.timer % 3 * 75;
-	      var yOffset = Math.floor(a.timer / 3) * 75;
-	      for (var i = 0; i < 4; i++) {
-	        this.ctx.drawImage(this.explosionImage, xOffset, yOffset, 75, 75, 530 + i * 60, a.yPos - 130, 75, 75);
-	      }
-	    }
-	  }, {
-	    key: 'addNewSentence',
-	    value: function addNewSentence() {
-	      var a = this.sentences.length - 1;
-	      var newYpos = this.sentences[a].yPos + this.lineSpacing;
-	
-	      this.sentences.push({ text: this.sentences[0].text, exploded: false, done: false, active: false, yPos: newYpos });
-	    }
-	  }, {
-	    key: 'update',
-	    value: function update(field) {
-	      var _this3 = this;
-	
-	      return function (e) {
-	        _this3.setState(_defineProperty({}, field, e.currentTarget.value));
-	      };
-	    }
-	  }, {
-	    key: 'checkOver',
-	    value: function checkOver() {
-	      if (this.sentences.length === 0) {
-	        clearInterval(this.yyinterval);
-	        console.log("OVER");
-	      }
-	    }
-	  }, {
-	    key: 'updateSentences',
-	    value: function updateSentences() {
-	      var _this4 = this;
-	
-	      if (this.state.currentInput === "bbr") {
-	        this.setState({ currentInput: this.sentences[0].text });
-	        return;
-	      }
-	      this.sentences.forEach(function (sentence) {
-	        sentence.yPos -= _this4.yPosIncrement;
-	      });
-	      if (this.sentences[0].yPos <= 200) {
-	        new Audio("./app/assets/sounds/missed.wav").play();
-	        this.addNewSentence();
-	        if (this.sentences[0].active) {
-	          this.sentences[1].active = true;
-	          this.sentences[0].active = false;
-	          this.sentences[0].exploded = false;
-	          this.sentences[0].done = true;
-	          this.setState({ currentInput: "" });
-	        }
-	        this.sentences.shift();
-	      } else {
-	        this.checkOver();
-	      }
-	    }
-	  }, {
-	    key: 'findActive',
-	    value: function findActive() {
-	      for (var i = 0; i < this.sentences.length; i++) {
-	        if (this.sentences[i].active) {
-	          return i;
-	        }
-	      }
-	      return null;
-	    }
-	  }, {
-	    key: 'handleSubmit',
-	    value: function handleSubmit(e) {
-	
-	      if (e.keyCode === 13) {
-	        e.preventDefault();
-	      }
-	      if (e.keyCode === 13 && this.state.currentInput.length > 1) {
-	        // debugger;
-	        var a = this.findActive();
-	        if (this.state.currentInput == this.sentences[this.findActive()].text) {
-	          new Audio("./app/assets/sounds/explosion.wav").play();
-	          this.addExplosion(this.sentences[a]);
-	          this.sentences[a + 1].active = true;
-	          this.sentences[a].exploded = true;
-	          this.sentences[a].active = false;
-	        } else {
-	          new Audio("./app/assets/sounds/missed.wav").play();
-	          this.sentences[a].active = false;
-	          this.sentences[a].done = true;
-	          this.sentences[a + 1].active = true;
-	        }
-	        this.setState({ currentInput: "" });
-	      }
-	    }
-	  }, {
-	    key: 'pairsLines',
-	    value: function pairsLines() {
-	      var _this5 = this;
-	
-	      var results = [];
-	      this.sentences.forEach(function (sentence, idx) {
-	        if (sentence.yPos < 500) {
-	          results.push(_react2.default.createElement(
-	            'div',
-	            { className: 'pairs-line', style: { top: sentence.yPos + "px" } },
-	            _react2.default.createElement(_pairs_line2.default, { currentLine: sentence, currentInput: _this5.state.currentInput })
-	          ));
-	        }
-	      });
-	      return results;
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'pairs-sesh' },
-	        _react2.default.createElement('canvas', { id: 'canvas2',
-	          width: '800',
-	          height: '520' }),
-	        _react2.default.createElement('img', { src: '/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/computer_screen2.png', className: 'pairs-computer-screen' }),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'pairs-input-text' },
-	          _react2.default.createElement('textarea', { id: 'pairs-input',
-	            value: this.state.currentInput,
-	            onKeyDown: this.handleSubmit,
-	            onChange: this.update("currentInput"),
-	            className: 'pairs-input', autoFocus: true })
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'pairs-partner-area' },
-	          this.pairsLines()
-	        )
-	      );
-	    }
-	  }]);
-	
-	  return PairsSeshDrivingScreen;
-	}(_react2.default.Component); //end component
-	
-	
-	exports.default = PairsSeshDrivingScreen;
-
-/***/ },
-/* 204 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _clock = __webpack_require__(189);
-	
-	var _clock2 = _interopRequireDefault(_clock);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var PairsSeshNavigatingScreen = function (_React$Component) {
-	  _inherits(PairsSeshNavigatingScreen, _React$Component);
-	
-	  function PairsSeshNavigatingScreen(props) {
-	    _classCallCheck(this, PairsSeshNavigatingScreen);
-	
-	    // this.main = this.main.bind(this);
-	    var _this = _possibleConstructorReturn(this, (PairsSeshNavigatingScreen.__proto__ || Object.getPrototypeOf(PairsSeshNavigatingScreen)).call(this, props));
-	
-	    _this.sentenceTexts = ["test", "def my_each(&prc)", "self.length.times do |i|", "prc.call(self[i])", "end", "self", "end", "def my_select(&prc)", "selects = []", "self.my_each do |item|", "if prc.call(item)", "selects << item", "end", "end", "selects", "end"];
-	    _this.errorTexts = ["teAst", "def my_each&prc)", "self.length.times |i|", "prc,call(self[i])", "end", "self[i]", "end()", "def my_select()", "selects === []", "my_each do |item|", "unless prc.call(item)", "selects < item", "'end", "end", "!selects", "end;"];
-	    _this.sentences = [];
-	    _this.explosions = [];
-	    _this.state = {
-	      currentInput: ""
-	    };
-	    _this.handleSubmit = _this.handleSubmit.bind(_this);
-	    _this.initializeSentences = _this.initializeSentences.bind(_this);
-	    _this.updateSentences = _this.updateSentences.bind(_this);
-	    _this.addNewSentence = _this.addNewSentence.bind(_this);
-	    _this.addExplosion = _this.addExplosion.bind(_this);
-	    _this.renderExplosion = _this.renderExplosion.bind(_this);
-	    _this.updateExplosions = _this.updateExplosions.bind(_this);
-	    _this.pairsLines = _this.pairsLines.bind(_this);
-	    _this.findActive = _this.findActive.bind(_this);
-	    _this.over = false;
-	    _this.yPosIncrement = 2;
-	    _this.lineSpacing = 100;
-	    _this.props.player.message = "FIND THE BUGS AND CORRECT THE CODE AS FAST AS YOU CAN!";
-	    _this.explosionImage = new Image();
-	    _this.explosionImage.src = "./app/assets/images/line_explosion.jpg";
-	    _this.initializeSentences();
-	    // debugger;
-	    _this.yyinterval = setInterval(function () {
-	      return _this.tick();
-	    }, 50);
-	    return _this;
-	  }
-	
-	  _createClass(PairsSeshNavigatingScreen, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.canvas = document.getElementById('canvas2');
-	      this.canvas.height = 500;
-	      this.canvas.width = 800;
-	      this.ctx = this.canvas.getContext("2d");
-	      this.setState({ currentInput: this.sentences[0].error });
-	    }
-	  }, {
-	    key: 'initializeSentences',
-	    value: function initializeSentences() {
-	      var _this2 = this;
-	
-	      this.sentenceTexts.forEach(function (el, idx) {
-	        _this2.sentences.push({ id: idx, error: _this2.errorTexts[idx], text: el, active: idx === 0 ? true : false, done: false, exploded: false, yPos: 500 + idx * 100 });
-	      });
-	    }
-	  }, {
-	    key: 'tick',
-	    value: function tick() {
-	      this.checkOver();
-	      this.updateSentences();
-	      this.updateExplosions();
-	      document.getElementById("pairs-input").focus();
-	    }
-	  }, {
-	    key: 'clearInt',
-	    value: function clearInt() {
-	      clearInterval(this.yyinterval);
-	    }
-	  }, {
-	    key: 'addExplosion',
-	    value: function addExplosion(a) {
-	      this.explosions.push({ yPos: a.yPos, timer: 0 });
-	    }
-	  }, {
-	    key: 'updateExplosions',
-	    value: function updateExplosions() {
-	
-	      for (var i = 0; i < this.explosions.length; i++) {
-	        var a = this.explosions[i];
-	        this.renderExplosion(a);
-	        a.yPos -= this.yPosIncrement * 2;
-	        a.timer++;
-	        if (a.timer === 8) {
-	          this.explosions.splice(i, 1);
-	          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-	          i--;
-	        }
-	      }
-	    }
-	  }, {
-	    key: 'renderExplosion',
-	    value: function renderExplosion(a) {
-	      // this.ctx.fillStyle = "rgb(51, 118, 36)";
-	      // this.ctx.fillRect(550, a.yPos + 310, 200, 50);
-	      var xOffset = a.timer % 3 * 75;
-	      var yOffset = Math.floor(a.timer / 3) * 75;
-	      for (var i = 0; i < 4; i++) {
-	        this.ctx.drawImage(this.explosionImage, xOffset, yOffset, 75, 75, 530 + i * 60, a.yPos - 130, 75, 75);
-	      }
-	    }
-	  }, {
-	    key: 'addNewSentence',
-	    value: function addNewSentence() {
-	      var a = this.sentences.length - 1;
-	      var newYpos = this.sentences[a].yPos + this.lineSpacing;
-	      var firstOne = this.sentences[0];
-	      this.sentences.push({ error: firstOne.error,
-	        text: firstOne.text,
-	        exploded: false,
-	        done: false,
-	        active: false,
-	        yPos: newYpos,
-	        id: firstOne.id });
-	    }
-	  }, {
-	    key: 'update',
-	    value: function update(field) {
-	      var _this3 = this;
-	
-	      return function (e) {
-	        _this3.setState(_defineProperty({}, field, e.currentTarget.value));
-	      };
-	    }
-	  }, {
-	    key: 'checkOver',
-	    value: function checkOver() {
-	      if (this.sentences.length === 0) {
-	        clearInterval(this.yyinterval);
-	        console.log("OVER");
-	      }
-	    }
-	  }, {
-	    key: 'updateSentences',
-	    value: function updateSentences() {
-	      var _this4 = this;
-	
-	      if (this.state.currentInput === "bbr") {
-	        this.setState({ currentInput: this.sentences[0].text });
-	        return;
-	      }
-	      this.sentences.forEach(function (sentence) {
-	        sentence.yPos -= _this4.yPosIncrement;
-	      });
-	      if (this.sentences[0].yPos <= 200) {
-	        if (!this.sentences[0].exploded && !this.sentences[0].done) {
-	          new Audio("./app/assets/sounds/missed.wav").play();
-	        }
-	        this.addNewSentence();
-	        if (this.sentences[0].active) {
-	          this.sentences[1].active = true;
-	          this.sentences[0].active = false;
-	          this.sentences[0].exploded = false;
-	          this.sentences[0].done = true;
-	          this.setState({ currentInput: this.sentences[1].error });
-	        }
-	        this.sentences.shift();
-	      } else {
-	        this.checkOver();
-	      }
-	    }
-	  }, {
-	    key: 'findActive',
-	    value: function findActive() {
-	      for (var i = 0; i < this.sentences.length; i++) {
-	        if (this.sentences[i].active) {
-	          return i;
-	        }
-	      }
-	      return null;
-	    }
-	  }, {
-	    key: 'handleSubmit',
-	    value: function handleSubmit(e) {
-	
-	      if (e.keyCode === 13) {
-	        e.preventDefault();
-	      }
-	      if (e.keyCode === 13) {
-	        // debugger;
-	        var a = this.findActive();
-	        if (this.state.currentInput == this.sentences[a].text) {
-	          new Audio("./app/assets/sounds/explosion.wav").play();
-	          this.addExplosion(this.sentences[a]);
-	          this.sentences[a + 1].active = true;
-	          this.sentences[a].exploded = true;
-	          this.sentences[a].active = false;
-	        } else {
-	          new Audio("./app/assets/sounds/missed.wav").play();
-	          this.sentences[a].active = false;
-	          this.sentences[a].text = "💩".repeat(Math.floor(this.sentences[a].text.length / 3));
-	          this.sentences[a].done = true;
-	          this.sentences[a + 1].active = true;
-	        }
-	        this.setState({ currentInput: this.sentences[a + 1].error });
-	      } else if (e.keyCode !== 8) {
-	        if (this.sentences[this.findActive()].text[this.state.currentInput.length] == e.key) {
-	          new Audio("./app/assets/sounds/shot.wav").play();
-	        } else {
-	          new Audio("./app/assets/sounds/beep.wav").play();
-	        }
-	      }
-	    }
-	  }, {
-	    key: 'pairsLines',
-	    value: function pairsLines() {
-	      var results = [];
-	      this.sentences.forEach(function (sentence, idx) {
-	        if (sentence.yPos < 500) {
-	          results.push(_react2.default.createElement(
-	            'div',
-	            { className: 'pairs-navigating-line', style: sentence.exploded ? { display: "none" } : { top: sentence.yPos + "px" } },
-	            sentence.text
-	          ));
-	        }
-	      });
-	      return results;
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'pairs-sesh' },
-	        _react2.default.createElement('canvas', { id: 'canvas2',
-	          width: '800',
-	          height: '520' }),
-	        _react2.default.createElement('img', { src: '/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/computer_screen2.png', className: 'pairs-computer-screen' }),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'pairs-input-text' },
-	          _react2.default.createElement('textarea', { id: 'pairs-input',
-	            value: this.state.currentInput,
-	            onKeyDown: this.handleSubmit,
-	            onChange: this.update("currentInput"),
-	            className: 'pairs-input', autoFocus: true })
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'pairs-partner-area' },
-	          this.pairsLines()
-	        )
-	      );
-	    }
-	  }]);
-	
-	  return PairsSeshNavigatingScreen;
-	}(_react2.default.Component); //end component
-	
-	
-	exports.default = PairsSeshNavigatingScreen;
 
 /***/ }
 /******/ ]);

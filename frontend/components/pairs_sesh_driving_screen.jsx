@@ -7,14 +7,16 @@ class PairsSeshDrivingScreen extends React.Component {
     super(props);
     // this.main = this.main.bind(this);
     this.sentenceTexts = ["test","def my_each(&prc)","self.length.times do |i|", "prc.call(self[i])", "end", "self", "end", "def my_select(&prc)", "selects = []", "self.my_each do |item|", "if prc.call(item)", "selects << item", "end", "end", "selects", "end"];
-    this.sentences = [];
     this.explosions = [];
     this.shotSound = new Audio ("./app/assets/sounds/shot.wav");
     this.state= {
       currentInput: "",
     };
     // this.onClick = this.onClick.bind(this);
+    this.counter=0;
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.showing = this.showing.bind(this);
+    // this.showing = this.showing.bind(this);
     this.initializeSentences = this.initializeSentences.bind(this);
     this.updateSentences = this.updateSentences.bind(this);
     // this.getRandomSentence = this.getRandomSentence.bind(this);
@@ -24,14 +26,16 @@ class PairsSeshDrivingScreen extends React.Component {
     this.updateExplosions = this.updateExplosions.bind(this);
     this.pairsLines = this.pairsLines.bind(this);
     this.findActive = this.findActive.bind(this);
-    this.initializeSentences();
     this.over = false;
     this.yPosIncrement = 2;
     this.lineSpacing = 100;
-    this.props.player.message = "TYPE THE TEXT AS FAST AS YOU CAN!";
     this.explosionImage = new Image ();
     this.explosionImage.src = "./app/assets/images/line_explosion.jpg";
-    this.yyinterval = setInterval(()=>this.tick(),50);
+    this.sentences = this.props.sentences;
+    this.props.player.message = "TYPE THE TEXT AS FAST AS YOU CAN!";
+
+    if (this.sentences.length === 0) {this.initializeSentences();}
+    console.log("driving constructor");
   }
 
   componentDidMount() {
@@ -39,6 +43,7 @@ class PairsSeshDrivingScreen extends React.Component {
     this.canvas.height = 500;
     this.canvas.width = 800;
     this.ctx = this.canvas.getContext("2d");
+    this.yyinterval = setInterval(()=>this.tick(),50);
 
   }
 
@@ -52,11 +57,14 @@ class PairsSeshDrivingScreen extends React.Component {
   }
 
   tick() {
-    this.checkOver();
-    this.updateSentences();
-    this.updateExplosions();
-    document.getElementById("pairs-input").focus();
+    if (!(this.props.stopped)) {
+      this.updateSentences();
+      this.updateExplosions();
+      this.checkOver();
+      document.getElementById("pairs-input").focus();
+    }
   }
+
 
   clearInt() {
     clearInterval(this.yyinterval);
@@ -117,7 +125,7 @@ class PairsSeshDrivingScreen extends React.Component {
   updateSentences() {
 
     if (this.state.currentInput==="bbr") {
-      this.setState({currentInput: this.sentences[0].text});
+      this.setState({currentInput: this.sentences[this.findActive()].text});
       return;
     }
     this.sentences.forEach(sentence => {
@@ -164,15 +172,21 @@ class PairsSeshDrivingScreen extends React.Component {
         this.sentences[a+1].active=true;
       }
         this.setState({currentInput: ""});
-    }
-    }
+    } else if (e.keyCode!==8) {
+        if (this.sentences[this.findActive()].text[this.state.currentInput.length]==e.key) {
+          new Audio ("./app/assets/sounds/shot.wav").play();
+        } else {
+          new Audio ("./app/assets/sounds/beep.wav").play();
+        }
+      }
+  }
 
   pairsLines() {
     var results = [];
     this.sentences.forEach((sentence, idx) => {
     if (sentence.yPos<500) {
     results.push(
-      <div className="pairs-line" style={{top: sentence.yPos + "px"}} >
+      <div key={++this.counter} className="pairs-line" style={{top: sentence.yPos + "px"}} >
         <PairsLine currentLine = {sentence} currentInput = {this.state.currentInput}/>
       </div>
       );}
@@ -180,11 +194,16 @@ class PairsSeshDrivingScreen extends React.Component {
     return results;
   }
 
+  showing() {
+    if (this.props.stopped) { return (
+      {display: "none"});
+    }
+  }
 
 
   render () {
     return (
-      <div className="pairs-sesh">
+      <div className="pairs-driving-sesh" style={this.showing()}>
       <canvas id="canvas2"
         width="800"
         height="520"/>
@@ -197,7 +216,7 @@ class PairsSeshDrivingScreen extends React.Component {
             onChange={this.update("currentInput")}
             className="pairs-input" autoFocus />
        </div>
-        <div className="pairs-partner-area">
+        <div key={++this.counter} className="pairs-partner-area">
           {this.pairsLines()}
         </div>
       </div>

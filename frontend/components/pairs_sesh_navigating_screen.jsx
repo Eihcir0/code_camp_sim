@@ -7,12 +7,15 @@ class PairsSeshNavigatingScreen extends React.Component {
     // this.main = this.main.bind(this);
     this.sentenceTexts = ["test","def my_each(&prc)","self.length.times do |i|", "prc.call(self[i])", "end", "self", "end", "def my_select(&prc)", "selects = []", "self.my_each do |item|", "if prc.call(item)", "selects << item", "end", "end", "selects", "end"];
     this.errorTexts = ["teAst","def my_each&prc)","self.length.times |i|", "prc,call(self[i])", "end", "self[i]", "end()", "def my_select()", "selects === []", "my_each do |item|", "unless prc.call(item)", "selects < item", "'end", "end", "!selects", "end;"];
-    this.sentences = [];
+    this.counter=0;
+    this.sentences = this.props.sentences;
     this.explosions = [];
     this.state= {
       currentInput: "",
     };
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.showing = this.showing.bind(this);
+    // this.showing = this.showing.bind(this);
     this.initializeSentences = this.initializeSentences.bind(this);
     this.updateSentences = this.updateSentences.bind(this);
     this.addNewSentence = this.addNewSentence.bind(this);
@@ -24,12 +27,11 @@ class PairsSeshNavigatingScreen extends React.Component {
     this.over = false;
     this.yPosIncrement = 2;
     this.lineSpacing = 100;
-    this.props.player.message = "FIND THE BUGS AND CORRECT THE CODE AS FAST AS YOU CAN!";
     this.explosionImage = new Image ();
     this.explosionImage.src = "./app/assets/images/line_explosion.jpg";
-    this.initializeSentences();
-    // debugger;
-    this.yyinterval = setInterval(()=>this.tick(),50);
+    if (this.sentences.length === 0) {this.initializeSentences();}
+    console.log("nav constructor");
+
   }
 
   componentDidMount() {
@@ -38,6 +40,7 @@ class PairsSeshNavigatingScreen extends React.Component {
     this.canvas.width = 800;
     this.ctx = this.canvas.getContext("2d");
     this.setState({currentInput: this.sentences[0].error});
+    this.yyinterval = setInterval(()=>this.tick(),50);
 
   }
 
@@ -51,10 +54,13 @@ class PairsSeshNavigatingScreen extends React.Component {
   }
 
   tick() {
-    this.checkOver();
-    this.updateSentences();
-    this.updateExplosions();
-    document.getElementById("pairs-input").focus();
+    if (!(this.props.stopped)) {
+      this.checkOver();
+      this.updateSentences();
+      this.updateExplosions();
+      document.getElementById("pairs-input").focus();
+    }
+
   }
 
   clearInt() {
@@ -98,7 +104,7 @@ class PairsSeshNavigatingScreen extends React.Component {
     var firstOne = this.sentences[0];
     this.sentences.push(
       {error: firstOne.error,
-        text: firstOne.text,
+        text: this.sentenceTexts[firstOne.id],
         exploded: false,
         done: false,
         active: false,
@@ -172,21 +178,15 @@ class PairsSeshNavigatingScreen extends React.Component {
         this.sentences[a+1].active=true;
       }
         this.setState({currentInput: this.sentences[a+1].error});
-    } else if (e.keyCode!==8) {
-        if (this.sentences[this.findActive()].text[this.state.currentInput.length]==e.key) {
-          new Audio ("./app/assets/sounds/shot.wav").play();
-        } else {
-          new Audio ("./app/assets/sounds/beep.wav").play();
-        }
-      }
     }
+  }
 
   pairsLines() {
     var results = [];
     this.sentences.forEach((sentence, idx) => {
     if (sentence.yPos<500) {
     results.push(
-      <div className="pairs-navigating-line" style={sentence.exploded ? {display: "none"} : {top: sentence.yPos + "px"}} >
+      <div key={++this.counter} className="pairs-navigating-line" style={sentence.exploded ? {display: "none"} : {top: sentence.yPos + "px"}} >
 
 
         {sentence.text}
@@ -195,12 +195,15 @@ class PairsSeshNavigatingScreen extends React.Component {
     });
     return results;
   }
-
-
+  showing() {
+    if (this.props.stopped) { return (
+      {display: "none"});
+    }
+  }
 
   render () {
     return (
-      <div className="pairs-sesh">
+      <div className="pairs-navigating-sesh" style={this.showing()}>
       <canvas id="canvas2"
         width="800"
         height="520"/>
