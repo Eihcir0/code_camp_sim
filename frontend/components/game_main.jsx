@@ -4,6 +4,7 @@ import React from 'react';
 import Game from './../../game_logic/game.js';
 import Player from './../../game_logic/player.js';
 import Clock from './../../game_logic/clock.js';
+import Week from './../../game_logic/week.js';
 import playerAnim from './../../game_logic/animation_logic/player_anim.js';
 import OpenSeshScreen from './open_sesh_screen.jsx';
 import LectureSeshScreen from './lecture_sesh_screen.jsx';
@@ -17,13 +18,13 @@ import CongratsScreen from './congrats_screen.jsx';
 class GameMain extends React.Component {
   constructor() {
     super();
-    this.player = new Player();
-    this.player.clock = new Clock([8,0],60);
+    this.player = new Player("Guest");
     this.playerAnim = new playerAnim({player: this.player});
+    this.week = new Week(this.player);
     this.state = {
       currentFace: "happy1",
       currentPos: -1,
-      message: "",
+      message: this.player.defaultMessage,
       clock: this.player.clock.time(),
       ruby: this.player.skills.Ruby,
       focus: this.player.focus
@@ -32,27 +33,47 @@ class GameMain extends React.Component {
     this.currentFaceImage = this.currentFaceImage.bind(this);
     this.tick = this.tick.bind(this);
     this.updateAttributes = this.updateAttributes.bind(this);
-    this.game = new Game(this.player);
+    // this.game = new Game(this.player);
 
 
-    this.interval = window.setInterval(()=>this.tick(),20);
+    this.interval = window.setInterval(()=>this.tick(),50);
     // window.setInterval(()=>this.render(),200);
   }
 
 
   tick() {
+    this.setState({currentPos: this.player.currentPos, clock: this.player.clock.time()});
+    this.updateSession();
     this.updateAttributes();
-    this.currentFaceUpdate();
+    this.currentFaceUpdate(); //REDO THIS WITH FACE CLASS
     this.setState({
-      currentPos: this.player.currentPos,
       message: this.player.message,
-      clock: this.player.clock.time(),
       ruby: Math.floor(this.player.skills.Ruby/10),
       focus: this.player.focus
     });
+    // debugger;
+    //animationFramE ????
   }
 
-  updateAttributes() {
+  updateSession() {
+    var clock = this.player.clock.time();
+    if (this.player.session === 0 && this.player.currentPos !==12) {
+      if (clock[0]==="9" && clock[1]==="00") {
+       this.player.newStrike = {message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9,1], newPos: this.player.currentPos};
+      }
+      else if (clock[0]==="9" && clock[1]==="30") {
+       this.player.newStrike = {message: "You cannot enter the lecture hall after 9:30am.  You received a strike for missing morning lecture.", newTime: [9,31], newPos: this.player.currentPos};
+      }
+    }
+    if (clock[0] === "12" && clock[1]==="01") {
+      this.player.session = 2;
+      this.player.message = "It's lunch time. Take a lunch break but be sure to be logged in at your workstation by 1:30pm for pair programming.";
+    }
+  }
+
+  updateAttributes() { //REDO THIS SOON
+    //should use a delta for decays
+    //use helper methods for each attribute
     this.ticker++;
     if (this.ticker>5) {
       if (this.player.currentPos === 11) {
@@ -70,6 +91,7 @@ class GameMain extends React.Component {
   }
 
   currentFaceUpdate() {
+    //should use a Face class, with default image based on tiredness and happiness then it can receive temporary new faces that last for a certain time and can also be replaced
     switch (this.player.currentEmotion) {
       case "eyes closed":
         this.setState({currentFace: "close eyes"});
@@ -98,41 +120,43 @@ class GameMain extends React.Component {
   }
 
   sesh() { // change this to a switch
-    return (<PairsSeshScreen player={this.player}/>);
-    // if (this.player.newStrike) {
-    //   return (
-    //     <StrikeScreen player={this.player}/>
-    //   );
-    // }
-    // else if (this.player.newCongrats) {
-    //   return (
-    //     <CongratsScreen player={this.player}/>
-    //   );
-    // }
-    //
-    // else if (this.state.currentPos === 12){
-    //   return (
-    //     <LectureSeshScreen className="lecture-sesh"
-    //       player={this.player}/>
-    //     );
-    // } else if ([0,2,4].includes(this.player.session)) {
-    //     return (
-    //       <OpenSeshScreen className="open-sesh"
-    //         player={this.player}
-    //         playerAnim ={this.playerAnim}/>
-    //   );
-    // }
+    // return (<PairsSeshScreen player={this.player}/>);
+    if (this.player.newStrike) {
+      this.player.clock.pause();
+      return (
+        <StrikeScreen player={this.player}/>
+      );
+    }
+    else if (this.player.newCongrats) {
+      this.player.clock.pause();
+      return (
+        <CongratsScreen player={this.player}/>
+      );
+    }
+
+    else if (this.state.currentPos === 12){
+      return (
+        <LectureSeshScreen className="lecture-sesh"
+          player={this.player}/>
+        );
+    } else if ([0,2,4].includes(this.player.session)) {
+        return (
+          <OpenSeshScreen className="open-sesh"
+            player={this.player}
+            playerAnim ={this.playerAnim}/>
+      );
+    }
   }
 
   message() {
     if (this.player.currentPos === 10) { //change this
-      return "CLICK ON THE OPEN WORK STATION RIGHT THERE TO START PROGRAMMING!";
+      return this.week.day.secretaryMessage();
     }
     else if (this.player.onFire) {
       return "YOU'RE ON FIRE!";
     }
     else {
-      return this.player.message;
+      return (this.player.message ? this.player.message : this.player.defaultMessage);
     }
   }
 

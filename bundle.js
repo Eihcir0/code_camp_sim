@@ -21458,6 +21458,10 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
+	var _week = __webpack_require__(175);
+	
+	var _week2 = _interopRequireDefault(_week);
+	
 	var _player_anim = __webpack_require__(190);
 	
 	var _player_anim2 = _interopRequireDefault(_player_anim);
@@ -21504,13 +21508,13 @@
 	
 	    var _this = _possibleConstructorReturn(this, (GameMain.__proto__ || Object.getPrototypeOf(GameMain)).call(this));
 	
-	    _this.player = new _player2.default();
-	    _this.player.clock = new _clock2.default([8, 0], 60);
+	    _this.player = new _player2.default("Guest");
 	    _this.playerAnim = new _player_anim2.default({ player: _this.player });
+	    _this.week = new _week2.default(_this.player);
 	    _this.state = {
 	      currentFace: "happy1",
 	      currentPos: -1,
-	      message: "",
+	      message: _this.player.defaultMessage,
 	      clock: _this.player.clock.time(),
 	      ruby: _this.player.skills.Ruby,
 	      focus: _this.player.focus
@@ -21519,11 +21523,12 @@
 	    _this.currentFaceImage = _this.currentFaceImage.bind(_this);
 	    _this.tick = _this.tick.bind(_this);
 	    _this.updateAttributes = _this.updateAttributes.bind(_this);
-	    _this.game = new _game2.default(_this.player);
+	    // this.game = new Game(this.player);
+	
 	
 	    _this.interval = window.setInterval(function () {
 	      return _this.tick();
-	    }, 20);
+	    }, 50);
 	    // window.setInterval(()=>this.render(),200);
 	    return _this;
 	  }
@@ -21531,19 +21536,40 @@
 	  _createClass(GameMain, [{
 	    key: 'tick',
 	    value: function tick() {
+	      this.setState({ currentPos: this.player.currentPos, clock: this.player.clock.time() });
+	      this.updateSession();
 	      this.updateAttributes();
-	      this.currentFaceUpdate();
+	      this.currentFaceUpdate(); //REDO THIS WITH FACE CLASS
 	      this.setState({
-	        currentPos: this.player.currentPos,
 	        message: this.player.message,
-	        clock: this.player.clock.time(),
 	        ruby: Math.floor(this.player.skills.Ruby / 10),
 	        focus: this.player.focus
 	      });
+	      // debugger;
+	      //animationFramE ????
+	    }
+	  }, {
+	    key: 'updateSession',
+	    value: function updateSession() {
+	      var clock = this.player.clock.time();
+	      if (this.player.session === 0 && this.player.currentPos !== 12) {
+	        if (clock[0] === "9" && clock[1] === "00") {
+	          this.player.newStrike = { message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9, 1], newPos: this.player.currentPos };
+	        } else if (clock[0] === "9" && clock[1] === "30") {
+	          this.player.newStrike = { message: "You cannot enter the lecture hall after 9:30am.  You received a strike for missing morning lecture.", newTime: [9, 31], newPos: this.player.currentPos };
+	        }
+	      }
+	      if (clock[0] === "12" && clock[1] === "01") {
+	        this.player.session = 2;
+	        this.player.message = "It's lunch time. Take a lunch break but be sure to be logged in at your workstation by 1:30pm for pair programming.";
+	      }
 	    }
 	  }, {
 	    key: 'updateAttributes',
 	    value: function updateAttributes() {
+	      //REDO THIS SOON
+	      //should use a delta for decays
+	      //use helper methods for each attribute
 	      this.ticker++;
 	      if (this.ticker > 5) {
 	        if (this.player.currentPos === 11) {
@@ -21566,6 +21592,7 @@
 	  }, {
 	    key: 'currentFaceUpdate',
 	    value: function currentFaceUpdate() {
+	      //should use a Face class, with default image based on tiredness and happiness then it can receive temporary new faces that last for a certain time and can also be replaced
 	      switch (this.player.currentEmotion) {
 	        case "eyes closed":
 	          this.setState({ currentFace: "close eyes" });
@@ -21594,41 +21621,32 @@
 	    key: 'sesh',
 	    value: function sesh() {
 	      // change this to a switch
-	      return _react2.default.createElement(_pairs_sesh_screen2.default, { player: this.player });
-	      // if (this.player.newStrike) {
-	      //   return (
-	      //     <StrikeScreen player={this.player}/>
-	      //   );
-	      // }
-	      // else if (this.player.newCongrats) {
-	      //   return (
-	      //     <CongratsScreen player={this.player}/>
-	      //   );
-	      // }
-	      //
-	      // else if (this.state.currentPos === 12){
-	      //   return (
-	      //     <LectureSeshScreen className="lecture-sesh"
-	      //       player={this.player}/>
-	      //     );
-	      // } else if ([0,2,4].includes(this.player.session)) {
-	      //     return (
-	      //       <OpenSeshScreen className="open-sesh"
-	      //         player={this.player}
-	      //         playerAnim ={this.playerAnim}/>
-	      //   );
-	      // }
+	      // return (<PairsSeshScreen player={this.player}/>);
+	      if (this.player.newStrike) {
+	        this.player.clock.pause();
+	        return _react2.default.createElement(_strike_screen2.default, { player: this.player });
+	      } else if (this.player.newCongrats) {
+	        this.player.clock.pause();
+	        return _react2.default.createElement(_congrats_screen2.default, { player: this.player });
+	      } else if (this.state.currentPos === 12) {
+	        return _react2.default.createElement(_lecture_sesh_screen2.default, { className: 'lecture-sesh',
+	          player: this.player });
+	      } else if ([0, 2, 4].includes(this.player.session)) {
+	        return _react2.default.createElement(_open_sesh_screen2.default, { className: 'open-sesh',
+	          player: this.player,
+	          playerAnim: this.playerAnim });
+	      }
 	    }
 	  }, {
 	    key: 'message',
 	    value: function message() {
 	      if (this.player.currentPos === 10) {
 	        //change this
-	        return "CLICK ON THE OPEN WORK STATION RIGHT THERE TO START PROGRAMMING!";
+	        return this.week.day.secretaryMessage();
 	      } else if (this.player.onFire) {
 	        return "YOU'RE ON FIRE!";
 	      } else {
-	        return this.player.message;
+	        return this.player.message ? this.player.message : this.player.defaultMessage;
 	      }
 	    }
 	
@@ -21761,6 +21779,7 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Game = function () {
+	  ////I DON'T THINK WE NEED A GAME CLASS
 	  function Game(player) {
 	    _classCallCheck(this, Game);
 	
@@ -21800,7 +21819,7 @@
 
 /***/ },
 /* 174 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
@@ -21810,13 +21829,21 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
+	var _clock = __webpack_require__(189);
+	
+	var _clock2 = _interopRequireDefault(_clock);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Player = function () {
-	  function Player(obj, name) {
+	  function Player(name, obj) {
 	    _classCallCheck(this, Player);
 	
 	    this.name = name || "Richie";
+	    this.clock = obj ? obj.clock : new _clock2.default([8, 45], 120);
+	    this.defaultMessage = obj ? obj.defaultMessage : "Get to lecture before 9:00am or you will get your first strike!";
 	    this.currentEmotion = obj ? obj.currentEmotion : "excited";
 	    this.info = obj ? obj.info : "";
 	    this.sleepBank = obj ? obj.sleepBank : 100;
@@ -21893,14 +21920,21 @@
 	    _classCallCheck(this, Week);
 	
 	    this.player = player;
-	    this.main();
+	    this.day = new _day2.default(this.player);
+	    this.material = this.materials();
 	  }
 	
 	  _createClass(Week, [{
+	    key: "materials",
+	    value: function materials() {
+	      if (this.player.week === 1) {
+	        return "Ruby";
+	      }
+	    }
+	  }, {
 	    key: "main",
 	    value: function main() {
 	      while (this.currentWeekDay() < 6) {
-	        this.day = new _day2.default(this.player);
 	        this.advanceDay();
 	      }
 	      this.weekEnd();
@@ -21988,48 +22022,53 @@
 	
 	    this.player = player;
 	    if (this.player.day === 1) this.firstDay();
-	    this.main();
 	  }
 	
 	  _createClass(Day, [{
-	    key: 'main',
-	    value: function main() {
-	      while (this.player.session < 5) {
-	        this.playSession();
-	      }
-	      this.nightTime();
-	    }
-	  }, {
-	    key: 'playSession',
-	    value: function playSession() {
-	      switch (this.player.session) {
-	        case 0:
-	          this.session = new _morning2.default(this.player);
-	          break;
-	        case 1:
-	          if (this.player.weekDay === 5) {
-	            this.session = new _assessment2.default(this.player);
-	          } else {
-	            this.session = new _lecture2.default(this.player);
-	          }
-	          break;
-	        case 2:
-	          this.session = new _lunch2.default(this.player);
-	          break;
-	        case 3:
-	          if ([1, 2, 3].includes(this.player.weekDay)) {
-	            this.session = new _pairs_programming2.default(this.player);
-	          } else {
-	            this.session = new _solo_project2.default(this.player);
-	          }
-	          break;
-	        case 4:
-	          this.session = new _evening2.default(this.player);
-	          break;
-	        default:
-	          break;
+	    key: 'secretaryMessage',
+	    value: function secretaryMessage() {
+	      if (this.player.day === 1 && this.player.session === 0) {
+	        return "Please go to the lecture area immediately!!";
 	      }
 	    }
+	    // main() {
+	    //   while (this.player.session < 5) {
+	    //     this.playSession();
+	    //   }
+	    //   this.nightTime();
+	    // }
+	    //
+	    // playSession() {
+	    //   switch (this.player.session) {
+	    //     case 0:
+	    //       this.session = new Morning(this.player);
+	    //       break;
+	    //     case 1:
+	    //       if (this.player.weekDay===5) {
+	    //         this.session = new Assessment(this.player);
+	    //       } else {
+	    //         this.session = new Lecture(this.player);
+	    //       }
+	    //       break;
+	    //     case 2:
+	    //       this.session = new Lunch(this.player);
+	    //       break;
+	    //     case 3:
+	    //       if ([1,2,3].includes(this.player.weekDay)) {
+	    //         this.session = new PairsProgramming(this.player);
+	    //       } else {
+	    //         this.session = new SoloProject(this.player);
+	    //       }
+	    //       break;
+	    //     case 4:
+	    //       this.session = new Evening(this.player);
+	    //       break;
+	    //     default:
+	    //       break;
+	    //   }
+	
+	    // }
+	
 	  }, {
 	    key: 'nightTime',
 	    value: function nightTime() {
@@ -22039,9 +22078,7 @@
 	    }
 	  }, {
 	    key: 'firstDay',
-	    value: function firstDay() {
-	      this.player.arrivalTime = [8, 45]; // could also put this in player
-	    }
+	    value: function firstDay() {}
 	  }]);
 	
 	  return Day;
@@ -22531,16 +22568,33 @@
 	    this.speed = speed;
 	    this.paused = false;
 	    this.pauseOffset = 0;
+	    this.time = this.time.bind(this);
+	    this.lastTime = [];
 	  }
 	
 	  _createClass(Clock, [{
+	    key: "pause",
+	    value: function pause() {
+	      this.paused = true;
+	      this.pauseStartTime = Date.now();
+	    }
+	  }, {
+	    key: "unpause",
+	    value: function unpause() {
+	      this.paused = false;
+	      var now = Date.now();
+	      this.pauseOffset += now - this.pauseStartTime;
+	    }
+	  }, {
 	    key: "time",
 	    value: function time() {
+	      if (this.paused) {
+	        return this.lastTime;
+	      }
 	      var now = Date.now();
-	      var elapsed = (now - this.systemClockAtStart) * this.speed / 1000;
+	      var elapsed = (now - this.systemClockAtStart - this.pauseOffset) * this.speed / 1000 / 60;
 	      var newTime = [];
-	      var hours = this.start[0] + Math.floor(elapsed / 3600);
-	      // debugger;
+	      var hours = this.start[0] + Math.floor((this.start[1] + elapsed) / 60);
 	      if (hours > 11 && hours < 24) {
 	        newTime[2] = "pm";
 	      } else {
@@ -22549,13 +22603,13 @@
 	      hours = hours > 12 ? hours - 12 : hours;
 	      hours = hours > 12 ? hours - 12 : hours;
 	      newTime[0] = hours.toString();
-	      var minutes = this.start[1] + Math.floor(elapsed % 3600 / 60);
+	      var minutes = Math.floor((this.start[1] + elapsed) % 60);
 	      if (minutes < 10) {
 	        newTime[1] = "0" + minutes;
 	      } else {
 	        newTime[1] = minutes.toString();
 	      }
-	
+	      this.lastTime = newTime;
 	      return newTime;
 	    }
 	  }]);
@@ -22995,7 +23049,9 @@
 	          this.props.player.currentPos = 9;
 	        }
 	        if (x > 125 && x < 421 && y < 186) {
-	          // animation walking to kitchen
+	          // animation walking to lecture
+	          this.props.player.message = "";
+	          this.props.player.defaultMessage = "";
 	          this.props.player.currentPos = 12;
 	        }
 	      }
@@ -23408,11 +23464,16 @@
 	    _classCallCheck(this, LectureSeshScreen);
 	
 	    // this.main = this.main.bind(this);
-	
 	    var _this = _possibleConstructorReturn(this, (LectureSeshScreen.__proto__ || Object.getPrototypeOf(LectureSeshScreen)).call(this, props));
 	
 	    _this.props.player.focus = 100;
-	    _this.props.player.clock = new _clock2.default([9, 0], 360);
+	    var startTime;
+	    if (_this.props.player.clock.time()[0] === "8") {
+	      startTime = [9, 0];
+	    } else {
+	      startTime = _this.props.player.clock.time();
+	    }
+	    _this.props.player.clock = new _clock2.default(startTime, 360);
 	    _this.startingFocus = _this.props.player.focus;
 	    _this.eyesClosedTimer = 0;
 	    _this.state = {
@@ -23437,7 +23498,7 @@
 	    _this.updateFocus = _this.updateFocus.bind(_this);
 	    _this.updateFaintMeter = _this.updateFaintMeter.bind(_this);
 	    _this.updateGoesToSleepMeter = _this.updateGoesToSleepMeter.bind(_this);
-	    // this.onClick = this.onClick.bind(this);
+	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.xxinterval = setInterval(function () {
 	      return _this.tick();
 	    }, 50);
@@ -23467,9 +23528,7 @@
 	      if (time[0] === "12") {
 	        clearInterval(this.xxinterval);
 	        this.xxinterval = undefined;
-	        this.props.player.newCongrats = true;
-	        this.props.player.currentPos = 0;
-	        this.props.player.clock = new _clock2.default([12, 0], 60);
+	        this.props.player.newCongrats = { message: 'CONGRATULATIONS!!! You made it through lecture without sleeping!', newTime: [12, 0], newPos: 0, newSession: 2 };
 	      }
 	    }
 	  }, {
@@ -23480,9 +23539,8 @@
 	      if (this.goesToSleepMeter >= this.faintMeterMax) {
 	        clearInterval(this.xxinterval);
 	        this.xxinterval = undefined;
-	        this.props.player.newStrike = true;
+	        this.props.player.newStrike = { message: "You received a strike for falling asleep during lecture.", newTime: [12, 0], newPos: 0, newSession: 2 };
 	        this.props.player.currentPos = 0;
-	        this.props.player.clock = new _clock2.default([12, 0], 60);
 	      }
 	      this.setState({ goesToSleepMeter: this.goesToSleepMeter });
 	    }
@@ -23505,9 +23563,8 @@
 	          if (this.faintMeter >= this.faintMeterMax) {
 	            clearInterval(this.xxinterval);
 	            this.xxinterval = undefined;
-	            this.props.player.newStrike = true;
+	            this.props.player.newStrike = { message: "You received a strike for passing out during lecture.", newTime: [12, 0], newPos: 0, newSession: 2 };
 	            this.props.player.currentPos = 0;
-	            this.props.player.clock = new _clock2.default([12, 0], 60);
 	          }
 	        }
 	      }
@@ -23565,6 +23622,23 @@
 	      }
 	    }
 	  }, {
+	    key: 'handleClick',
+	    value: function handleClick() {
+	      var time = this.props.player.clock.time();
+	      if (time[0] === "9") {
+	        // ADD A CLOCK FUNCTION BETWEEN()
+	        if (parseInt(time[1]) < 30) {
+	          this.props.player.clock = new _clock2.default([9, 30], 360);
+	        } else {
+	          this.props.player.clock = new _clock2.default([10, 0], 360);
+	        }
+	      } else if (time[0] === "10") {
+	        if (parseInt(time[1]) < 30) {
+	          this.props.player.clock = new _clock2.default([10, 30], 360);
+	        }
+	      }
+	    }
+	  }, {
 	    key: 'lectureSlide',
 	    value: function lectureSlide() {
 	      if (!this.state.eyesClosed) {
@@ -23572,10 +23646,10 @@
 	          return _react2.default.createElement(
 	            'ul',
 	            { id: 'lecture-slide', className: 'lecture-slide blur' },
-	            this.slide().map(function (line) {
+	            this.slide().map(function (line, idx) {
 	              return _react2.default.createElement(
 	                'li',
-	                null,
+	                { id: idx },
 	                line,
 	                _react2.default.createElement('br', null)
 	              );
@@ -23639,7 +23713,7 @@
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'lecture-slide-container' },
+	        { onClick: this.handleClick, className: 'lecture-slide-container' },
 	        this.lectureSlide(),
 	        _react2.default.createElement('meter', { className: 'faint-meter-bar', value: this.state.faintMeter, min: '0', max: this.faintMeterMax, low: this.faintMeterMax - 1, high: this.faintMeterMax - 0.5, optimum: this.faintMeterMax }),
 	        _react2.default.createElement(
@@ -24034,7 +24108,9 @@
 	        sentence.yPos -= _this5.yPosIncrement;
 	      });
 	      if (this.sentences[0].yPos <= 200) {
-	        new Audio("./app/assets/sounds/missed.wav").play();
+	        if (!this.sentences[0].exploded) {
+	          new Audio("./app/assets/sounds/missed.wav").play();
+	        }
 	        this.addNewSentence();
 	        if (this.sentences[0].active) {
 	          this.sentences[1].active = true;
@@ -24624,18 +24700,13 @@
 	
 	    var _this = _possibleConstructorReturn(this, (StrikeScreen.__proto__ || Object.getPrototypeOf(StrikeScreen)).call(this, props));
 	
+	    _this.strike = _this.props.player.newStrike;
 	    _this.startTime = Date.now();
 	    _this.buzzerSound = new Audio("./app/assets/sounds/buzzer.mp3");
 	    _this.buzzerSound.play();
 	    _this.props.player.strikes = _this.props.player.strikes + "X";
-	    _this.props.player.message = 'You received a strike for passing out during lecture.\n    You now have ' + _this.props.player.strikes.length + '\n    strike' + (_this.props.player.strikes.length > 1 ? "s" : "") + '!';
+	    _this.props.player.message = _this.strike.message + ('  You now have ' + _this.props.player.strikes.length + '\n    strike' + (_this.props.player.strikes.length > 1 ? "s" : "") + '!');
 	    _this.handleClick = _this.handleClick.bind(_this);
-	    // this.main = this.main.bind(this);
-	    _this.state = {
-	      // lastTime: Date.now()
-	      // isLiked: false
-	    };
-	
 	    return _this;
 	  }
 	
@@ -24645,7 +24716,11 @@
 	      if (Date.now() - this.startTime < 2000) {
 	        return;
 	      } else {
-	        this.props.player.message = "";
+	        this.props.player.clock = new _clock2.default(this.strike.newTime);
+	        this.props.player.currentPos = this.strike.newPos;
+	        if (this.strike.newSession) {
+	          this.props.player.session = this.strike.newSession;
+	        }
 	        this.props.player.newStrike = false;
 	      }
 	    }
@@ -24706,11 +24781,12 @@
 	
 	    var _this = _possibleConstructorReturn(this, (StrikeScreen.__proto__ || Object.getPrototypeOf(StrikeScreen)).call(this, props));
 	
+	    _this.congrats = _this.props.player.newCongrats;
 	    _this.startTime = Date.now();
 	    _this.buzzerSound = new Audio("./app/assets/sounds/congrats-ding.wav");
 	    _this.buzzerSound.play();
 	
-	    _this.props.player.message = 'CONGRATULATIONS!!! You made it through lecture without sleeping!';
+	    _this.props.player.message = _this.congrats.message;
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    // this.main = this.main.bind(this);
 	    _this.state = {
@@ -24727,6 +24803,9 @@
 	      if (Date.now() - this.startTime < 2000) {
 	        return;
 	      } else {
+	        this.props.player.session = this.congrats.newSession;
+	        this.props.player.currentPos = this.congrats.newPos;
+	        this.props.player.clock = new _clock2.default(this.congrats.newTime);
 	        this.props.player.message = "";
 	        this.props.player.newCongrats = false;
 	      }

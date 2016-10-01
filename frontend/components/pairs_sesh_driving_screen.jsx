@@ -132,7 +132,8 @@ class PairsSeshDrivingScreen extends React.Component {
       sentence.yPos -= this.yPosIncrement;
     });
     if (this.sentences[0].yPos <= 200) {
-        new Audio ("./app/assets/sounds/missed.wav").play();
+        if (!(this.sentences[0].exploded)) {
+        new Audio ("./app/assets/sounds/missed.wav").play();}
         this.addNewSentence();
         if (this.sentences[0].active) {
           this.sentences[1].active = true;

@@ -111,7 +111,9 @@ class OpenSesh extends React.Component {
         this.props.player.currentPos = 9;
       }
       if (x>125 && x<421 && y<186) {
-        // animation walking to kitchen
+        // animation walking to lecture
+        this.props.player.message = "";
+        this.props.player.defaultMessage = "";
         this.props.player.currentPos = 12;
       }
     }

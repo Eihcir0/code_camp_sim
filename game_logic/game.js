@@ -1,7 +1,7 @@
 import Player from './player.js';
 import Week from './week.js';
 
-class Game {
+class Game {  ////I DON'T THINK WE NEED A GAME CLASS
   constructor (player) {
     this.player = player;
   }

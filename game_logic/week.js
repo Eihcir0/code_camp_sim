@@ -4,12 +4,17 @@ import Day from './day.js';
 class Week {
   constructor (player) {
     this.player = player;
-    this.main();
+    this.day = new Day (this.player);
+    this.material = this.materials();
   }
 
+
+  materials() {
+    if (this.player.week === 1) {return "Ruby";}
+  }
+  
   main () {
     while (this.currentWeekDay() < 6) {
-      this.day = new Day (this.player);
       this.advanceDay();
     }
     this.weekEnd();

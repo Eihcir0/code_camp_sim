@@ -6,9 +6,12 @@ class LectureSeshScreen extends React.Component {
   constructor (props) {
     super(props);
     // this.main = this.main.bind(this);
-
     this.props.player.focus = 100;
-    this.props.player.clock = new Clock([9,0],360);
+    var startTime;
+    if (this.props.player.clock.time()[0]==="8") {
+      startTime = [9,0];
+    } else {startTime = this.props.player.clock.time();}
+    this.props.player.clock = new Clock(startTime,360);
     this.startingFocus = this.props.player.focus;
     this.eyesClosedTimer = 0;
     this.state= {
@@ -33,8 +36,8 @@ class LectureSeshScreen extends React.Component {
     this.updateFocus = this.updateFocus.bind(this);
     this.updateFaintMeter = this.updateFaintMeter.bind(this);
     this.updateGoesToSleepMeter = this.updateGoesToSleepMeter.bind(this);
-    // this.onClick = this.onClick.bind(this);
-   this.xxinterval = setInterval(()=>this.tick(),50);
+    this.handleClick = this.handleClick.bind(this);
+    this.xxinterval = setInterval(()=>this.tick(),50);
   }
 
   tick() {
@@ -56,9 +59,7 @@ class LectureSeshScreen extends React.Component {
     if (time[0]==="12") {
         clearInterval(this.xxinterval);
         this.xxinterval = undefined;
-        this.props.player.newCongrats = true;
-        this.props.player.currentPos = 0;
-        this.props.player.clock = new Clock([12,0],60);
+        this.props.player.newCongrats = {message: `CONGRATULATIONS!!! You made it through lecture without sleeping!`, newTime: [12,0], newPos: 0, newSession: 2};
     }
   }
 
@@ -68,9 +69,8 @@ class LectureSeshScreen extends React.Component {
     if (this.goesToSleepMeter >= this.faintMeterMax) {
       clearInterval(this.xxinterval);
       this.xxinterval = undefined;
-      this.props.player.newStrike = true;
+      this.props.player.newStrike = {message: "You received a strike for falling asleep during lecture.", newTime: [12,0], newPos: 0, newSession: 2};
       this.props.player.currentPos = 0;
-      this.props.player.clock = new Clock([12,0],60);
       }
     this.setState({goesToSleepMeter: this.goesToSleepMeter});
 
@@ -94,9 +94,8 @@ class LectureSeshScreen extends React.Component {
       if (this.faintMeter >= this.faintMeterMax) {
         clearInterval(this.xxinterval);
         this.xxinterval = undefined;
-        this.props.player.newStrike = true;
+        this.props.player.newStrike = {message: "You received a strike for passing out during lecture.", newTime: [12,0], newPos: 0, newSession: 2};
         this.props.player.currentPos = 0;
-        this.props.player.clock = new Clock([12,0],60);
         }
       }
     }
@@ -145,12 +144,27 @@ class LectureSeshScreen extends React.Component {
     }
   }
 
+  handleClick() {
+    var time = this.props.player.clock.time();
+    if (time[0]==="9") { // ADD A CLOCK FUNCTION BETWEEN()
+      if (parseInt(time[1])<30) {
+        this.props.player.clock = new Clock([9,30],360);
+    } else {
+      this.props.player.clock = new Clock([10,0],360);
+      }
+    } else if (time[0]==="10") {
+      if (parseInt(time[1])<30) {
+        this.props.player.clock = new Clock([10,30],360);
+      }
+    }
+  }
+
   lectureSlide() {
     if (!(this.state.eyesClosed)) {
       if (this.props.player.focus<30) {
       return (
         <ul id="lecture-slide" className="lecture-slide blur">
-            {this.slide().map((line)=><li>{line}<br/></li>)}
+            {this.slide().map((line,idx)=><li id={idx}>{line}<br/></li>)}
             <img src="./app/assets/images/ned3-blur.png" className="teacher-image"/>
         </ul>
       );}
@@ -202,7 +216,7 @@ class LectureSeshScreen extends React.Component {
 
   render () {
     return (
-      <div className="lecture-slide-container">
+      <div onClick={this.handleClick} className="lecture-slide-container">
         {this.lectureSlide()}
         <meter className="faint-meter-bar" value={this.state.faintMeter} min="0" max={this.faintMeterMax} low={this.faintMeterMax - 1} high={this.faintMeterMax -0.5} optimum={this.faintMeterMax} />
         <div>

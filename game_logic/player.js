@@ -1,7 +1,10 @@
+import Clock from './clock.js';
 
 class Player {
-  constructor(obj, name) {
+  constructor(name, obj) {
     this.name = name || "Richie";
+    this.clock = obj ? obj.clock : new Clock([8,45],120);
+    this.defaultMessage = obj ? obj.defaultMessage : "Get to lecture before 9:00am or you will get your first strike!";
     this.currentEmotion = obj ? obj.currentEmotion : "excited";
     this.info = obj ? obj.info : "";
     this.sleepBank = obj ? obj.sleepBank : 100;
