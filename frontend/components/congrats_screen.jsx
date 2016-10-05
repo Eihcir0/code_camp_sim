@@ -13,22 +13,29 @@ class StrikeScreen extends React.Component {
     this.congrats.message;
     this.handleClick = this.handleClick.bind(this);
     // this.main = this.main.bind(this);
-    this.state= {
-      // lastTime: Date.now()
-      // isLiked: false
-    };
+
 
   }
 
   handleClick() {
+    var newClockSpeed;
     if (Date.now() - this.startTime < 2000) {return;}
     else {
-      this.props.player.session = this.congrats.newSession;
-      this.props.player.currentPos = this.congrats.newPos;
-      this.props.player.clock = new Clock (this.congrats.newTime);
-      this.props.player.message="";
-      this.props.player.newCongrats = false;
+      if (this.congrats.newClockSpeed) {
+        newClockSpeed = this.congrats.newClockSpeed;
+      } else {
+        newClockSpeed = 360;
       }
+      this.props.player.clock = new Clock (this.congrats.newTime, newClockSpeed);
+      if (!(this.congrats.newPos===undefined)) {
+        this.props.player.currentPos = this.congrats.newPos;
+      }
+      if (this.congrats.newSession) {
+        this.props.player.session = this.congrats.newSession;
+      }
+      this.props.player.newCongrats = false;}
+      debugger;
+
   }
 
   render () {

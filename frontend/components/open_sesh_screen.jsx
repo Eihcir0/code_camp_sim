@@ -1,4 +1,3 @@
-// import * as Sprites from './../../game_logic/animation_logic/sprites.js';
 import React from 'react';
 import Secretary from './../../game_logic/animation_logic/secretary.js';
 import Desk from './../../game_logic/animation_logic/desk.js';
@@ -6,7 +5,6 @@ import StudyIconAnim from
  './../../game_logic/animation_logic/study_icon_anim.js';
 import Fire from
  './../../game_logic/animation_logic/fire.js';
-// import ReactDOM from 'react-dom';
 
 
 class OpenSesh extends React.Component {
@@ -21,11 +19,12 @@ class OpenSesh extends React.Component {
     this.initializeSprites = this.initializeSprites.bind(this);
     this.buttons = this.buttons.bind(this);
     this.handleGetOffComputer = this.handleGetOffComputer.bind(this);
-
+    this.fire = {};
     this.background = new Image();
     this.background.src = './app/assets/images/newfloor.png';
     this.sprites = [];
     this.lastTime = Date.now();
+    this.updateCount = 0;
     this.state= {
       // lastTime: Date.now()
       // isLiked: false
@@ -44,6 +43,7 @@ class OpenSesh extends React.Component {
   }
 
   initializeSprites () {
+    //need to change this up between animated and not-animated
     this.sprites.push(new Secretary);
     var d = new Desk(1);
     d.pos = [290,90];
@@ -67,12 +67,22 @@ class OpenSesh extends React.Component {
     this.update(dt);
     this.renderSprites();
 
-    window.requestAnimationFrame(this.main);
+    if ([0,2,4].includes(this.props.player.session)) {
+      this.openSeshAnimationFrame = window.requestAnimationFrame(this.main);
+    } else {
+      if (this.openSeshAnimationFrame) {
+        this.props.playerAnim.soundTyping.pause();
+        //cancel fire
+        window.cancelAnimationFrame(this.openSeshAnimationFrame);
+        this.openSeshAnimationFrame = undefined;
+      }
+    }
   }
 
 
   handleGetOffComputer() {
     this.props.playerAnim.soundTyping.pause();
+    this.props.player.fireOff();
     this.props.playerAnim.moveTo(0, ()=>(this.props.player.currentPos=0));
   }
 
@@ -112,34 +122,59 @@ class OpenSesh extends React.Component {
       }
       if (x>125 && x<421 && y<186) {
         // animation walking to lecture
-        this.props.player.message = "";
-        this.props.player.defaultMessage = "";
-        this.props.player.currentPos = 12;
+        if (this.props.player.clock.isBetween([8,30],[9,30])) {
+          this.props.player.message = "";
+          this.props.player.defaultMessage = "";
+          this.props.player.currentPos = 12;
+        }
+        else {
+          this.props.player.message = "The lecture hall doors are locked.";
+          this.props.player.currentPos = 0;
+        }
       }
     }
   }//end handle click
 
+  //need to add a "on hover" ie mouseover section.  will change the classes of some overlays to make it darker.
   update (dt) {
-      this.props.playerAnim.update(dt);
+      this.updateCount += dt;
+      if (this.props.player.working()) {
+        if (this.updateCount>50) {
+          this.updateCount = 0;
+          var workstationUpdate = this.props.player.workstationGo();
+          if (workstationUpdate){
+            if (workstationUpdate.type === "fire") {
+              this.fire = workstationUpdate;
+              this.fire.ctx=this.ctx;
+              this.fire.canvas = this.canvas;
+            }}
+        }
+      }
+
       this.checkForDoneSprites();
       this.sprites.forEach(sprite => sprite.update(dt));
-      this.randomFire();
-      this.randomIcon();
+      if (this.props.player.onFire) {
+        this.fire.update(dt);}
+      this.props.playerAnim.update(dt);
+      //check for fire
+      //check for new icon
+
 
   }
 
-  renderSprites () {
+  renderSprites () { //change this - render immoveables vs. icons vs hero
     this.sprites.forEach(sprite => {
-      if (sprite.type==="study icon" || sprite.type==="fire") {
+      if (sprite.type==="study icon") {
         sprite.render();
       } else {
         this.ctx.drawImage(sprite.image,sprite.pos[0],sprite.pos[1]);
       }
+      if (this.props.player.onFire) {this.fire.render();}
       this.props.playerAnim.render(); // render player
     });
   }
 
-  checkForDoneSprites () {
+  checkForDoneSprites () { //change to check for done icons
 
     for (var i = 0; i < this.sprites.length; i++) {
       var sprite = this.sprites[i];
@@ -159,14 +194,14 @@ class OpenSesh extends React.Component {
 
 
   randomFire() { //this goes away
-    if (Math.floor(Math.random()*5000) < 5
-      && this.props.player.currentPos===11
-      && this.props.player.onFire===false) {
-        this.addFire();
-    }
+    // if (Math.floor(Math.random()*5000) < 5
+    //   && this.props.player.currentPos===11
+    //   && this.props.player.onFire===false) {
+    //     this.addFire();
+    // }
   }
 
-  addFire () {
+  addFire () { //change the logic to just check if he's still on fire, if he is then draw it and advance frame on a loop.
     var d = new Fire({canvas: this.canvas, ctx: this.ctx,
       player: this.props.player});
     this.sprites.push(d);
@@ -174,16 +209,16 @@ class OpenSesh extends React.Component {
   }
 
   randomIcon() {  //this goes away
-    if (
-      ((Math.floor(Math.random()*1000) -
-      (this.props.player.onFire ? 50 : 0))
-      < 10) &&
-      this.props.player.currentPos===11 ) {
-      this.addStudyIcon();
-    }
+    // if (
+    //   ((Math.floor(Math.random()*1000) -
+    //   (this.props.player.onFire ? 50 : 0))
+    //   < 10) &&
+    //   this.props.player.currentPos===11 ) {
+    //   this.addStudyIcon();
+    // }
   }
 
-  addStudyIcon () {
+  addStudyIcon () { //this should take an object account
     if ( (Date.now() - this.props.player.lastIconTime) > 70) {
       var d = new StudyIconAnim({canvas: this.canvas, ctx: this.ctx});
       this.sprites.push(d);

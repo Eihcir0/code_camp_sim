@@ -10,9 +10,7 @@ class LectureSeshScreen extends React.Component {
     var startTime;
     if (this.props.player.clock.time()[0]==="8") {
       startTime = [9,0];
-    } else {
-      startTime = this.props.player.clock.time();
-    }
+    } else {startTime = this.props.player.clock.time();}
     this.props.player.clock = new Clock(startTime,360);
     this.startingFocus = this.props.player.focus;
     this.eyesClosedTimer = 0;
@@ -39,11 +37,12 @@ class LectureSeshScreen extends React.Component {
     this.updateFaintMeter = this.updateFaintMeter.bind(this);
     this.updateGoesToSleepMeter = this.updateGoesToSleepMeter.bind(this);
     this.handleClick = this.handleClick.bind(this);
-    this.sleepSound = new Audio("./app/assets/sounds/Rock-a-bye Baby.mp3");
-    this.faintSound = new Audio("./app/assets/sounds/trippy.wav");
-    this.faintSoundOn = false;
     this.xxinterval = setInterval(()=>this.tick(),50);
-
+    this.sleepSound = new Audio("./app/assets/sounds/Rock-a-bye Baby.mp3");
+    this.faintSound = new Audio("./app/assets/sounds/siren.wav");
+    this.faintSoundOn = false;
+    this.dubstepSound = new Audio("./app/assets/sounds/trippy.wav");
+    this.dubstepSoundOn = false;
   }
 
   tick() {
@@ -68,6 +67,8 @@ class LectureSeshScreen extends React.Component {
         this.sleepSound.pause();
         this.faintSound = "";
         this.sleepSound = "";
+        this.dubstepSound.pause();
+        this.dubstepSound = "";
         this.xxinterval = undefined;
         this.props.player.newCongrats = {message: `CONGRATULATIONS!!! You made it through lecture without sleeping!`, newTime: [12,0], newPos: 0, newSession: 2};
     }
@@ -80,7 +81,7 @@ class LectureSeshScreen extends React.Component {
       clearInterval(this.xxinterval);
       this.sleepSound.pause();
       this.xxinterval = undefined;
-      this.props.player.newStrike = {message: "You received a strike for falling asleep during lecture.", newTime: [12,0], newPos: 0, newSession: 2, newClockSpeed: 360};
+      this.props.player.newStrike = {message: "You received a strike for falling asleep during lecture.", newTime: [12,0], newPos: 0, newSession: 2};
       this.props.player.currentPos = 0;
       }
     this.setState({goesToSleepMeter: this.goesToSleepMeter});
@@ -99,18 +100,22 @@ class LectureSeshScreen extends React.Component {
       }
     }
     else {
-      if (this.props.player.focus <= 10) {
-      if (!(this.faintSoundOn)) {
-        this.faintSound.play();
-        this.faintSoundOn=true;}
-      this.faintMeter++;
-      this.faintMeter++;
+      if (this.props.player.focus <= 0) {
+      if (!(this.dubstepSoundOn)) {
+        if (this.faintSoundOn) {this.faintSound.pause();}
+        this.dubstepSound.play();
+        this.dubstepSoundOn = true;}
+        this.faintMeter++;
+        this.faintMeter++;
       if (this.faintMeter >= this.faintMeterMax) {
         clearInterval(this.xxinterval);
         this.faintSound.pause();
         this.faintSound = "";
+        this.dubstepSound.pause();
+        this.dubstepSound = "";
         this.xxinterval = undefined;
         this.props.player.newStrike = {message: "You received a strike for passing out during lecture.", newTime: [12,0], newPos: 0, newSession: 2};
+        this.xxinterval = undefined;
         this.props.player.currentPos = 0;
         }
       }
@@ -126,8 +131,16 @@ class LectureSeshScreen extends React.Component {
       if (time[0]==="11" && parseInt(time[1])>45) {this.props.player.focus--;}
 
       if (this.props.player.focus<50 && (!(this.state.eyesClosed))) {
+
+
+        if (!(this.faintSoundOn)) {
+          this.faintSound.play();
+          this.faintSoundOn = true;
+
+        }
         this.props.player.message =
          "OH NO!  You're losing focus!  You might pass out soon...........  (PRESS AND HOLD THE BUTTON TO CLOSE EYES AND REGAIN FOCUS)";
+        this.faintMeterOn = true;
       } else {this.props.player.message = "";}
     }
     else { //if eyes ARE closed:
@@ -203,10 +216,13 @@ class LectureSeshScreen extends React.Component {
 
 
   handleCloseEyesOn() {
+    if (this.dubstepSoundOn) {
+      this.dubstepSound.pause();
+      this.dubstepSoundOn=false;
+    }
     if (this.faintSoundOn) {
       this.faintSound.pause();
-      this.faintSoundOn = false;
-    }
+      this.faintSoundOn = false;}
     this.sleepSound.play();
     this.eyesClosedTimer++;
     this.setState({eyesClosed: true});
@@ -214,9 +230,13 @@ class LectureSeshScreen extends React.Component {
   }
 
   handleCloseEyesOff() {
-    if (this.props.player.focus < 50) {
+    if (this.props.player.focus>0 && this.props.player.focus < 50) {
       this.faintSound.play();
-      this.faintSoundOn = true;}
+      this.faintSoundOn = true;
+      }
+    else if (this.faintMeter>0) {
+      this.dubstepSound.play();
+      this.dubstepSoundOn=true;}
     else {
       this.faintSound = new Audio("./app/assets/sounds/siren.wav");
       this.faintSoundOn = false;

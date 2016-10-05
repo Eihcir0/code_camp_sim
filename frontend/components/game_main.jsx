@@ -34,40 +34,54 @@ class GameMain extends React.Component {
     this.tick = this.tick.bind(this);
     this.updateAttributes = this.updateAttributes.bind(this);
     // this.game = new Game(this.player);
-
-
-    this.interval = window.setInterval(()=>this.tick(),50);
+    this.lastTime = Date.now();
+    this.interval = window.setInterval(()=>this.tick(),10);
     // window.setInterval(()=>this.render(),200);
   }
 
 
   tick() {
-    this.setState({currentPos: this.player.currentPos, clock: this.player.clock.time()});
-    this.updateSession();
-    this.updateAttributes();
-    this.currentFaceUpdate(); //REDO THIS WITH FACE CLASS
-    this.setState({
-      message: this.player.message,
-      ruby: Math.floor(this.player.skills.Ruby/10),
-      focus: this.player.focus
-    });
+    var dt= Date.now() - this.lastTime;
+    if (dt>50) {
+      this.lastTime = Date.now();
+      this.setState({
+        currentPos: this.player.currentPos,
+        clock: this.player.clock.time()
+      });
+      this.updateSession();
+      this.updateAttributes();
+      this.currentFaceUpdate(); //REDO THIS WITH FACE CLASS
+      this.setState({
+        message: this.player.message,
+        ruby: Math.floor(this.player.skills.Ruby/10),
+        focus: this.player.focus
+    });}
     // debugger;
     //animationFramE ????
   }
 
   updateSession() {
-    var clock = this.player.clock.time();
     if (this.player.session === 0 && this.player.currentPos !==12) {
-      if (clock[0]==="9" && clock[1]==="00") {
+      if (this.player.clock.is(["9","00","am"])) {
        this.player.newStrike = {message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9,1], newPos: this.player.currentPos};
       }
-      else if (clock[0]==="9" && clock[1]==="30") {
+      else if (this.player.clock.is(["9","30","am"])) {
        this.player.newStrike = {message: "You cannot enter the lecture hall after 9:30am.  You received a strike for missing morning lecture.", newTime: [9,31], newPos: this.player.currentPos};
       }
     }
-    if (clock[0] === "12" && clock[1]==="01") {
+    if (this.player.clock.is(["12","01","pm"])) {
       this.player.session = 2;
       this.player.message = "It's lunch time. Take a lunch break but be sure to be logged in at your workstation by 1:30pm for pair programming.";
+    }
+
+    if (this.player.clock.is(["1","30","pm"])) {
+      if (this.player.currentPos !== 11) {
+        this.player.newStrike = {message: "You received a strike for not being seated at your workstation by 1:30pm for pair programming. ", newTime: [13,30], newClockSpeed: 720, newSession: 3, newPos: 11};
+      }
+      else {
+        this.player.clock = new Clock([13,31], 180);
+        this.player.session = 3;
+      }
     }
   }
 
@@ -76,9 +90,9 @@ class GameMain extends React.Component {
     //use helper methods for each attribute
     this.ticker++;
     if (this.ticker>5) {
-      if (this.player.currentPos === 11) {
+      if (this.player.currentPos === 11 && this.player.session !==3) {
         this.player.focus--;}
-      else if (this.player.currentPos !==12) {
+      else if (this.player.currentPos !==12 && this.player.session !==3) {
         this.player.focus++;
         this.player.focus++;
         this.player.focus++;
@@ -120,7 +134,6 @@ class GameMain extends React.Component {
   }
 
   sesh() { // change this to a switch
-    // return (<PairsSeshScreen player={this.player}/>);
     if (this.player.newStrike) {
       this.player.clock.pause();
       return (
@@ -133,8 +146,11 @@ class GameMain extends React.Component {
         <CongratsScreen player={this.player}/>
       );
     }
+    else if (this.player.session == 3) {
+      return (<PairsSeshScreen  player={this.player}/>);
+    }
 
-    else if (this.state.currentPos === 12){
+    else if (this.player.currentPos === 12){
       return (
         <LectureSeshScreen className="lecture-sesh"
           player={this.player}/>

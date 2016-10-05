@@ -35,7 +35,6 @@ class Moveable {
     if (this.type === "hero") {this.updateAnimSet();}
     this.updateAnim(elapsed);
     this.move(elapsed);
-
   }
 
   move(elapsed) {

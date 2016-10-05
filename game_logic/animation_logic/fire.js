@@ -7,7 +7,7 @@ class Fire extends Moveable {
     this.type = "fire";
     this.width = 93;
     this.height = 200;
-    this.pos = [285, 210];
+    this.pos = [290, 210];
 
     this.animationOn = true;
     this.movementOn = false;
@@ -22,29 +22,26 @@ class Fire extends Moveable {
     this.image = new Image();
     this.image.src =
     "./app/assets/images/fire.png";
-    this.sound = new Audio("./app/assets/sounds/fire.wav");
+    this.sound = new Audio("./app/assets/sounds/hes_on_fire.wav");
     this.sound.play();
     this.moves = 0;
-    this.done = false;
     this.times = 0;
-    // this.maxTimes = Math.floor(Math.random()*10)+10;
-    this.maxTimes = 10;
-    console.log("MAX TIMES " + this.maxTimes);
+
   }
 
 
   updateAnim(elapsed) {
       this.animTimer += elapsed;
-      if (this.animTimer > this.animDelay && this.done === false) {
+      if (this.animTimer > this.animDelay) {
         this.animFrame++;
+        if (this.times %3 ===0 && this.animFrame === this.animNumFrames) {
+          this.player.fireSound=new Audio("./app/assets/sounds/fire.wav");
+          this.player.fireSound.play();}
         this.animTimer = 0;
-
         if (this.animFrame > this.animNumFrames) {
-          if (this.times % 2 === 0) {this.sound.play();}
           this.animFrame = 0;
-          this.times += 1;
+          this.times++;
 
-        if (this.times === this.maxTimes - 1) {this.animNumFrames = 15;}
         }
       }
     }

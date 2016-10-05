@@ -159,6 +159,13 @@ button {
 	line-height: 50px;
 	background: blanchedalmond;
 	font-size: 36px;
+	-webkit-touch-callout: none;
+ -webkit-user-select: none;
+ -khtml-user-select: none;
+ -moz-user-select: none;
+ -ms-user-select: none;
+ -o-user-select: none;
+ user-select: none;
 }
 .blur {
    color: transparent;
@@ -306,4 +313,12 @@ textarea {
 	height: 100px;
 	font-size: 24px;
 	outline: none;
+}
+
+.pairs-results {
+	width: 800px;
+	margin-left: 100px;
+	background: black;
+	color: white;
+	font-size: 24px;
 }

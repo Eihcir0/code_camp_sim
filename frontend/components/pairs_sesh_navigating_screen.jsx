@@ -7,15 +7,16 @@ class PairsSeshNavigatingScreen extends React.Component {
     // this.main = this.main.bind(this);
     this.sentenceTexts = ["test","def my_each(&prc)","self.length.times do |i|", "prc.call(self[i])", "end", "self", "end", "def my_select(&prc)", "selects = []", "self.my_each do |item|", "if prc.call(item)", "selects << item", "end", "end", "selects", "end"];
     this.errorTexts = ["teAst","def my_each&prc)","self.length.times |i|", "prc,call(self[i])", "end", "self[i]", "end()", "def my_select()", "selects === []", "my_each do |item|", "unless prc.call(item)", "selects < item", "'end", "end", "!selects", "end;"];
-    this.counter=0;
-    this.sentences = this.props.sentences;
     this.explosions = [];
+
     this.state= {
       currentInput: "",
     };
+
+    this.counter=0;
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.sentences = this.props.sentences;
     this.showing = this.showing.bind(this);
-    // this.showing = this.showing.bind(this);
     this.initializeSentences = this.initializeSentences.bind(this);
     this.updateSentences = this.updateSentences.bind(this);
     this.addNewSentence = this.addNewSentence.bind(this);
@@ -30,7 +31,6 @@ class PairsSeshNavigatingScreen extends React.Component {
     this.explosionImage = new Image ();
     this.explosionImage.src = "./app/assets/images/line_explosion.jpg";
     if (this.sentences.length === 0) {this.initializeSentences();}
-    console.log("nav constructor");
 
   }
 
@@ -40,7 +40,7 @@ class PairsSeshNavigatingScreen extends React.Component {
     this.canvas.width = 800;
     this.ctx = this.canvas.getContext("2d");
     this.setState({currentInput: this.sentences[0].error});
-    this.yyinterval = setInterval(()=>this.tick(),50);
+    this.navigatingInterval = setInterval(()=>this.tick(),50);
 
   }
 
@@ -55,16 +55,19 @@ class PairsSeshNavigatingScreen extends React.Component {
 
   tick() {
     if (!(this.props.stopped)) {
-      this.checkOver();
-      this.updateSentences();
-      this.updateExplosions();
-      document.getElementById("pairs-input").focus();
+      if (this.props.player.clock.is(["6","00","pm"])) {
+        this.clearInt();
+      } else {
+        this.updateSentences();
+        this.updateExplosions();
+        document.getElementById("pairs-input").focus();
+      }
     }
 
   }
 
   clearInt() {
-    clearInterval(this.yyinterval);
+    clearInterval(this.navigatingInterval);
   }
 
   addExplosion(a) {
@@ -120,16 +123,10 @@ class PairsSeshNavigatingScreen extends React.Component {
     };
   }
 
-  checkOver() {
-    if (this.sentences.length===0) {
-    clearInterval(this.yyinterval);
-    console.log("OVER");}
-  }
-
   updateSentences() {
 
     if (this.state.currentInput==="bbr") {
-      this.setState({currentInput: this.sentences[0].text});
+      this.setState({currentInput: this.findActive().text});
       return;
     }
     this.sentences.forEach(sentence => {
@@ -137,6 +134,7 @@ class PairsSeshNavigatingScreen extends React.Component {
     });
     if (this.sentences[0].yPos <= 200) {
         if (!(this.sentences[0].exploded) && !(this.sentences[0].done)) {
+          this.props.navigatingLines[1]++;
           new Audio ("./app/assets/sounds/missed.wav").play();}
         this.addNewSentence();
         if (this.sentences[0].active) {
@@ -147,7 +145,7 @@ class PairsSeshNavigatingScreen extends React.Component {
           this.setState({currentInput: this.sentences[1].error});
         }
         this.sentences.shift();
-    } else {this.checkOver();}
+    }
   }
 
   findActive() {
@@ -161,7 +159,6 @@ class PairsSeshNavigatingScreen extends React.Component {
 
     if (e.keyCode===13) {e.preventDefault();}
     if (e.keyCode===13) {
-      // debugger;
       var a = this.findActive();
       if (this.state.currentInput == this.sentences[a].text) {
           new Audio ("./app/assets/sounds/explosion.wav").play();
@@ -169,6 +166,8 @@ class PairsSeshNavigatingScreen extends React.Component {
           this.sentences[a+1].active = true;
           this.sentences[a].exploded = true;
           this.sentences[a].active = false;
+          this.props.navigatingLines[0]++;
+          this.props.navigatingLines[1]++;
         }
       else {
         new Audio ("./app/assets/sounds/missed.wav").play();
@@ -176,6 +175,7 @@ class PairsSeshNavigatingScreen extends React.Component {
         this.sentences[a].text="💩".repeat(Math.floor(this.sentences[a].text.length/3));
         this.sentences[a].done = true;
         this.sentences[a+1].active=true;
+        this.props.navigatingLines[1]++;
       }
         this.setState({currentInput: this.sentences[a+1].error});
     }
@@ -187,8 +187,6 @@ class PairsSeshNavigatingScreen extends React.Component {
     if (sentence.yPos<500) {
     results.push(
       <div key={++this.counter} className="pairs-navigating-line" style={sentence.exploded ? {display: "none"} : {top: sentence.yPos + "px"}} >
-
-
         {sentence.text}
       </div>
       );}

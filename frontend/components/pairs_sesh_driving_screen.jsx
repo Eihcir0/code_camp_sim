@@ -12,14 +12,12 @@ class PairsSeshDrivingScreen extends React.Component {
     this.state= {
       currentInput: "",
     };
-    // this.onClick = this.onClick.bind(this);
     this.counter=0;
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.sentences = this.props.sentences;
     this.showing = this.showing.bind(this);
-    // this.showing = this.showing.bind(this);
     this.initializeSentences = this.initializeSentences.bind(this);
     this.updateSentences = this.updateSentences.bind(this);
-    // this.getRandomSentence = this.getRandomSentence.bind(this);
     this.addNewSentence = this.addNewSentence.bind(this);
     this.addExplosion = this.addExplosion.bind(this);
     this.renderExplosion = this.renderExplosion.bind(this);
@@ -31,11 +29,7 @@ class PairsSeshDrivingScreen extends React.Component {
     this.lineSpacing = 100;
     this.explosionImage = new Image ();
     this.explosionImage.src = "./app/assets/images/line_explosion.jpg";
-    this.sentences = this.props.sentences;
-    this.props.player.message = "TYPE THE TEXT AS FAST AS YOU CAN!";
-
     if (this.sentences.length === 0) {this.initializeSentences();}
-    console.log("driving constructor");
   }
 
   componentDidMount() {
@@ -43,7 +37,7 @@ class PairsSeshDrivingScreen extends React.Component {
     this.canvas.height = 500;
     this.canvas.width = 800;
     this.ctx = this.canvas.getContext("2d");
-    this.yyinterval = setInterval(()=>this.tick(),50);
+    this.drivingInterval = setInterval(()=>this.tick(),50);
 
   }
 
@@ -58,16 +52,19 @@ class PairsSeshDrivingScreen extends React.Component {
 
   tick() {
     if (!(this.props.stopped)) {
-      this.updateSentences();
-      this.updateExplosions();
-      this.checkOver();
-      document.getElementById("pairs-input").focus();
+      if (this.props.player.clock.is(["6","00","pm"])) {
+        this.clearInt();
+      } else {
+        this.updateSentences();
+        this.updateExplosions();
+        document.getElementById("pairs-input").focus();
+      }
     }
   }
 
 
   clearInt() {
-    clearInterval(this.yyinterval);
+    clearInterval(this.drivingInterval);
   }
 
   addExplosion(a) {
@@ -117,11 +114,6 @@ class PairsSeshDrivingScreen extends React.Component {
     };
   }
 
-  checkOver() {
-    if (this.sentences.length===0) {
-    clearInterval(this.yyinterval);
-    console.log("OVER");}
-  }
   updateSentences() {
 
     if (this.state.currentInput==="bbr") {
@@ -133,6 +125,7 @@ class PairsSeshDrivingScreen extends React.Component {
     });
     if (this.sentences[0].yPos <= 200) {
         if (!(this.sentences[0].exploded)) {
+        this.props.drivingLines[1]++;
         new Audio ("./app/assets/sounds/missed.wav").play();}
         this.addNewSentence();
         if (this.sentences[0].active) {
@@ -143,7 +136,7 @@ class PairsSeshDrivingScreen extends React.Component {
           this.setState({currentInput: ""});
         }
         this.sentences.shift();
-    } else {this.checkOver();}
+    }
   }
 
   findActive() {
@@ -157,7 +150,6 @@ class PairsSeshDrivingScreen extends React.Component {
 
     if (e.keyCode===13) {e.preventDefault();}
     if (e.keyCode===13 && this.state.currentInput.length>1) {
-      // debugger;
       var a = this.findActive();
       if (this.state.currentInput == this.sentences[this.findActive()].text) {
           new Audio ("./app/assets/sounds/explosion.wav").play();
@@ -165,12 +157,16 @@ class PairsSeshDrivingScreen extends React.Component {
           this.sentences[a+1].active = true;
           this.sentences[a].exploded = true;
           this.sentences[a].active = false;
+          this.props.drivingLines[0]++;
+          this.props.drivingLines[1]++;
         }
       else {
         new Audio ("./app/assets/sounds/missed.wav").play();
         this.sentences[a].active=false;
         this.sentences[a].done = true;
         this.sentences[a+1].active=true;
+        this.props.drivingLines[1]++;
+
       }
         this.setState({currentInput: ""});
     } else if (e.keyCode!==8) {

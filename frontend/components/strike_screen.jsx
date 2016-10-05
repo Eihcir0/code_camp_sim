@@ -17,10 +17,18 @@ class StrikeScreen extends React.Component {
 
 
   handleClick() {
+    var newClockSpeed;
     if (Date.now() - this.startTime < 2000) {return;}
     else {
-      this.props.player.clock = new Clock (this.strike.newTime);
-      this.props.player.currentPos = this.strike.newPos;
+      if (this.strike.newClockSpeed) {
+        newClockSpeed = this.strike.newClockSpeed;
+      } else {
+        newClockSpeed = 360;
+      }
+      this.props.player.clock = new Clock (this.strike.newTime, newClockSpeed);
+      if (this.strike.newPos) {
+        this.props.player.currentPos = this.strike.newPos;
+      }
       if (this.strike.newSession) {
         this.props.player.session = this.strike.newSession;
       }
