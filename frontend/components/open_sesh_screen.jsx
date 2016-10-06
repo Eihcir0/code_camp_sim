@@ -26,7 +26,7 @@ class OpenSesh extends React.Component {
     this.background = new Image();
     this.background.src = './app/assets/images/newfloor.png';
     this.sprites = [];
-    this.lastTime = Date.now();
+    this.lastTickerCount = this.player.clock.tickCounter;
     this.updateCount = 0;
     this.state= {
       // lastTime: Date.now()
@@ -65,16 +65,15 @@ class OpenSesh extends React.Component {
   }
 
   main() {
-    var dt = Date.now() - this.lastTime;
-    this.lastTime = Date.now();
-
+    var dt = (this.player.clock.tickCounter - this.lastTickerCount);
+    this.lastTickerCount = this.player.clock.tickCounter;
     this.ctx.drawImage(this.background,-28,0);
     this.update(dt);
     this.renderSprites();
 
     if ([0,2,4].includes(this.player.session)) {
       this.openSeshAnimationFrame = window.requestAnimationFrame(this.main);
-    } else {this.cancelAnimationFrame();}
+    } else {this.cancelAnimationFrame(this.openSeshAnimationFrame);debugger;}
 
   }
 
@@ -136,6 +135,7 @@ class OpenSesh extends React.Component {
         // animation walking to lecture
         if (this.player.clock.isBetween([8,30],[9,30])) {
           this.player.message = "";
+          this.player.session = 1;
           this.player.defaultMessage = "";
           this.player.currentPos = 12;
         }
@@ -151,6 +151,7 @@ class OpenSesh extends React.Component {
   update (dt) {
       if (this.player.focus<=0) {
         this.player.message="You can't focus any longer.  Take a break.";
+        window.setTimeout(()=> (this.player.message=""), 2000);
         this.handleGetOffComputer();
       }
       this.updateCount += dt;

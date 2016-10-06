@@ -16,7 +16,7 @@ class BugAnim extends StudyIcon {
     this.spriteYoffset = 0; // ??
     this.animFrame = 0; // ??
     this.animNumFrames = 2; // ??
-    this.animDelay = 30; // ??
+    this.animDelay = 20; // ??
     this.animTimer = 0; // ??
     this.imageReady = false;
     this.image = new Image();
@@ -34,6 +34,7 @@ class BugAnim extends StudyIcon {
   updateAnim(elapsed) {
       this.animTimer += elapsed;
       if (this.animTimer >= this.animDelay) {
+        this.animTimer = 0;
         ++this.animFrame;
         this.pos[1]++;
         if (this.animFrame > 45) {

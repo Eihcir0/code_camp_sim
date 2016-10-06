@@ -13,7 +13,7 @@ import FireAnim from
 class Player {
   constructor(name, obj) {
     this.name = name || "Richie";
-    this.clock = obj ? obj.clock : new Clock([18,1],180);
+    this.clock = obj ? obj.clock : new Clock([18,45],8);
     this.defaultMessage =
       obj ? obj.defaultMessage
       : "Get to lecture before 9:00am or you will get your first strike!";
@@ -22,12 +22,12 @@ class Player {
     this.sleepBank = obj ? obj.sleepBank : 100;
     this.happiness = obj ? obj.happiness : 100;
     this.focus = obj ? obj.focus : 100;
-    this.score = obj ? obj.score : 100000;
-    this.liked = obj ? obj.liked : 50;
+    this.score = obj ? obj.score : 0;
+    this.liked = obj ? obj.liked : 50; //not used
     this.currentPos = obj ? obj.currentPos : 0;
     this.lastCurrentPos = obj ? obj.lastCurrentPos : -1;
     this.message = obj ? obj.message : "";
-    this.lastIconTime = obj ? obj.lastIconTime : 0;
+    this.lastIconTickerCount = obj ? obj.lastIconTickerCount : 0;
     this.onFire = obj ? obj.onFire : false;
     this.fire = undefined;
     this.strikes = obj ? obj.strikes : "";
@@ -44,7 +44,7 @@ class Player {
     this.week = Math.floor(this.day / 7) + 1;
     this.weekDay = this.day % 7;
     this.skills = obj ? obj.skill : {
-      Ruby: 50,
+      Ruby: 0,
       Rails: 0,
       SQL: 0,
       JavaScript: 0,
@@ -70,17 +70,23 @@ class Player {
   }
 
   workstationGo(playerAnim) {
-     //scoreDivisor - adjust to increase/decrease chance of something
-  //  var now = Date.now();
-  //  if (now-this.lastIconTime < 50) {return false;}
-    var scoreDivisor = 50000;
+   var now = this.clock.tickCounter;
+   //frequency driven by speed of clock:
+   if (now-this.lastIconTickerCount < (50 / this.clock.relativeSpeed)) {
+     return false;
+   }
+   this.lastIconTickerCount = this.clock.tickCounter;
+  //scoreDivisor - adjust to increase/decrease chance of something
+  //so scoreDivsor set to 50,000 with score is 5% chance plus offset
+    var scoreDivisor = 10000;
+    var scoreOffset = 100000;
     var gotSomething = (Math.random() <
-    (((((this.score+20000) /scoreDivisor))/100) * (this.onFire ? 10 : 1)) ); //delete *33
+    (((((this.score+scoreOffset) /scoreDivisor))/100) * (this.onFire ? 4 : 1)) );
     if (!(gotSomething)) {return false;}
 
-    //onFire -- for now just score /1000000 * 50% (so 100k = 5%)
-    // 50 is adjustable divisor to make it infrequent
-    var chanceForFire = ((this.score / 1000000) * 0.5)*5; //delete *0
+    //onFire -- for now just score /1000000 * 50% (so 100k = 5%) + offset <== for testing
+    var chanceForFireOffset = 0;
+    var chanceForFire = (((this.score) / 1000000) * 0.5) + chanceForFireOffset;
     if (this.onFire) {chanceForFire = 0;}
 
     // out of 1000 so /1000 to convert to % then /2
@@ -119,11 +125,12 @@ class Player {
 
   newBug() {
     this.happiness -=1;
-    console.log("new bug happiness -1");
+    this.skills[this.currentSkill]++;
     return new BugAnim({canvas: this.canvas, ctx: this.ctx});
   }
 
   newSkillIncrease() {
+    this.skills[this.currentSkill]++;
     this.skills[this.currentSkill]++;
     this.skills[this.currentSkill]++;
     return new SkillAnim({canvas: this.canvas, ctx: this.ctx},

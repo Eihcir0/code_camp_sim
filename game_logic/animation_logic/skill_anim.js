@@ -33,7 +33,7 @@ class SkillAnim extends StudyIcon {
         this.spriteYoffset = 0; // ??
         this.animFrame = 0; // ??
         this.animNumFrames = 1; // ??
-        this.animDelay = 50; // ??
+        this.animDelay = 20; // ??
         this.animTimer = 0; // ??
         break;
       default:
@@ -53,6 +53,7 @@ class SkillAnim extends StudyIcon {
     updateAnim(elapsed) {
       this.animTimer += elapsed;
       if (this.animTimer >= this.animDelay) {
+        this.animTimer = 0;
         ++this.animFrame;
         this.pos[1]--;
         if (this.animFrame>65) {

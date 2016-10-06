@@ -1,17 +1,49 @@
 class Clock {
-  constructor (start, speed = 60) {
+  constructor (start, relativeSpeed = 1) {
+
     this.start = [0,0,0];
+    //start can be military [18,30] or [6,30,"pm"]
     this.start[0] = parseInt(start[0]);
     this.start[1] = parseInt(start[1]);
     if (start[2]) {
       this.start[0] += (start[2]==="pm" ? 12 : 0);
     }
-    this.systemClockAtStart = Date.now();
-    this.speed = speed;
+
+    //60 => 1 real second / 1 game minute or 60 real seconds for 1 gm hr
+    this.relativeSpeed = relativeSpeed; // 1 => 1 real sec / game minute
+    this.speed = this.relativeSpeed * 60;
+
+    this.ticksPerSecond = 100; //based on Game_Main class
+    this.tickFraction = 1000 / this.ticksPerSecond;
     this.paused = false;
-    this.pauseOffset = 0;
     this.time = this.time.bind(this);
+    this.tick = this.tick.bind(this);
     this.lastTime = [];
+    this.tickCounter = 0;
+  }
+
+  tick(n=1){
+    if (!(this.paused)) {
+      this.tickCounter += (n * this.tickFraction)*this.relativeSpeed;
+    }
+  }
+
+  time() {
+    if (this.paused) {return this.lastTime;}
+    //convert to seconds passed, then minutes, then game minutes
+    let elapsed = (this.tickCounter /1000);
+    let newTime = [];
+    let hours = this.start[0] + Math.floor((this.start[1] + elapsed) / 60);
+    if (hours > 11 && hours < 24) {newTime[2] = "pm";}
+    else {newTime[2] = "am";}
+    hours = (hours > 12) ? hours - 12 : hours;
+    hours = (hours > 12) ? hours - 12 : hours;
+    newTime[0] = hours.toString();
+    let minutes = Math.floor((this.start[1]+elapsed) % 60);
+    if (minutes< 10) {newTime[1] = "0"+minutes;}
+    else {newTime[1] = minutes.toString();}
+    this.lastTime = newTime;
+    return newTime;
   }
 
   diff(lastTime) { //THIS CURRENTLY DOESN'T ACCOUNT FOR AM/PM
@@ -52,31 +84,11 @@ class Clock {
 
   pause() {
     this.paused = true;
-    this.pauseStartTime = Date.now();
   }
 
   unpause() {
     this.paused = false;
-    var now = Date.now();
-    this.pauseOffset += (now-this.pauseStartTime);
   }
-  time() {
-    if (this.paused) {return this.lastTime;}
-    var now = Date.now();
-    let elapsed = ((now - this.systemClockAtStart - this.pauseOffset) * this.speed / 1000)/60;
-  	let newTime = [];
-  	let hours = this.start[0] + Math.floor((this.start[1] + elapsed) / 60);
-    if (hours > 11 && hours < 24) {newTime[2] = "pm";}
-    else {newTime[2] = "am";}
-    hours = (hours > 12) ? hours - 12 : hours;
-    hours = (hours > 12) ? hours - 12 : hours;
-    newTime[0] = hours.toString();
-  	let minutes = Math.floor((this.start[1]+elapsed) % 60);
-    if (minutes< 10) {newTime[1] = "0"+minutes;}
-    else {newTime[1] = minutes.toString();}
-    this.lastTime = newTime;
-  	return newTime;
-}
 
 }//end class
 

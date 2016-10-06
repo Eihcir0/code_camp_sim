@@ -16,7 +16,7 @@ class PairsSeshResults extends React.Component {
       this.props.player.message = "You're done for the day!  Keep working or leave whenever you want!";
       this.props.player.currentPos = 0;
       this.props.player.session = 4;
-      this.props.player.clock = new Clock ([18,1],180);
+      this.props.player.clock = new Clock ([18,1],3);
 
     }
 

@@ -23,7 +23,7 @@ class StrikeScreen extends React.Component {
       if (this.strike.newClockSpeed) {
         newClockSpeed = this.strike.newClockSpeed;
       } else {
-        newClockSpeed = 360;
+        newClockSpeed = 6;
       }
       this.props.player.clock = new Clock (this.strike.newTime, newClockSpeed);
       if (this.strike.newPos) {

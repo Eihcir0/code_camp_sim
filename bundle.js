@@ -21458,31 +21458,31 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _week = __webpack_require__(178);
+	var _week = __webpack_require__(182);
 	
 	var _week2 = _interopRequireDefault(_week);
 	
-	var _player_anim = __webpack_require__(192);
+	var _player_anim = __webpack_require__(196);
 	
 	var _player_anim2 = _interopRequireDefault(_player_anim);
 	
-	var _open_sesh_screen = __webpack_require__(193);
+	var _open_sesh_screen = __webpack_require__(197);
 	
 	var _open_sesh_screen2 = _interopRequireDefault(_open_sesh_screen);
 	
-	var _lecture_sesh_screen = __webpack_require__(197);
+	var _lecture_sesh_screen = __webpack_require__(200);
 	
 	var _lecture_sesh_screen2 = _interopRequireDefault(_lecture_sesh_screen);
 	
-	var _pairs_sesh_screen = __webpack_require__(199);
+	var _pairs_sesh_screen = __webpack_require__(202);
 	
 	var _pairs_sesh_screen2 = _interopRequireDefault(_pairs_sesh_screen);
 	
-	var _strike_screen = __webpack_require__(205);
+	var _strike_screen = __webpack_require__(208);
 	
 	var _strike_screen2 = _interopRequireDefault(_strike_screen);
 	
-	var _congrats_screen = __webpack_require__(206);
+	var _congrats_screen = __webpack_require__(209);
 	
 	var _congrats_screen2 = _interopRequireDefault(_congrats_screen);
 	
@@ -21509,36 +21509,40 @@
 	    var _this = _possibleConstructorReturn(this, (GameMain.__proto__ || Object.getPrototypeOf(GameMain)).call(this));
 	
 	    _this.player = new _player2.default("Guest");
+	    _this.clock = _this.player.clock;
 	    _this.playerAnim = new _player_anim2.default({ player: _this.player });
 	    _this.week = new _week2.default(_this.player);
 	    _this.state = {
 	      currentFace: "happy1",
 	      currentPos: -1,
 	      message: _this.player.defaultMessage,
-	      clock: _this.player.clock.time(),
+	      clock: _this.clock.time(),
 	      ruby: _this.player.skills.Ruby,
 	      focus: _this.player.focus
 	    };
-	    _this.ticker = 0;
+	    _this.attributeTicker = 0;
 	    _this.currentFaceImage = _this.currentFaceImage.bind(_this);
 	    _this.tick = _this.tick.bind(_this);
 	    _this.updateAttributes = _this.updateAttributes.bind(_this);
-	    _this.lastTime = Date.now();
+	    _this.lastClockTickCounter = _this.clock.tickCounter;
+	    _this.ticksPerSecond = 100; //<<=If changed then change Clock class
+	    _this.intervalTime = 1000 / _this.ticksPerSecond;
 	    _this.interval = window.setInterval(function () {
 	      return _this.tick();
-	    }, 10);
+	    }, _this.intervalTime);
 	    return _this;
 	  }
 	
 	  _createClass(GameMain, [{
 	    key: 'tick',
 	    value: function tick() {
-	      var dt = Date.now() - this.lastTime;
-	      if (dt > 50) {
-	        this.lastTime = Date.now();
+	      this.clock.tick();
+	      var dt = (this.clock.tickCounter - this.lastClockTickCounter) * this.clock.relativeSpeed;
+	      if (dt > 200) {
+	        this.lastClockTickCounter = this.clock.tickCounter;
 	        this.setState({
 	          currentPos: this.player.currentPos,
-	          clock: this.player.clock.time()
+	          clock: this.clock.time()
 	        });
 	        this.updateSession();
 	        this.updateAttributes();
@@ -21556,22 +21560,22 @@
 	    key: 'updateSession',
 	    value: function updateSession() {
 	      if (this.player.session === 0 && this.player.currentPos !== 12) {
-	        if (this.player.clock.is(["9", "00", "am"])) {
+	        if (this.clock.is(["9", "00", "am"])) {
 	          this.player.newStrike = { message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9, 1], newPos: this.player.currentPos };
-	        } else if (this.player.clock.is(["9", "30", "am"])) {
+	        } else if (this.clock.is(["9", "30", "am"])) {
 	          this.player.newStrike = { message: "You cannot enter the lecture hall after 9:30am.  You received a strike for missing morning lecture.", newTime: [9, 31], newPos: this.player.currentPos };
 	        }
 	      }
-	      if (this.player.clock.is(["12", "01", "pm"])) {
+	      if (this.clock.is(["12", "01", "pm"])) {
 	        this.player.session = 2;
 	        this.player.message = "It's lunch time. Take a lunch break but be sure to be logged in at your workstation by 1:30pm for pair programming.";
 	      }
 	
-	      if (this.player.clock.is(["1", "30", "pm"])) {
+	      if (this.clock.is(["1", "30", "pm"])) {
 	        if (this.player.currentPos !== 11) {
 	          this.player.newStrike = { message: "You received a strike for not being seated at your workstation by 1:30pm for pair programming. ", newTime: [13, 30], newClockSpeed: 720, newSession: 3, newPos: 11 };
 	        } else {
-	          this.player.clock = new _clock2.default([13, 31], 180);
+	          this.clock = new _clock2.default([13, 31], 3);
 	          this.player.session = 3;
 	        }
 	      }
@@ -21580,14 +21584,12 @@
 	    key: 'updateAttributes',
 	    value: function updateAttributes() {
 	      //REDO THIS SOON
-	      //should use a delta for decays
 	      //use helper methods for each attribute
-	      this.ticker++;
-	      if (this.ticker > 5) {
+	      this.attributeTicker++;
+	      if (this.attributeTicker > 5) {
 	        if (this.player.currentPos === 11 && this.player.session !== 3) {
-	          this.player.focus--;
+	          this.player.focus -= 0.55;
 	        } else if (this.player.currentPos !== 12 && this.player.session !== 3) {
-	          this.player.focus++;
 	          this.player.focus++;
 	          this.player.focus++;
 	        }
@@ -21598,7 +21600,7 @@
 	          this.player.focus = 0;
 	        }
 	
-	        this.ticker = 0;
+	        this.attributeTicker = 0;
 	      }
 	    }
 	  }, {
@@ -21634,10 +21636,10 @@
 	    value: function sesh() {
 	      // change this to a switch
 	      if (this.player.newStrike) {
-	        this.player.clock.pause();
+	        this.clock.pause();
 	        return _react2.default.createElement(_strike_screen2.default, { player: this.player });
 	      } else if (this.player.newCongrats) {
-	        this.player.clock.pause();
+	        this.clock.pause();
 	        return _react2.default.createElement(_congrats_screen2.default, { player: this.player });
 	      } else if (this.player.session == 3) {
 	        return _react2.default.createElement(_pairs_sesh_screen2.default, { player: this.player });
@@ -21783,7 +21785,7 @@
 	
 	var _player2 = _interopRequireDefault(_player);
 	
-	var _week = __webpack_require__(178);
+	var _week = __webpack_require__(182);
 	
 	var _week2 = _interopRequireDefault(_week);
 	
@@ -21846,23 +21848,23 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _fire_anim = __webpack_require__(207);
+	var _fire_anim = __webpack_require__(176);
 	
 	var _fire_anim2 = _interopRequireDefault(_fire_anim);
 	
-	var _study_icon_anim = __webpack_require__(196);
+	var _study_icon_anim = __webpack_require__(178);
 	
 	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
 	
-	var _bug_anim = __webpack_require__(208);
+	var _bug_anim = __webpack_require__(179);
 	
 	var _bug_anim2 = _interopRequireDefault(_bug_anim);
 	
-	var _skill_anim = __webpack_require__(209);
+	var _skill_anim = __webpack_require__(180);
 	
 	var _skill_anim2 = _interopRequireDefault(_skill_anim);
 	
-	var _points_anim = __webpack_require__(210);
+	var _points_anim = __webpack_require__(181);
 	
 	var _points_anim2 = _interopRequireDefault(_points_anim);
 	
@@ -21875,19 +21877,19 @@
 	    _classCallCheck(this, Player);
 	
 	    this.name = name || "Richie";
-	    this.clock = obj ? obj.clock : new _clock2.default([18, 1], 180);
+	    this.clock = obj ? obj.clock : new _clock2.default([18, 45], 8);
 	    this.defaultMessage = obj ? obj.defaultMessage : "Get to lecture before 9:00am or you will get your first strike!";
 	    this.currentEmotion = obj ? obj.currentEmotion : "excited";
 	    this.info = obj ? obj.info : "";
 	    this.sleepBank = obj ? obj.sleepBank : 100;
 	    this.happiness = obj ? obj.happiness : 100;
 	    this.focus = obj ? obj.focus : 100;
-	    this.score = obj ? obj.score : 100000;
-	    this.liked = obj ? obj.liked : 50;
+	    this.score = obj ? obj.score : 0;
+	    this.liked = obj ? obj.liked : 50; //not used
 	    this.currentPos = obj ? obj.currentPos : 0;
 	    this.lastCurrentPos = obj ? obj.lastCurrentPos : -1;
 	    this.message = obj ? obj.message : "";
-	    this.lastIconTime = obj ? obj.lastIconTime : 0;
+	    this.lastIconTickerCount = obj ? obj.lastIconTickerCount : 0;
 	    this.onFire = obj ? obj.onFire : false;
 	    this.fire = undefined;
 	    this.strikes = obj ? obj.strikes : "";
@@ -21904,7 +21906,7 @@
 	    this.week = Math.floor(this.day / 7) + 1;
 	    this.weekDay = this.day % 7;
 	    this.skills = obj ? obj.skill : {
-	      Ruby: 50,
+	      Ruby: 0,
 	      Rails: 0,
 	      SQL: 0,
 	      JavaScript: 0,
@@ -21939,18 +21941,24 @@
 	  }, {
 	    key: 'workstationGo',
 	    value: function workstationGo(playerAnim) {
+	      var now = this.clock.tickCounter;
+	      //frequency driven by speed of clock:
+	      if (now - this.lastIconTickerCount < 50 / this.clock.relativeSpeed) {
+	        return false;
+	      }
+	      this.lastIconTickerCount = this.clock.tickCounter;
 	      //scoreDivisor - adjust to increase/decrease chance of something
-	      //  var now = Date.now();
-	      //  if (now-this.lastIconTime < 50) {return false;}
-	      var scoreDivisor = 50000;
-	      var gotSomething = Math.random() < (this.score + 20000) / scoreDivisor / 100 * (this.onFire ? 10 : 1); //delete *33
+	      //so scoreDivsor set to 50,000 with score is 5% chance plus offset
+	      var scoreDivisor = 10000;
+	      var scoreOffset = 100000;
+	      var gotSomething = Math.random() < (this.score + scoreOffset) / scoreDivisor / 100 * (this.onFire ? 4 : 1);
 	      if (!gotSomething) {
 	        return false;
 	      }
 	
-	      //onFire -- for now just score /1000000 * 50% (so 100k = 5%)
-	      // 50 is adjustable divisor to make it infrequent
-	      var chanceForFire = this.score / 1000000 * 0.5 * 5; //delete *0
+	      //onFire -- for now just score /1000000 * 50% (so 100k = 5%) + offset <== for testing
+	      var chanceForFireOffset = 0;
+	      var chanceForFire = this.score / 1000000 * 0.5 + chanceForFireOffset;
 	      if (this.onFire) {
 	        chanceForFire = 0;
 	      }
@@ -21996,12 +22004,13 @@
 	    key: 'newBug',
 	    value: function newBug() {
 	      this.happiness -= 1;
-	      console.log("new bug happiness -1");
+	      this.skills[this.currentSkill]++;
 	      return new _bug_anim2.default({ canvas: this.canvas, ctx: this.ctx });
 	    }
 	  }, {
 	    key: 'newSkillIncrease',
 	    value: function newSkillIncrease() {
+	      this.skills[this.currentSkill]++;
 	      this.skills[this.currentSkill]++;
 	      this.skills[this.currentSkill]++;
 	      return new _skill_anim2.default({ canvas: this.canvas, ctx: this.ctx }, { type: "skill", value: this.currentSkill });
@@ -22037,25 +22046,68 @@
 	
 	var Clock = function () {
 	  function Clock(start) {
-	    var speed = arguments.length <= 1 || arguments[1] === undefined ? 60 : arguments[1];
+	    var relativeSpeed = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
 	
 	    _classCallCheck(this, Clock);
 	
 	    this.start = [0, 0, 0];
+	    //start can be military [18,30] or [6,30,"pm"]
 	    this.start[0] = parseInt(start[0]);
 	    this.start[1] = parseInt(start[1]);
 	    if (start[2]) {
 	      this.start[0] += start[2] === "pm" ? 12 : 0;
 	    }
-	    this.systemClockAtStart = Date.now();
-	    this.speed = speed;
+	
+	    //60 => 1 real second / 1 game minute or 60 real seconds for 1 gm hr
+	    this.relativeSpeed = relativeSpeed; // 1 => 1 real sec / game minute
+	    this.speed = this.relativeSpeed * 60;
+	
+	    this.ticksPerSecond = 100; //based on Game_Main class
+	    this.tickFraction = 1000 / this.ticksPerSecond;
 	    this.paused = false;
-	    this.pauseOffset = 0;
 	    this.time = this.time.bind(this);
+	    this.tick = this.tick.bind(this);
 	    this.lastTime = [];
+	    this.tickCounter = 0;
 	  }
 	
 	  _createClass(Clock, [{
+	    key: "tick",
+	    value: function tick() {
+	      var n = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
+	
+	      if (!this.paused) {
+	        this.tickCounter += n * this.tickFraction * this.relativeSpeed;
+	      }
+	    }
+	  }, {
+	    key: "time",
+	    value: function time() {
+	      if (this.paused) {
+	        return this.lastTime;
+	      }
+	      //convert to seconds passed, then minutes, then game minutes
+	      var elapsed = this.tickCounter / 1000;
+	      var newTime = [];
+	      var hours = this.start[0] + Math.floor((this.start[1] + elapsed) / 60);
+	      if (hours > 11 && hours < 24) {
+	        newTime[2] = "pm";
+	      } else {
+	        newTime[2] = "am";
+	      }
+	      hours = hours > 12 ? hours - 12 : hours;
+	      hours = hours > 12 ? hours - 12 : hours;
+	      newTime[0] = hours.toString();
+	      var minutes = Math.floor((this.start[1] + elapsed) % 60);
+	      if (minutes < 10) {
+	        newTime[1] = "0" + minutes;
+	      } else {
+	        newTime[1] = minutes.toString();
+	      }
+	      this.lastTime = newTime;
+	      return newTime;
+	    }
+	  }, {
 	    key: "diff",
 	    value: function diff(lastTime) {
 	      //THIS CURRENTLY DOESN'T ACCOUNT FOR AM/PM
@@ -22101,41 +22153,11 @@
 	    key: "pause",
 	    value: function pause() {
 	      this.paused = true;
-	      this.pauseStartTime = Date.now();
 	    }
 	  }, {
 	    key: "unpause",
 	    value: function unpause() {
 	      this.paused = false;
-	      var now = Date.now();
-	      this.pauseOffset += now - this.pauseStartTime;
-	    }
-	  }, {
-	    key: "time",
-	    value: function time() {
-	      if (this.paused) {
-	        return this.lastTime;
-	      }
-	      var now = Date.now();
-	      var elapsed = (now - this.systemClockAtStart - this.pauseOffset) * this.speed / 1000 / 60;
-	      var newTime = [];
-	      var hours = this.start[0] + Math.floor((this.start[1] + elapsed) / 60);
-	      if (hours > 11 && hours < 24) {
-	        newTime[2] = "pm";
-	      } else {
-	        newTime[2] = "am";
-	      }
-	      hours = hours > 12 ? hours - 12 : hours;
-	      hours = hours > 12 ? hours - 12 : hours;
-	      newTime[0] = hours.toString();
-	      var minutes = Math.floor((this.start[1] + elapsed) % 60);
-	      if (minutes < 10) {
-	        newTime[1] = "0" + minutes;
-	      } else {
-	        newTime[1] = minutes.toString();
-	      }
-	      this.lastTime = newTime;
-	      return newTime;
 	    }
 	  }]);
 	
@@ -22145,7 +22167,95 @@
 	exports.default = Clock;
 
 /***/ },
-/* 176 */,
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _moveable = __webpack_require__(177);
+	
+	var _moveable2 = _interopRequireDefault(_moveable);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var FireAnim = function (_Moveable) {
+	  _inherits(FireAnim, _Moveable);
+	
+	  function FireAnim(player) {
+	    _classCallCheck(this, FireAnim);
+	
+	    var _this = _possibleConstructorReturn(this, (FireAnim.__proto__ || Object.getPrototypeOf(FireAnim)).call(this, { ctx: player.ctx, canvas: player.canvas }));
+	
+	    _this.player = player;
+	    _this.type = "fire";
+	    _this.width = 93;
+	    _this.height = 200;
+	    _this.pos = [290, 210];
+	
+	    _this.animationOn = true;
+	    _this.movementOn = false;
+	    _this.animSet = 0; // ??
+	    _this.spriteYoffset = 0; // ??
+	    _this.spriteXoffset = 0; // ??
+	    _this.animFrame = 0; // ??
+	    _this.animNumFrames = 9; // ??
+	    _this.animDelay = 50; // ??
+	    _this.animTimer = 0; // ??
+	    _this.imageReady = false;
+	    _this.image = new Image();
+	    _this.image.src = "./app/assets/images/fire.png";
+	    _this.sound = new Audio("./app/assets/sounds/hes_on_fire.wav");
+	    _this.sound.play();
+	    _this.moves = 0;
+	    _this.times = 0;
+	
+	    return _this;
+	  }
+	
+	  _createClass(FireAnim, [{
+	    key: "updateAnim",
+	    value: function updateAnim(elapsed) {
+	      this.animTimer += elapsed;
+	      if (this.animTimer > this.animDelay) {
+	        this.animTimer = 0;
+	        this.animFrame++;
+	        if (this.times % 3 === 0 && this.animFrame === this.animNumFrames) {
+	          this.player.fireSound = new Audio("./app/assets/sounds/fire.wav");
+	          this.player.fireSound.play();
+	        }
+	        if (this.animFrame > this.animNumFrames) {
+	          this.animFrame = 0;
+	          this.times++;
+	        }
+	      }
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      // this.ctx.fillStyle = "rgb(51, 118, 36)";
+	      // this.ctx.fillRect(300,300,50,50);
+	      this.ctx.drawImage(this.image, this.currentSprite(), 0, this.width, this.height, this.pos[0], this.pos[1], this.width, this.height);
+	    }
+	  }]);
+	
+	  return FireAnim;
+	}(_moveable2.default); //end class
+	
+	exports.default = FireAnim;
+
+/***/ },
 /* 177 */
 /***/ function(module, exports) {
 
@@ -22239,9 +22349,389 @@
 	  value: true
 	});
 	
+	var _moveable = __webpack_require__(177);
+	
+	var _moveable2 = _interopRequireDefault(_moveable);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var StudyIcon = function (_Moveable) {
+	  _inherits(StudyIcon, _Moveable);
+	
+	  function StudyIcon(obj1, obj2) {
+	    _classCallCheck(this, StudyIcon);
+	
+	    var _this = _possibleConstructorReturn(this, (StudyIcon.__proto__ || Object.getPrototypeOf(StudyIcon)).call(this, obj1)); //obj1 = canvas/ctx, obj2 = iconType, value
+	
+	
+	    _this.type = "study icon";
+	
+	    return _this;
+	  }
+	
+	  return StudyIcon;
+	}(_moveable2.default); //end class
+	
+	exports.default = StudyIcon;
+
+/***/ },
+/* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _day = __webpack_require__(179);
+	var _moveable = __webpack_require__(177);
+	
+	var _moveable2 = _interopRequireDefault(_moveable);
+	
+	var _study_icon_anim = __webpack_require__(178);
+	
+	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var BugAnim = function (_StudyIcon) {
+	  _inherits(BugAnim, _StudyIcon);
+	
+	  function BugAnim(obj1, obj2) {
+	    _classCallCheck(this, BugAnim);
+	
+	    var _this = _possibleConstructorReturn(this, (BugAnim.__proto__ || Object.getPrototypeOf(BugAnim)).call(this, obj1)); //obj1 = canvas/ctx, obj2 = iconType, value
+	
+	
+	    _this.iconType = "bug";
+	    _this.value = "bug";
+	
+	    _this.pos = [300, 325];
+	    _this.animationOn = true;
+	    _this.movementOn = false;
+	    _this.height = 30;
+	    _this.width = 30;
+	    _this.animSet = 0; // ??
+	    _this.spriteYoffset = 0; // ??
+	    _this.animFrame = 0; // ??
+	    _this.animNumFrames = 2; // ??
+	    _this.animDelay = 20; // ??
+	    _this.animTimer = 0; // ??
+	    _this.imageReady = false;
+	    _this.image = new Image();
+	    _this.image.src = "./app/assets/images/bug.png";
+	    _this.sound = new Audio("./app/assets/sounds/bug_sound.wav");
+	    _this.sound.playbackRate = 0.75 + Math.random() / 2;
+	    _this.sound.play();
+	    _this.moves = 0;
+	    _this.sunset = Math.floor(Math.random() * 2) - 0.5 > 0 ? -1 : 1;
+	    _this.done = false;
+	
+	    return _this;
+	  }
+	
+	  _createClass(BugAnim, [{
+	    key: 'updateAnim',
+	    value: function updateAnim(elapsed) {
+	      this.animTimer += elapsed;
+	      if (this.animTimer >= this.animDelay) {
+	        this.animTimer = 0;
+	        ++this.animFrame;
+	        this.pos[1]++;
+	        if (this.animFrame > 45) {
+	          this.pos[0] += -this.sunset;
+	          this.pos[0] += -this.sunset;
+	        } else if (this.animFrame > 37) {
+	          this.pos[0] += this.sunset;
+	          this.pos[0] += this.sunset;
+	        } else if (this.animFrame > 25) {
+	          this.pos[0] += -this.sunset;
+	          this.pos[0] += -this.sunset;
+	        } else {
+	          this.pos[0] += this.sunset;
+	          this.pos[0] += this.sunset;
+	        }
+	        if (this.animFrame > 50) {
+	          this.done = true;
+	        }
+	      } //end animTime>animDelay
+	    } //end function
+	
+	
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      // this.ctx.fillStyle = "rgb(51, 118, 36)";
+	      // this.ctx.fillRect(300,300,50,50);
+	      this.ctx.drawImage(this.image, 0 + this.animFrame % 2 * this.width, 0, this.width, this.height, this.pos[0], this.pos[1], 60, 60);
+	    }
+	  }]);
+	
+	  return BugAnim;
+	}(_study_icon_anim2.default); //end class
+	
+	exports.default = BugAnim;
+
+/***/ },
+/* 180 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _moveable = __webpack_require__(177);
+	
+	var _moveable2 = _interopRequireDefault(_moveable);
+	
+	var _study_icon_anim = __webpack_require__(178);
+	
+	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var SkillAnim = function (_StudyIcon) {
+	  _inherits(SkillAnim, _StudyIcon);
+	
+	  function SkillAnim(obj1, obj2) {
+	    _classCallCheck(this, SkillAnim);
+	
+	    var _this = _possibleConstructorReturn(this, (SkillAnim.__proto__ || Object.getPrototypeOf(SkillAnim)).call(this, obj1)); //obj1 = canvas/ctx, obj2 = iconType, value
+	
+	
+	    _this.iconType = obj2.type;
+	    _this.value = obj2.value;
+	    _this.pos = [325, 310];
+	    _this.animationOn = true;
+	    _this.movementOn = false;
+	    _this.animSettings();
+	    _this.imageReady = false;
+	    _this.image = new Image();
+	    _this.image.src = _this.getImage();
+	    _this.sound = new Audio("./app/assets/sounds/icon.wav");
+	    _this.sound.play();
+	    _this.moves = 0;
+	    _this.sunset = Math.floor(Math.random() * 2) - 0.5 > 0 ? -1 : 1;
+	    _this.done = false;
+	
+	    _this.getImage = _this.getImage.bind(_this);
+	    _this.animSettings = _this.animSettings.bind(_this);
+	    _this.updateAnim = _this.updateAnim.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(SkillAnim, [{
+	    key: 'animSettings',
+	    value: function animSettings() {
+	      switch (this.value) {
+	        case "Ruby":
+	          this.width = 959;
+	          this.height = 833;
+	          this.animSet = 0; // ??
+	          this.spriteYoffset = 0; // ??
+	          this.animFrame = 0; // ??
+	          this.animNumFrames = 1; // ??
+	          this.animDelay = 20; // ??
+	          this.animTimer = 0; // ??
+	          break;
+	        default:
+	          break;
+	      }
+	    }
+	  }, {
+	    key: 'getImage',
+	    value: function getImage() {
+	      switch (this.value) {
+	        case "Ruby":
+	          return "./app/assets/images/ruby.png";
+	        default:
+	          return undefined;
+	
+	      }
+	    }
+	  }, {
+	    key: 'updateAnim',
+	    value: function updateAnim(elapsed) {
+	      this.animTimer += elapsed;
+	      if (this.animTimer >= this.animDelay) {
+	        this.animTimer = 0;
+	        ++this.animFrame;
+	        this.pos[1]--;
+	        if (this.animFrame > 65) {
+	          this.pos[0] += this.sunset;
+	        } else if (this.animFrame > 45) {
+	          this.pos[0] += this.sunset * -1;
+	        } else if (this.animFrame > 25) {
+	          this.pos[0] += this.sunset;
+	        } else if (this.animFrame > 15) {
+	          this.pos[0] += this.sunset * -1;
+	        } else if (this.animFrame > 5) {
+	          this.pos[0] += this.sunset;
+	        }
+	        if (this.animFrame > 120) {
+	          this.done = true;
+	        }
+	      } //end animTime>animDelay
+	    } //end function
+	
+	
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      this.ctx.drawImage(this.image, 0, 0, this.width, this.height, this.pos[0], this.pos[1], 20, 16);
+	    }
+	  }]);
+	
+	  return SkillAnim;
+	}(_study_icon_anim2.default); //end class
+	
+	exports.default = SkillAnim;
+
+/***/ },
+/* 181 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _moveable = __webpack_require__(177);
+	
+	var _moveable2 = _interopRequireDefault(_moveable);
+	
+	var _study_icon_anim = __webpack_require__(178);
+	
+	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var PointsAnim = function (_StudyIcon) {
+	  _inherits(PointsAnim, _StudyIcon);
+	
+	  function PointsAnim(obj1, obj2) {
+	    _classCallCheck(this, PointsAnim);
+	
+	    var _this = _possibleConstructorReturn(this, (PointsAnim.__proto__ || Object.getPrototypeOf(PointsAnim)).call(this, obj1)); //obj1 = canvas/ctx, obj2 = iconType, value
+	
+	
+	    _this.iconType = obj2.type;
+	    _this.value = obj2.value;
+	    _this.numValue = _this.value + 1 - 1;
+	    _this.value = _this.value === 1000 ? "+1,000" : '+' + _this.value;
+	    _this.pos = [325, 310];
+	    _this.animationOn = true;
+	    _this.animTimer = 0;
+	    _this.animFrame = 0;
+	    _this.animDelay = 20;
+	    _this.movementOn = false;
+	    _this.sound = _this.numValue === 1000 ? new Audio("./app/assets/sounds/woohoo.wav") : new Audio("./app/assets/sounds/icon.wav");
+	    _this.sound.play();
+	    _this.sunset = Math.floor(Math.random() * 2) - 0.5 > 0 ? -1 : 1;
+	    _this.done = false;
+	    _this.updateAnim = _this.updateAnim.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(PointsAnim, [{
+	    key: 'updateAnim',
+	    value: function updateAnim(elapsed) {
+	      this.animTimer += elapsed;
+	      if (this.animTimer >= this.animDelay) {
+	        this.animTimer = 0;
+	        ++this.animFrame;
+	        this.pos[1]--;
+	        if (this.animFrame > 65) {
+	          this.pos[0] += this.sunset;
+	        } else if (this.animFrame > 45) {
+	          this.pos[0] += this.sunset * -1;
+	        } else if (this.animFrame > 25) {
+	          this.pos[0] += this.sunset;
+	        } else if (this.animFrame > 15) {
+	          this.pos[0] += this.sunset * -1;
+	        } else if (this.animFrame > 5) {
+	          this.pos[0] += this.sunset;
+	        }
+	        if (this.animFrame > 90 && this.numValue < 1000) {
+	          this.done = true;
+	        }
+	        if (this.animFrame > 150 && this.numValue === 1000) {
+	          this.done = true;
+	        }
+	      } //end animTime>animDelay
+	    } //end function
+	
+	
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      if (this.numValue < 1000) {
+	        this.ctx.font = "24px serif";
+	        this.ctx.fillStyle = "white";
+	        if (this.numValue > 500) {
+	          this.ctx.font = "36px serif";
+	          this.ctx.fillStyle = "lightgreen";
+	        }
+	        this.ctx.fillText(this.value, this.pos[0], this.pos[1]);
+	      } else {
+	        this.ctx.font = "48px serif";
+	        this.ctx.strokeStyle = "lightgreen";
+	        this.ctx.strokeText(this.value, this.pos[0], this.pos[1]);
+	      }
+	    }
+	  }]);
+	
+	  return PointsAnim;
+	}(_study_icon_anim2.default); //end class
+	
+	exports.default = PointsAnim;
+
+/***/ },
+/* 182 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _day = __webpack_require__(183);
 	
 	var _day2 = _interopRequireDefault(_day);
 	
@@ -22305,7 +22795,7 @@
 	exports.default = Week;
 
 /***/ },
-/* 179 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22316,35 +22806,35 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _morning = __webpack_require__(180);
+	var _morning = __webpack_require__(184);
 	
 	var _morning2 = _interopRequireDefault(_morning);
 	
-	var _lecture = __webpack_require__(182);
+	var _lecture = __webpack_require__(186);
 	
 	var _lecture2 = _interopRequireDefault(_lecture);
 	
-	var _assessment = __webpack_require__(184);
+	var _assessment = __webpack_require__(188);
 	
 	var _assessment2 = _interopRequireDefault(_assessment);
 	
-	var _lunch = __webpack_require__(185);
+	var _lunch = __webpack_require__(189);
 	
 	var _lunch2 = _interopRequireDefault(_lunch);
 	
-	var _solo_project = __webpack_require__(187);
+	var _solo_project = __webpack_require__(191);
 	
 	var _solo_project2 = _interopRequireDefault(_solo_project);
 	
-	var _pairs_programming = __webpack_require__(189);
+	var _pairs_programming = __webpack_require__(193);
 	
 	var _pairs_programming2 = _interopRequireDefault(_pairs_programming);
 	
-	var _evening = __webpack_require__(190);
+	var _evening = __webpack_require__(194);
 	
 	var _evening2 = _interopRequireDefault(_evening);
 	
-	var _night_time = __webpack_require__(191);
+	var _night_time = __webpack_require__(195);
 	
 	var _night_time2 = _interopRequireDefault(_night_time);
 	
@@ -22423,7 +22913,7 @@
 	exports.default = Day;
 
 /***/ },
-/* 180 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22432,7 +22922,7 @@
 	  value: true
 	});
 	
-	var _session = __webpack_require__(181);
+	var _session = __webpack_require__(185);
 	
 	var _session2 = _interopRequireDefault(_session);
 	
@@ -22459,7 +22949,7 @@
 	exports.default = Morning;
 
 /***/ },
-/* 181 */
+/* 185 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22518,7 +23008,7 @@
 	exports.default = Session;
 
 /***/ },
-/* 182 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22527,7 +23017,7 @@
 	  value: true
 	});
 	
-	var _mid_morning = __webpack_require__(183);
+	var _mid_morning = __webpack_require__(187);
 	
 	var _mid_morning2 = _interopRequireDefault(_mid_morning);
 	
@@ -22554,7 +23044,7 @@
 	exports.default = Lecture;
 
 /***/ },
-/* 183 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22563,7 +23053,7 @@
 	  value: true
 	});
 	
-	var _session = __webpack_require__(181);
+	var _session = __webpack_require__(185);
 	
 	var _session2 = _interopRequireDefault(_session);
 	
@@ -22590,7 +23080,7 @@
 	exports.default = MidMorning;
 
 /***/ },
-/* 184 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22599,7 +23089,7 @@
 	  value: true
 	});
 	
-	var _mid_morning = __webpack_require__(183);
+	var _mid_morning = __webpack_require__(187);
 	
 	var _mid_morning2 = _interopRequireDefault(_mid_morning);
 	
@@ -22626,7 +23116,7 @@
 	exports.default = Assessment;
 
 /***/ },
-/* 185 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22635,7 +23125,7 @@
 	  value: true
 	});
 	
-	var _open_session = __webpack_require__(186);
+	var _open_session = __webpack_require__(190);
 	
 	var _open_session2 = _interopRequireDefault(_open_session);
 	
@@ -22662,7 +23152,7 @@
 	exports.default = Lunch;
 
 /***/ },
-/* 186 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22671,7 +23161,7 @@
 	  value: true
 	});
 	
-	var _session = __webpack_require__(181);
+	var _session = __webpack_require__(185);
 	
 	var _session2 = _interopRequireDefault(_session);
 	
@@ -22700,7 +23190,7 @@
 	exports.default = OpenSession;
 
 /***/ },
-/* 187 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22709,7 +23199,7 @@
 	  value: true
 	});
 	
-	var _afternoon = __webpack_require__(188);
+	var _afternoon = __webpack_require__(192);
 	
 	var _afternoon2 = _interopRequireDefault(_afternoon);
 	
@@ -22736,7 +23226,7 @@
 	exports.default = SoloProject;
 
 /***/ },
-/* 188 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22745,7 +23235,7 @@
 	  value: true
 	});
 	
-	var _session = __webpack_require__(181);
+	var _session = __webpack_require__(185);
 	
 	var _session2 = _interopRequireDefault(_session);
 	
@@ -22772,7 +23262,7 @@
 	exports.default = Afternoon;
 
 /***/ },
-/* 189 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22781,7 +23271,7 @@
 	  value: true
 	});
 	
-	var _afternoon = __webpack_require__(188);
+	var _afternoon = __webpack_require__(192);
 	
 	var _afternoon2 = _interopRequireDefault(_afternoon);
 	
@@ -22808,7 +23298,7 @@
 	exports.default = PairsProgramming;
 
 /***/ },
-/* 190 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22817,7 +23307,7 @@
 	  value: true
 	});
 	
-	var _open_session = __webpack_require__(186);
+	var _open_session = __webpack_require__(190);
 	
 	var _open_session2 = _interopRequireDefault(_open_session);
 	
@@ -22844,7 +23334,7 @@
 	exports.default = Evening;
 
 /***/ },
-/* 191 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22853,7 +23343,7 @@
 	  value: true
 	});
 	
-	var _session = __webpack_require__(181);
+	var _session = __webpack_require__(185);
 	
 	var _session2 = _interopRequireDefault(_session);
 	
@@ -22880,7 +23370,7 @@
 	exports.default = NightTime;
 
 /***/ },
-/* 192 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23064,7 +23554,7 @@
 	exports.default = PlayerAnim;
 
 /***/ },
-/* 193 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23079,19 +23569,19 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _secretary = __webpack_require__(194);
+	var _secretary = __webpack_require__(198);
 	
 	var _secretary2 = _interopRequireDefault(_secretary);
 	
-	var _desk = __webpack_require__(195);
+	var _desk = __webpack_require__(199);
 	
 	var _desk2 = _interopRequireDefault(_desk);
 	
-	var _study_icon_anim = __webpack_require__(196);
+	var _study_icon_anim = __webpack_require__(178);
 	
 	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
 	
-	var _fire_anim = __webpack_require__(207);
+	var _fire_anim = __webpack_require__(176);
 	
 	var _fire_anim2 = _interopRequireDefault(_fire_anim);
 	
@@ -23127,7 +23617,7 @@
 	    _this.background = new Image();
 	    _this.background.src = './app/assets/images/newfloor.png';
 	    _this.sprites = [];
-	    _this.lastTime = Date.now();
+	    _this.lastTickerCount = _this.player.clock.tickCounter;
 	    _this.updateCount = 0;
 	    _this.state = {
 	      // lastTime: Date.now()
@@ -23173,9 +23663,8 @@
 	  }, {
 	    key: 'main',
 	    value: function main() {
-	      var dt = Date.now() - this.lastTime;
-	      this.lastTime = Date.now();
-	
+	      var dt = this.player.clock.tickCounter - this.lastTickerCount;
+	      this.lastTickerCount = this.player.clock.tickCounter;
 	      this.ctx.drawImage(this.background, -28, 0);
 	      this.update(dt);
 	      this.renderSprites();
@@ -23183,7 +23672,7 @@
 	      if ([0, 2, 4].includes(this.player.session)) {
 	        this.openSeshAnimationFrame = window.requestAnimationFrame(this.main);
 	      } else {
-	        this.cancelAnimationFrame();
+	        this.cancelAnimationFrame(this.openSeshAnimationFrame);debugger;
 	      }
 	    }
 	  }, {
@@ -23264,6 +23753,7 @@
 	          // animation walking to lecture
 	          if (this.player.clock.isBetween([8, 30], [9, 30])) {
 	            this.player.message = "";
+	            this.player.session = 1;
 	            this.player.defaultMessage = "";
 	            this.player.currentPos = 12;
 	          } else {
@@ -23279,8 +23769,13 @@
 	  }, {
 	    key: 'update',
 	    value: function update(dt) {
+	      var _this4 = this;
+	
 	      if (this.player.focus <= 0) {
 	        this.player.message = "You can't focus any longer.  Take a break.";
+	        window.setTimeout(function () {
+	          return _this4.player.message = "";
+	        }, 2000);
 	        this.handleGetOffComputer();
 	      }
 	      this.updateCount += dt;
@@ -23314,20 +23809,20 @@
 	  }, {
 	    key: 'renderSprites',
 	    value: function renderSprites() {
-	      var _this4 = this;
+	      var _this5 = this;
 	
 	      ////draw furniture first then fire, then study icons then hero
 	      this.sprites.forEach(function (sprite) {
 	        if (sprite.type !== "study icon") {
-	          _this4.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
+	          _this5.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
 	        }
-	        if (_this4.player.onFire) {
-	          _this4.player.fire.render();
+	        if (_this5.player.onFire) {
+	          _this5.player.fire.render();
 	        }
 	        if (sprite.type === "study icon") {
 	          sprite.render();
 	        }
-	        _this4.playerAnim.render(); // render player
+	        _this5.playerAnim.render(); // render player
 	      });
 	    }
 	  }, {
@@ -23365,7 +23860,7 @@
 	exports.default = OpenSesh;
 
 /***/ },
-/* 194 */
+/* 198 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -23403,7 +23898,7 @@
 	exports.default = Secretary;
 
 /***/ },
-/* 195 */
+/* 199 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -23449,48 +23944,7 @@
 	exports.default = Desk;
 
 /***/ },
-/* 196 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _moveable = __webpack_require__(177);
-	
-	var _moveable2 = _interopRequireDefault(_moveable);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var StudyIcon = function (_Moveable) {
-	  _inherits(StudyIcon, _Moveable);
-	
-	  function StudyIcon(obj1, obj2) {
-	    _classCallCheck(this, StudyIcon);
-	
-	    var _this = _possibleConstructorReturn(this, (StudyIcon.__proto__ || Object.getPrototypeOf(StudyIcon)).call(this, obj1)); //obj1 = canvas/ctx, obj2 = iconType, value
-	
-	
-	    _this.type = "study icon";
-	
-	    return _this;
-	  }
-	
-	  return StudyIcon;
-	}(_moveable2.default); //end class
-	
-	exports.default = StudyIcon;
-
-/***/ },
-/* 197 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23505,7 +23959,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _sleep_minigame = __webpack_require__(198);
+	var _sleep_minigame = __webpack_require__(201);
 	
 	var _sleep_minigame2 = _interopRequireDefault(_sleep_minigame);
 	
@@ -23537,7 +23991,7 @@
 	    } else {
 	      startTime = _this.props.player.clock.time();
 	    }
-	    _this.props.player.clock = new _clock2.default(startTime, 360);
+	    _this.props.player.clock = new _clock2.default(startTime, 9);
 	    _this.startingFocus = _this.props.player.focus;
 	    _this.eyesClosedTimer = 0;
 	    _this.state = {
@@ -23705,13 +24159,13 @@
 	      if (time[0] === "9") {
 	        // ADD A CLOCK FUNCTION BETWEEN()
 	        if (parseInt(time[1]) < 30) {
-	          this.props.player.clock = new _clock2.default([9, 30], 360);
+	          this.props.player.clock = new _clock2.default([9, 30], 6);
 	        } else {
-	          this.props.player.clock = new _clock2.default([10, 0], 360);
+	          this.props.player.clock = new _clock2.default([10, 0], 6);
 	        }
 	      } else if (time[0] === "10") {
 	        if (parseInt(time[1]) < 30) {
-	          this.props.player.clock = new _clock2.default([10, 30], 360);
+	          this.props.player.clock = new _clock2.default([10, 30], 6);
 	        }
 	      }
 	    }
@@ -23823,7 +24277,7 @@
 	exports.default = LectureSeshScreen;
 
 /***/ },
-/* 198 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23883,7 +24337,7 @@
 	exports.default = SleepMinigame;
 
 /***/ },
-/* 199 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23898,19 +24352,19 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _pairs_sesh_driving_screen = __webpack_require__(200);
+	var _pairs_sesh_driving_screen = __webpack_require__(203);
 	
 	var _pairs_sesh_driving_screen2 = _interopRequireDefault(_pairs_sesh_driving_screen);
 	
-	var _pairs_sesh_navigating_screen = __webpack_require__(202);
+	var _pairs_sesh_navigating_screen = __webpack_require__(205);
 	
 	var _pairs_sesh_navigating_screen2 = _interopRequireDefault(_pairs_sesh_navigating_screen);
 	
-	var _pairs_sesh_open_screen = __webpack_require__(203);
+	var _pairs_sesh_open_screen = __webpack_require__(206);
 	
 	var _pairs_sesh_open_screen2 = _interopRequireDefault(_pairs_sesh_open_screen);
 	
-	var _pairs_sesh_results = __webpack_require__(204);
+	var _pairs_sesh_results = __webpack_require__(207);
 	
 	var _pairs_sesh_results2 = _interopRequireDefault(_pairs_sesh_results);
 	
@@ -24044,7 +24498,7 @@
 	exports.default = PairsSeshScreen;
 
 /***/ },
-/* 200 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24063,7 +24517,7 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _pairs_line = __webpack_require__(201);
+	var _pairs_line = __webpack_require__(204);
 	
 	var _pairs_line2 = _interopRequireDefault(_pairs_line);
 	
@@ -24334,7 +24788,7 @@
 	exports.default = PairsSeshDrivingScreen;
 
 /***/ },
-/* 201 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24437,7 +24891,7 @@
 	exports.default = PairsLine;
 
 /***/ },
-/* 202 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24728,7 +25182,7 @@
 	exports.default = PairsSeshNavigatingScreen;
 
 /***/ },
-/* 203 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24771,7 +25225,7 @@
 	exports.default = PairsSeshOpenScreen;
 
 /***/ },
-/* 204 */
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24790,7 +25244,7 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _pairs_line = __webpack_require__(201);
+	var _pairs_line = __webpack_require__(204);
 	
 	var _pairs_line2 = _interopRequireDefault(_pairs_line);
 	
@@ -24825,7 +25279,7 @@
 	      this.props.player.message = "You're done for the day!  Keep working or leave whenever you want!";
 	      this.props.player.currentPos = 0;
 	      this.props.player.session = 4;
-	      this.props.player.clock = new _clock2.default([18, 1], 180);
+	      this.props.player.clock = new _clock2.default([18, 1], 3);
 	    }
 	  }, {
 	    key: 'render',
@@ -24864,7 +25318,7 @@
 	exports.default = PairsSeshResults;
 
 /***/ },
-/* 205 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24919,7 +25373,7 @@
 	        if (this.strike.newClockSpeed) {
 	          newClockSpeed = this.strike.newClockSpeed;
 	        } else {
-	          newClockSpeed = 360;
+	          newClockSpeed = 6;
 	        }
 	        this.props.player.clock = new _clock2.default(this.strike.newTime, newClockSpeed);
 	        if (this.strike.newPos) {
@@ -24953,7 +25407,7 @@
 	exports.default = StrikeScreen;
 
 /***/ },
-/* 206 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24980,13 +25434,13 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var StrikeScreen = function (_React$Component) {
-	  _inherits(StrikeScreen, _React$Component);
+	var CongratsScreen = function (_React$Component) {
+	  _inherits(CongratsScreen, _React$Component);
 	
-	  function StrikeScreen(props) {
-	    _classCallCheck(this, StrikeScreen);
+	  function CongratsScreen(props) {
+	    _classCallCheck(this, CongratsScreen);
 	
-	    var _this = _possibleConstructorReturn(this, (StrikeScreen.__proto__ || Object.getPrototypeOf(StrikeScreen)).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (CongratsScreen.__proto__ || Object.getPrototypeOf(CongratsScreen)).call(this, props));
 	
 	    _this.congrats = _this.props.player.newCongrats;
 	    _this.startTime = Date.now();
@@ -24994,6 +25448,7 @@
 	    _this.buzzerSound.play();
 	
 	    _this.props.player.message = _this.congrats.message;
+	    debugger;
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    // this.main = this.main.bind(this);
 	
@@ -25001,7 +25456,7 @@
 	    return _this;
 	  }
 	
-	  _createClass(StrikeScreen, [{
+	  _createClass(CongratsScreen, [{
 	    key: 'handleClick',
 	    value: function handleClick() {
 	      var newClockSpeed;
@@ -25011,7 +25466,7 @@
 	        if (this.congrats.newClockSpeed) {
 	          newClockSpeed = this.congrats.newClockSpeed;
 	        } else {
-	          newClockSpeed = 360;
+	          newClockSpeed = 6;
 	        }
 	        this.props.player.clock = new _clock2.default(this.congrats.newTime, newClockSpeed);
 	        if (!(this.congrats.newPos === undefined)) {
@@ -25034,436 +25489,11 @@
 	    }
 	  }]);
 	
-	  return StrikeScreen;
+	  return CongratsScreen;
 	}(_react2.default.Component); //end component
 	
 	
-	exports.default = StrikeScreen;
-
-/***/ },
-/* 207 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _moveable = __webpack_require__(177);
-	
-	var _moveable2 = _interopRequireDefault(_moveable);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var FireAnim = function (_Moveable) {
-	  _inherits(FireAnim, _Moveable);
-	
-	  function FireAnim(player) {
-	    _classCallCheck(this, FireAnim);
-	
-	    var _this = _possibleConstructorReturn(this, (FireAnim.__proto__ || Object.getPrototypeOf(FireAnim)).call(this, { ctx: player.ctx, canvas: player.canvas }));
-	
-	    _this.player = player;
-	    _this.type = "fire";
-	    _this.width = 93;
-	    _this.height = 200;
-	    _this.pos = [290, 210];
-	
-	    _this.animationOn = true;
-	    _this.movementOn = false;
-	    _this.animSet = 0; // ??
-	    _this.spriteYoffset = 0; // ??
-	    _this.spriteXoffset = 0; // ??
-	    _this.animFrame = 0; // ??
-	    _this.animNumFrames = 9; // ??
-	    _this.animDelay = 40; // ??
-	    _this.animTimer = 0; // ??
-	    _this.imageReady = false;
-	    _this.image = new Image();
-	    _this.image.src = "./app/assets/images/fire.png";
-	    _this.sound = new Audio("./app/assets/sounds/hes_on_fire.wav");
-	    _this.sound.play();
-	    _this.moves = 0;
-	    _this.times = 0;
-	
-	    return _this;
-	  }
-	
-	  _createClass(FireAnim, [{
-	    key: "updateAnim",
-	    value: function updateAnim(elapsed) {
-	      this.animTimer += elapsed;
-	      if (this.animTimer > this.animDelay) {
-	        this.animFrame++;
-	        if (this.times % 3 === 0 && this.animFrame === this.animNumFrames) {
-	          this.player.fireSound = new Audio("./app/assets/sounds/fire.wav");
-	          this.player.fireSound.play();
-	        }
-	        this.animTimer = 0;
-	        if (this.animFrame > this.animNumFrames) {
-	          this.animFrame = 0;
-	          this.times++;
-	        }
-	      }
-	    }
-	  }, {
-	    key: "render",
-	    value: function render() {
-	      // this.ctx.fillStyle = "rgb(51, 118, 36)";
-	      // this.ctx.fillRect(300,300,50,50);
-	      this.ctx.drawImage(this.image, this.currentSprite(), 0, this.width, this.height, this.pos[0], this.pos[1], this.width, this.height);
-	    }
-	  }]);
-	
-	  return FireAnim;
-	}(_moveable2.default); //end class
-	
-	exports.default = FireAnim;
-
-/***/ },
-/* 208 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _moveable = __webpack_require__(177);
-	
-	var _moveable2 = _interopRequireDefault(_moveable);
-	
-	var _study_icon_anim = __webpack_require__(196);
-	
-	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var BugAnim = function (_StudyIcon) {
-	  _inherits(BugAnim, _StudyIcon);
-	
-	  function BugAnim(obj1, obj2) {
-	    _classCallCheck(this, BugAnim);
-	
-	    var _this = _possibleConstructorReturn(this, (BugAnim.__proto__ || Object.getPrototypeOf(BugAnim)).call(this, obj1)); //obj1 = canvas/ctx, obj2 = iconType, value
-	
-	
-	    _this.iconType = "bug";
-	    _this.value = "bug";
-	
-	    _this.pos = [300, 325];
-	    _this.animationOn = true;
-	    _this.movementOn = false;
-	    _this.height = 30;
-	    _this.width = 30;
-	    _this.animSet = 0; // ??
-	    _this.spriteYoffset = 0; // ??
-	    _this.animFrame = 0; // ??
-	    _this.animNumFrames = 2; // ??
-	    _this.animDelay = 30; // ??
-	    _this.animTimer = 0; // ??
-	    _this.imageReady = false;
-	    _this.image = new Image();
-	    _this.image.src = "./app/assets/images/bug.png";
-	    _this.sound = new Audio("./app/assets/sounds/bug_sound.wav");
-	    _this.sound.playbackRate = 0.75 + Math.random() / 2;
-	    _this.sound.play();
-	    _this.moves = 0;
-	    _this.sunset = Math.floor(Math.random() * 2) - 0.5 > 0 ? -1 : 1;
-	    _this.done = false;
-	
-	    return _this;
-	  }
-	
-	  _createClass(BugAnim, [{
-	    key: 'updateAnim',
-	    value: function updateAnim(elapsed) {
-	      this.animTimer += elapsed;
-	      if (this.animTimer >= this.animDelay) {
-	        ++this.animFrame;
-	        this.pos[1]++;
-	        if (this.animFrame > 45) {
-	          this.pos[0] += -this.sunset;
-	          this.pos[0] += -this.sunset;
-	        } else if (this.animFrame > 37) {
-	          this.pos[0] += this.sunset;
-	          this.pos[0] += this.sunset;
-	        } else if (this.animFrame > 25) {
-	          this.pos[0] += -this.sunset;
-	          this.pos[0] += -this.sunset;
-	        } else {
-	          this.pos[0] += this.sunset;
-	          this.pos[0] += this.sunset;
-	        }
-	        if (this.animFrame > 50) {
-	          this.done = true;
-	        }
-	      } //end animTime>animDelay
-	    } //end function
-	
-	
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      // this.ctx.fillStyle = "rgb(51, 118, 36)";
-	      // this.ctx.fillRect(300,300,50,50);
-	      this.ctx.drawImage(this.image, 0 + this.animFrame % 2 * this.width, 0, this.width, this.height, this.pos[0], this.pos[1], 60, 60);
-	    }
-	  }]);
-	
-	  return BugAnim;
-	}(_study_icon_anim2.default); //end class
-	
-	exports.default = BugAnim;
-
-/***/ },
-/* 209 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _moveable = __webpack_require__(177);
-	
-	var _moveable2 = _interopRequireDefault(_moveable);
-	
-	var _study_icon_anim = __webpack_require__(196);
-	
-	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var SkillAnim = function (_StudyIcon) {
-	  _inherits(SkillAnim, _StudyIcon);
-	
-	  function SkillAnim(obj1, obj2) {
-	    _classCallCheck(this, SkillAnim);
-	
-	    var _this = _possibleConstructorReturn(this, (SkillAnim.__proto__ || Object.getPrototypeOf(SkillAnim)).call(this, obj1)); //obj1 = canvas/ctx, obj2 = iconType, value
-	
-	
-	    _this.iconType = obj2.type;
-	    _this.value = obj2.value;
-	    _this.pos = [325, 310];
-	    _this.animationOn = true;
-	    _this.movementOn = false;
-	    _this.animSettings();
-	    _this.imageReady = false;
-	    _this.image = new Image();
-	    _this.image.src = _this.getImage();
-	    _this.sound = new Audio("./app/assets/sounds/icon.wav");
-	    _this.sound.play();
-	    _this.moves = 0;
-	    _this.sunset = Math.floor(Math.random() * 2) - 0.5 > 0 ? -1 : 1;
-	    _this.done = false;
-	
-	    _this.getImage = _this.getImage.bind(_this);
-	    _this.animSettings = _this.animSettings.bind(_this);
-	    _this.updateAnim = _this.updateAnim.bind(_this);
-	    return _this;
-	  }
-	
-	  _createClass(SkillAnim, [{
-	    key: 'animSettings',
-	    value: function animSettings() {
-	      switch (this.value) {
-	        case "Ruby":
-	          this.width = 959;
-	          this.height = 833;
-	          this.animSet = 0; // ??
-	          this.spriteYoffset = 0; // ??
-	          this.animFrame = 0; // ??
-	          this.animNumFrames = 1; // ??
-	          this.animDelay = 50; // ??
-	          this.animTimer = 0; // ??
-	          break;
-	        default:
-	          break;
-	      }
-	    }
-	  }, {
-	    key: 'getImage',
-	    value: function getImage() {
-	      switch (this.value) {
-	        case "Ruby":
-	          return "./app/assets/images/ruby.png";
-	        default:
-	          return undefined;
-	
-	      }
-	    }
-	  }, {
-	    key: 'updateAnim',
-	    value: function updateAnim(elapsed) {
-	      this.animTimer += elapsed;
-	      if (this.animTimer >= this.animDelay) {
-	        ++this.animFrame;
-	        this.pos[1]--;
-	        if (this.animFrame > 65) {
-	          this.pos[0] += this.sunset;
-	        } else if (this.animFrame > 45) {
-	          this.pos[0] += this.sunset * -1;
-	        } else if (this.animFrame > 25) {
-	          this.pos[0] += this.sunset;
-	        } else if (this.animFrame > 15) {
-	          this.pos[0] += this.sunset * -1;
-	        } else if (this.animFrame > 5) {
-	          this.pos[0] += this.sunset;
-	        }
-	        if (this.animFrame > 120) {
-	          this.done = true;
-	        }
-	      } //end animTime>animDelay
-	    } //end function
-	
-	
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      this.ctx.drawImage(this.image, 0, 0, this.width, this.height, this.pos[0], this.pos[1], 20, 16);
-	    }
-	  }]);
-	
-	  return SkillAnim;
-	}(_study_icon_anim2.default); //end class
-	
-	exports.default = SkillAnim;
-
-/***/ },
-/* 210 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _moveable = __webpack_require__(177);
-	
-	var _moveable2 = _interopRequireDefault(_moveable);
-	
-	var _study_icon_anim = __webpack_require__(196);
-	
-	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var PointsAnim = function (_StudyIcon) {
-	  _inherits(PointsAnim, _StudyIcon);
-	
-	  function PointsAnim(obj1, obj2) {
-	    _classCallCheck(this, PointsAnim);
-	
-	    var _this = _possibleConstructorReturn(this, (PointsAnim.__proto__ || Object.getPrototypeOf(PointsAnim)).call(this, obj1)); //obj1 = canvas/ctx, obj2 = iconType, value
-	
-	
-	    _this.iconType = obj2.type;
-	    _this.value = obj2.value;
-	    _this.numValue = _this.value + 1 - 1;
-	    _this.value = _this.value === 1000 ? "+1,000" : '+' + _this.value;
-	    _this.pos = [325, 310];
-	    _this.animationOn = true;
-	    _this.animTimer = 0;
-	    _this.animFrame = 0;
-	    _this.animDelay = 50;
-	    _this.movementOn = false;
-	    _this.sound = _this.numValue === 1000 ? new Audio("./app/assets/sounds/woohoo.wav") : new Audio("./app/assets/sounds/icon.wav");
-	    _this.sound.play();
-	    _this.sunset = Math.floor(Math.random() * 2) - 0.5 > 0 ? -1 : 1;
-	    _this.done = false;
-	    _this.updateAnim = _this.updateAnim.bind(_this);
-	    return _this;
-	  }
-	
-	  _createClass(PointsAnim, [{
-	    key: 'updateAnim',
-	    value: function updateAnim(elapsed) {
-	      this.animTimer += elapsed;
-	      if (this.animTimer >= this.animDelay) {
-	        ++this.animFrame;
-	        this.pos[1]--;
-	        if (this.animFrame > 65) {
-	          this.pos[0] += this.sunset;
-	        } else if (this.animFrame > 45) {
-	          this.pos[0] += this.sunset * -1;
-	        } else if (this.animFrame > 25) {
-	          this.pos[0] += this.sunset;
-	        } else if (this.animFrame > 15) {
-	          this.pos[0] += this.sunset * -1;
-	        } else if (this.animFrame > 5) {
-	          this.pos[0] += this.sunset;
-	        }
-	        if (this.animFrame > 90 && this.numValue < 1000) {
-	          this.done = true;
-	        }
-	        if (this.animFrame > 150 && this.numValue === 1000) {
-	          this.done = true;
-	        }
-	      } //end animTime>animDelay
-	    } //end function
-	
-	
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      if (this.numValue < 1000) {
-	        this.ctx.font = "24px serif";
-	        this.ctx.fillStyle = "white";
-	        if (this.numValue > 500) {
-	          this.ctx.font = "36px serif";
-	          this.ctx.fillStyle = "lightgreen";
-	        }
-	        this.ctx.fillText(this.value, this.pos[0], this.pos[1]);
-	      } else {
-	        this.ctx.font = "48px serif";
-	        this.ctx.strokeStyle = "lightgreen";
-	        this.ctx.strokeText(this.value, this.pos[0], this.pos[1]);
-	      }
-	    }
-	  }]);
-	
-	  return PointsAnim;
-	}(_study_icon_anim2.default); //end class
-	
-	exports.default = PointsAnim;
+	exports.default = CongratsScreen;
 
 /***/ }
 /******/ ]);

@@ -12,7 +12,7 @@ class PointsAnim extends StudyIcon {
     this.animationOn = true;
     this.animTimer = 0;
     this.animFrame = 0;
-    this.animDelay = 50;
+    this.animDelay = 20;
     this.movementOn = false;
     this.sound = this.numValue === 1000 ?
     new Audio("./app/assets/sounds/woohoo.wav") :
@@ -26,6 +26,7 @@ class PointsAnim extends StudyIcon {
     updateAnim(elapsed) {
       this.animTimer += elapsed;
       if (this.animTimer >= this.animDelay) {
+        this.animTimer = 0;
         ++this.animFrame;
         this.pos[1]--;
         if (this.animFrame>65) {

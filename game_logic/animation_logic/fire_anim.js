@@ -16,7 +16,7 @@ class FireAnim extends Moveable {
     this.spriteXoffset = 0; // ??
     this.animFrame = 0; // ??
     this.animNumFrames = 9; // ??
-    this.animDelay = 40; // ??
+    this.animDelay = 50; // ??
     this.animTimer = 0; // ??
     this.imageReady = false;
     this.image = new Image();
@@ -33,11 +33,11 @@ class FireAnim extends Moveable {
   updateAnim(elapsed) {
       this.animTimer += elapsed;
       if (this.animTimer > this.animDelay) {
+        this.animTimer = 0;
         this.animFrame++;
         if (this.times %3 ===0 && this.animFrame === this.animNumFrames) {
           this.player.fireSound=new Audio("./app/assets/sounds/fire.wav");
           this.player.fireSound.play();}
-        this.animTimer = 0;
         if (this.animFrame > this.animNumFrames) {
           this.animFrame = 0;
           this.times++;

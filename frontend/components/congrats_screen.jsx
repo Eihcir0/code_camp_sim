@@ -1,7 +1,7 @@
 import React from 'react';
 import Clock from './../../game_logic/clock.js';
 
-class StrikeScreen extends React.Component {
+class CongratsScreen extends React.Component {
   constructor (props) {
     super(props);
     this.congrats = this.props.player.newCongrats;
@@ -11,6 +11,7 @@ class StrikeScreen extends React.Component {
 
     this.props.player.message =
     this.congrats.message;
+    debugger;
     this.handleClick = this.handleClick.bind(this);
     // this.main = this.main.bind(this);
 
@@ -24,7 +25,7 @@ class StrikeScreen extends React.Component {
       if (this.congrats.newClockSpeed) {
         newClockSpeed = this.congrats.newClockSpeed;
       } else {
-        newClockSpeed = 360;
+        newClockSpeed = 6;
       }
       this.props.player.clock = new Clock (this.congrats.newTime, newClockSpeed);
       if (!(this.congrats.newPos===undefined)) {
@@ -47,4 +48,4 @@ class StrikeScreen extends React.Component {
 }//end component
 
 
-export default StrikeScreen;
+export default CongratsScreen;

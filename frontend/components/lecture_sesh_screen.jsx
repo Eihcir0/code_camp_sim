@@ -13,7 +13,7 @@ class LectureSeshScreen extends React.Component {
     } else {
       startTime = this.props.player.clock.time();
     }
-    this.props.player.clock = new Clock(startTime,360);
+    this.props.player.clock = new Clock(startTime,9);
     this.startingFocus = this.props.player.focus;
     this.eyesClosedTimer = 0;
     this.state= {
@@ -162,13 +162,13 @@ class LectureSeshScreen extends React.Component {
     var time = this.props.player.clock.time();
     if (time[0]==="9") { // ADD A CLOCK FUNCTION BETWEEN()
       if (parseInt(time[1])<30) {
-        this.props.player.clock = new Clock([9,30],360);
+        this.props.player.clock = new Clock([9,30],6);
     } else {
-      this.props.player.clock = new Clock([10,0],360);
+      this.props.player.clock = new Clock([10,0],6);
       }
     } else if (time[0]==="10") {
       if (parseInt(time[1])<30) {
-        this.props.player.clock = new Clock([10,30],360);
+        this.props.player.clock = new Clock([10,30],6);
       }
     }
   }
