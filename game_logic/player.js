@@ -1,12 +1,22 @@
 import Clock from './clock.js';
-import Fire from
- './animation_logic/fire.js';
+import FireAnim from
+ './animation_logic/fire_anim.js';
+ import StudyIconAnim from
+  './animation_logic/study_icon_anim.js';
+ import BugAnim from
+  './animation_logic/bug_anim.js';
+ import SkillAnim from
+  './animation_logic/skill_anim.js';
+ import PointsAnim from
+  './animation_logic/points_anim.js';
 
 class Player {
   constructor(name, obj) {
     this.name = name || "Richie";
     this.clock = obj ? obj.clock : new Clock([18,1],180);
-    this.defaultMessage = obj ? obj.defaultMessage : "Get to lecture before 9:00am or you will get your first strike!";
+    this.defaultMessage =
+      obj ? obj.defaultMessage
+      : "Get to lecture before 9:00am or you will get your first strike!";
     this.currentEmotion = obj ? obj.currentEmotion : "excited";
     this.info = obj ? obj.info : "";
     this.sleepBank = obj ? obj.sleepBank : 100;
@@ -17,8 +27,9 @@ class Player {
     this.currentPos = obj ? obj.currentPos : 0;
     this.lastCurrentPos = obj ? obj.lastCurrentPos : -1;
     this.message = obj ? obj.message : "";
-    this.lastIconTime = obj ? obj.lastIcontTime : 0;
+    this.lastIconTime = obj ? obj.lastIconTime : 0;
     this.onFire = obj ? obj.onFire : false;
+    this.fire = undefined;
     this.strikes = obj ? obj.strikes : "";
     this.session = obj ? obj.session : 0; //
     this.pos = obj ? obj.pos : [280,300];
@@ -33,7 +44,7 @@ class Player {
     this.week = Math.floor(this.day / 7) + 1;
     this.weekDay = this.day % 7;
     this.skills = obj ? obj.skill : {
-      Ruby: 0,
+      Ruby: 50,
       Rails: 0,
       SQL: 0,
       JavaScript: 0,
@@ -41,6 +52,8 @@ class Player {
       Redux: 0
     };
     this.currentSkill = Object.keys(this.skills)[this.week - 1];
+    this.fireOff = this.fireOff.bind(this);
+    this.newOnFire = this.newOnFire.bind(this);
 
   } // end constructor
 
@@ -58,23 +71,31 @@ class Player {
 
   workstationGo(playerAnim) {
      //scoreDivisor - adjust to increase/decrease chance of something
+  //  var now = Date.now();
+  //  if (now-this.lastIconTime < 50) {return false;}
     var scoreDivisor = 50000;
     var gotSomething = (Math.random() <
-    ((((this.score+20000) /scoreDivisor))/100) * (this.onFire ? 2 : 1) );
+    (((((this.score+20000) /scoreDivisor))/100) * (this.onFire ? 10 : 1)) ); //delete *33
     if (!(gotSomething)) {return false;}
 
     //onFire -- for now just score /1000000 * 50% (so 100k = 5%)
     // 50 is adjustable divisor to make it infrequent
-    var chanceForFire = ((this.score / 1000000) * 0.5)*10;
+    var chanceForFire = ((this.score / 1000000) * 0.5)*5; //delete *0
     if (this.onFire) {chanceForFire = 0;}
 
     // out of 1000 so /1000 to convert to % then /2
     var chanceForBug = ((1- (this.skills[this.currentSkill]/1000)) / 2);
     if (this.onFire) {chanceForBug = 0;}
-    if (Math.random()<chanceForFire) {return this.newOnFire();}
-    else if (Math.random()<chanceForBug) {this.newBug();}
-    else if (Math.random()<(0.5)) {this.newSkillIncrease();}
-    else {this.newPoints();}
+    if (Math.random()<chanceForFire) {
+      return this.newOnFire();
+    }
+    else if (Math.random()<chanceForBug) {
+      return this.newBug();
+    }
+    else if (Math.random()<(0.5)) {
+      return this.newSkillIncrease();
+    }
+    else {return this.newPoints();}
 
   }
 
@@ -84,32 +105,37 @@ class Player {
     window.setTimeout(()=> {
       this.fireOff();
     },5000);
-    return new Fire({player: this});
-
+    this.fire = new FireAnim(this);
+    return false;
   }
 
   fireOff() {
     this.onFire = false;
-    this.fireSound.pause();
-    this.fireSound = "";
-
+    if (this.fireSound) {
+      this.fireSound.pause();
+      this.fireSound = undefined;
+  }
   }
 
   newBug() {
     this.happiness -=1;
     console.log("new bug happiness -1");
+    return new BugAnim({canvas: this.canvas, ctx: this.ctx});
   }
 
   newSkillIncrease() {
     this.skills[this.currentSkill]++;
     this.skills[this.currentSkill]++;
-    console.log(`new skill increase ${this.currentSkill} + 2`);
-  }
+    return new SkillAnim({canvas: this.canvas, ctx: this.ctx},
+      {type: "skill", value: this.currentSkill});
+    }
 
   newPoints() {
     var points = Math.floor(((Math.random()*10)+1))*100;
     console.log(`score increase ${points}`);
     this.score += points;
+    return new PointsAnim({canvas: this.canvas, ctx: this.ctx},
+      {type: "points", value: points});
   }
 
 

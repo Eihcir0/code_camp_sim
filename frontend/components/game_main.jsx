@@ -33,10 +33,8 @@ class GameMain extends React.Component {
     this.currentFaceImage = this.currentFaceImage.bind(this);
     this.tick = this.tick.bind(this);
     this.updateAttributes = this.updateAttributes.bind(this);
-    // this.game = new Game(this.player);
     this.lastTime = Date.now();
     this.interval = window.setInterval(()=>this.tick(),10);
-    // window.setInterval(()=>this.render(),200);
   }
 
 

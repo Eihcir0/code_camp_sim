@@ -34,7 +34,6 @@ class StrikeScreen extends React.Component {
         this.props.player.session = this.congrats.newSession;
       }
       this.props.player.newCongrats = false;}
-      debugger;
 
   }
 

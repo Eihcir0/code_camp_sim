@@ -11,6 +11,7 @@ article, aside, canvas, details, embed,
 figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
+	outline: none;
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -24,6 +25,7 @@ footer, header, hgroup, menu, nav, section {
 	display: block;
 }
 body {
+	outline: none;
 	font-family: 'Exo 2', sans-serif;
 	line-height: 1;
   background-color: black;
@@ -45,6 +47,13 @@ table {
 }
 
 .game-title {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
   font-family: 'Exo 2', sans-serif;
   font-size: 48px;
   font-weight: bolder;
@@ -79,6 +88,13 @@ table {
 }
 
 .game-right-side {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
   height: 480px;
   width: 150px;
   background-color: lightgrey;
@@ -87,7 +103,14 @@ table {
 }
 
 .game-messages {
-  color: blanchedalmond;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	color: blanchedalmond;
   font-family: 'Exo 2', sans-serif;
   font-size: 24px;
   display: inline-block;
@@ -117,7 +140,6 @@ table {
   font-size: 36px;
   display: inline-block;
   padding-top: 20px;
-  padding-left: 20px;
 }
 .player-title {
   display: inline-block;
@@ -205,15 +227,6 @@ button {
 	margin-left: 50px;
 }
 
-.middle-button {
-  width: 200px;
-	font-size: 18px;
-  padding: 10px;
-	border-radius: 8px;
-	background-color: blanchedalmond;
-
-}
-
 .teacher-image {
 		position: absolute;
     width: 158px;
@@ -227,7 +240,7 @@ button {
   padding: 10px;
 	border-radius: 8px;
 	background-color: blanchedalmond;
-
+	display: inline-block;;
 }
 
 .x {
@@ -321,4 +334,45 @@ textarea {
 	background: black;
 	color: white;
 	font-size: 24px;
+}
+/*.middle-buttons-area {
+    position: absolute;
+    top: -220px;
+    left: 229px;
+}*/
+
+.middle-button1 {
+    width: 80px;
+    position: absolute;
+    height: 70px;
+    top: 533px;
+    left: 588px;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: blanchedalmond;
+}
+
+.middle-button2 {
+    position: absolute;
+    top: 532px;
+    left: 457px;
+    height: 70px;
+    width: 120px;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: blanchedalmond;
+}
+
+.middle-button3 {
+    position: absolute;
+    height: 70px;
+    top: 533px;
+    left: 677px;
+    width: 80px;
+    font-size: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: blanchedalmond;
 }

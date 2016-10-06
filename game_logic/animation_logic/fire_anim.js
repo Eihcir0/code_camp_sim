@@ -1,9 +1,9 @@
 import Moveable from './moveable.js';
 
-class Fire extends Moveable {
-  constructor(obj) {
-    super(obj);
-    this.player = obj.player;
+class FireAnim extends Moveable {
+  constructor(player) {
+    super({ctx: player.ctx, canvas: player.canvas});
+    this.player = player;
     this.type = "fire";
     this.width = 93;
     this.height = 200;
@@ -67,4 +67,4 @@ class Fire extends Moveable {
 
 } //end class
 
-export default Fire;
+export default FireAnim;
