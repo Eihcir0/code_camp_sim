@@ -21713,7 +21713,7 @@
 	              _react2.default.createElement('meter', { value: this.player.sleepBank, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
 	              _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/bed.png' }),
 	              _react2.default.createElement('meter', { value: this.player.happiness, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
-	              _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/happy.jpeg' }),
+	              _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/happy.png' }),
 	              _react2.default.createElement('meter', { value: this.player.focus, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
 	              _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/star.png' }),
 	              _react2.default.createElement(
@@ -21875,7 +21875,7 @@
 	    _classCallCheck(this, Player);
 	
 	    this.name = name || "Richie";
-	    this.clock = obj ? obj.clock : new _clock2.default([8, 40], 1);
+	    this.clock = obj ? obj.clock : new _clock2.default([18, 40], 1);
 	    this.defaultMessage = obj ? obj.defaultMessage : "";
 	    this.currentEmotion = obj ? obj.currentEmotion : "excited";
 	    this.info = obj ? obj.info : "";
@@ -21955,7 +21955,7 @@
 	      }
 	
 	      //onFire -- for now just score /1000000 * 50% (so 100k = 5%) + offset <== for testing
-	      var chanceForFireOffset = 0.1; //delete me
+	      var chanceForFireOffset = 0; //delete me
 	      var chanceForFire = this.score / 1000000 * 0.5 + chanceForFireOffset;
 	      if (this.onFire) {
 	        chanceForFire = 0;
@@ -22015,7 +22015,14 @@
 	  }, {
 	    key: 'newPoints',
 	    value: function newPoints() {
-	      var points = Math.floor(Math.random() * 10 + 1) * 100;
+	      var rand = Math.floor(Math.random() * 10 + 1) * 10 + this.score / 50000;
+	      var points;
+	      if (rand > 95) {
+	        points = 1000;
+	      } else {
+	        points = Math.max(Math.floor((rand - 20) / 10) * 100, 100);
+	      }
+	
 	      this.score += points;
 	      return new _points_anim2.default({ canvas: this.canvas, ctx: this.ctx }, { type: "points", value: points });
 	    }
@@ -22199,7 +22206,7 @@
 	    _this.type = "fire";
 	    _this.width = 93;
 	    _this.height = 200;
-	    _this.pos = [290, 210];
+	    _this.pos = [280, 210];
 	
 	    _this.animationOn = true;
 	    _this.movementOn = false;
@@ -22214,7 +22221,9 @@
 	    _this.image = new Image();
 	    _this.image.src = "./app/assets/images/fire.png";
 	    _this.sound = new Audio("./app/assets/sounds/hes_on_fire.wav");
-	    _this.sound.play();
+	    window.setTimeout(function () {
+	      return _this.sound.play();
+	    }, 10);
 	    _this.moves = 0;
 	    _this.times = 0;
 	
@@ -22243,7 +22252,7 @@
 	    value: function render() {
 	      // this.ctx.fillStyle = "rgb(51, 118, 36)";
 	      // this.ctx.fillRect(300,300,50,50);
-	      this.ctx.drawImage(this.image, this.currentSprite(), 0, this.width, this.height, this.pos[0], this.pos[1], this.width, this.height);
+	      this.ctx.drawImage(this.image, this.currentSprite(), 0, this.width - 10, this.height - 10, this.pos[0], this.pos[1], this.width - 10, this.height - 10);
 	    }
 	  }]);
 	
@@ -23605,7 +23614,7 @@
 	          break;
 	        case 11:
 	          // seated at computer
-	          this.pos = [302, 323];
+	          this.pos = [298, 321];
 	          this.image = this.imageSeated;
 	          this.animSet = 3;
 	          if (this.animTimer === 0) {
@@ -23807,6 +23816,7 @@
 	      this.sprites.push(d);
 	
 	      d = new _student_anim2.default(this.player, [412, 320], 3);
+	      this.player.rightStudent = d;
 	      this.sprites.push(d);
 	      d = new _student_anim2.default(this.player, [482, 319], 3);
 	      this.sprites.push(d);
@@ -24196,7 +24206,7 @@
 	    _this.spriteXoffset = 0; // ??
 	    _this.animFrame = 0; // ??
 	    _this.animNumFrames = 4; // ??
-	    _this.animDelay = 600 + Math.random() * 300; // ??
+	    _this.animDelay = 1000 + Math.random() * 500; // ??
 	    _this.animTimer = 0; // ??
 	    _this.imageReady = false;
 	    _this.image = new Image();
@@ -24418,11 +24428,13 @@
 	          this.faintMeterOn = false;
 	        }
 	      } else {
+	        if (!this.faintSoundOn && this.player.focus < 50) {
+	          this.faintSound.play();
+	          this.faintSoundOn = true;
+	        }
+	
 	        if (this.player.focus <= 10) {
-	          if (!this.faintSoundOn) {
-	            this.faintSound.play();
-	            this.faintSoundOn = true;
-	          }
+	
 	          this.faintMeter++;
 	          this.faintMeter++;
 	          if (this.faintMeter >= this.faintMeterMax) {
@@ -24507,13 +24519,10 @@
 	    key: 'lectureSlide',
 	    value: function lectureSlide() {
 	      if (!this.state.eyesClosed) {
-	        if (this.player.focus === 0) {
-	          debugger;
-	        }
-	        if (this.player.focus <= 40) {
+	        if (this.player.focus <= 50) {
 	          var shadow = '0 0 ' + (50 - this.player.focus) + 'px rgba(0,0,0,0.5)';
 	          var style = { color: "transparent", textShadow: '' + shadow };
-	          var raysStyle = { opacity: this.faintMeter * 2 };
+	          var raysStyle = { opacity: this.faintMeter / 100 };
 	          console.log(style);
 	          return _react2.default.createElement(
 	            'div',
@@ -25704,6 +25713,9 @@
 	    _this.startTime = Date.now();
 	    _this.buzzerSound = new Audio("./app/assets/sounds/buzzer.mp3");
 	    _this.buzzerSound.play();
+	    if (_this.props.player.onFire) {
+	      _this.props.player.onFire = false;
+	    }
 	    _this.props.player.strikes = _this.props.player.strikes + "X";
 	    _this.props.player.message = _this.strike.message + ('  You now have ' + _this.props.player.strikes.length + '\n    strike' + (_this.props.player.strikes.length > 1 ? "s" : "") + '!');
 	    _this.handleClick = _this.handleClick.bind(_this);

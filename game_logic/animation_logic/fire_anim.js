@@ -7,7 +7,7 @@ class FireAnim extends Moveable {
     this.type = "fire";
     this.width = 93;
     this.height = 200;
-    this.pos = [290, 210];
+    this.pos = [280, 210];
 
     this.animationOn = true;
     this.movementOn = false;
@@ -23,7 +23,7 @@ class FireAnim extends Moveable {
     this.image.src =
     "./app/assets/images/fire.png";
     this.sound = new Audio("./app/assets/sounds/hes_on_fire.wav");
-    this.sound.play();
+    window.setTimeout(()=>this.sound.play(),10);
     this.moves = 0;
     this.times = 0;
 
@@ -56,12 +56,12 @@ class FireAnim extends Moveable {
   		this.image,
       this.currentSprite(),
       0,
-      this.width,
-      this.height,
+      this.width-10,
+      this.height-10,
   		this.pos[0],
       this.pos[1],
-      this.width,
-  		this.height
+      this.width-10,
+  		this.height-10
       );
     }
 

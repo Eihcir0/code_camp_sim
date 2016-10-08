@@ -100,10 +100,12 @@ class LectureSeshScreen extends React.Component {
       }
     }
     else {
-      if (this.player.focus <= 10) {
-      if (!(this.faintSoundOn)) {
+      if (!(this.faintSoundOn) && this.player.focus<50) {
         this.faintSound.play();
         this.faintSoundOn=true;}
+
+      if (this.player.focus <= 10) {
+
       this.faintMeter++;
       this.faintMeter++;
       if (this.faintMeter >= this.faintMeterMax) {
@@ -176,11 +178,10 @@ class LectureSeshScreen extends React.Component {
 
   lectureSlide() {
     if (!(this.state.eyesClosed)) {
-      if (this.player.focus === 0) {debugger;}
-      if (this.player.focus<=40) {
+      if (this.player.focus<=50) {
       var shadow = `0 0 ${50-this.player.focus}px rgba(0,0,0,0.5)`;
       var style = {color: "transparent", textShadow: `${shadow}` };
-      var raysStyle = {opacity: this.faintMeter * 2};
+      var raysStyle = {opacity: (this.faintMeter)/100};
       console.log(style);
       return (
         <div>

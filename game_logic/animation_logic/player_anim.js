@@ -203,7 +203,7 @@ class PlayerAnim extends Moveable {
           this.movementOn = false;
           break;
         case 11: // seated at computer
-          this.pos = [302,323];
+          this.pos = [298,321];
           this.image = this.imageSeated;
           this.animSet = 3;
           if (this.animTimer ===0){this.animFrame =

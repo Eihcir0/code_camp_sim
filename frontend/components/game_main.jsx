@@ -206,7 +206,7 @@ class GameMain extends React.Component {
               <meter value={this.player.sleepBank} min="0" max="100" low="30" high="70" optimum="100"/>
               <img className="icon" src="./app/assets/images/bed.png" />
               <meter value={this.player.happiness} min="0" max="100" low="30" high="70" optimum="100"/>
-              <img className="icon" src="./app/assets/images/happy.jpeg" />
+              <img className="icon" src="./app/assets/images/happy.png" />
               <meter value={this.player.focus} min="0" max="100" low="30" high="70" optimum="100"/>
               <img className="icon" src="./app/assets/images/star.png" />
               <span className="score">{this.player.score}</span>

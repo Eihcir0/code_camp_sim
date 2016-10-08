@@ -8,6 +8,7 @@ class StrikeScreen extends React.Component {
     this.startTime = Date.now();
     this.buzzerSound = new Audio("./app/assets/sounds/buzzer.mp3");
     this.buzzerSound.play();
+    if (this.props.player.onFire) {this.props.player.onFire=false;}
     this.props.player.strikes = this.props.player.strikes + "X";
     this.props.player.message = this.strike.message +
     `  You now have ${this.props.player.strikes.length}

@@ -396,3 +396,11 @@ textarea {
     border-radius: 8px;
     background-color: blanchedalmond;
 }
+
+.rays {
+position: absolute;
+top: 128px;
+left: 91px;
+height: 500px;
+width: 797px;
+}

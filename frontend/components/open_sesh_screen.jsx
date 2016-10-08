@@ -65,6 +65,7 @@ class OpenSesh extends React.Component {
     this.sprites.push(d);
 
     d = new StudentAnim(this.player, [412,320], 3);
+    this.player.rightStudent = d;
     this.sprites.push(d);
     d = new StudentAnim(this.player, [482,319], 3);
     this.sprites.push(d);

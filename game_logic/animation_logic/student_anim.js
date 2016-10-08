@@ -21,7 +21,7 @@ class StudentAnim extends Moveable {
     this.spriteXoffset = 0; // ??
     this.animFrame = 0; // ??
     this.animNumFrames = 4; // ??
-    this.animDelay = 600 + Math.random()*300; // ??
+    this.animDelay = 1000 + Math.random()*500; // ??
     this.animTimer = 0; // ??
     this.imageReady = false;
     this.image = new Image();

@@ -13,7 +13,7 @@ import FireAnim from
 class Player {
   constructor(name, obj) {
     this.name = name || "Richie";
-    this.clock = obj ? obj.clock : new Clock([8,40],1);
+    this.clock = obj ? obj.clock : new Clock([18,40],1);
     this.defaultMessage =
       obj ? obj.defaultMessage
       : "";
@@ -85,7 +85,7 @@ class Player {
     if (!(gotSomething)) {return false;}
 
     //onFire -- for now just score /1000000 * 50% (so 100k = 5%) + offset <== for testing
-    var chanceForFireOffset = 0.1; //delete me
+    var chanceForFireOffset = 0; //delete me
     var chanceForFire = (((this.score) / 1000000) * 0.5) + chanceForFireOffset;
     if (this.onFire) {chanceForFire = 0;}
 
@@ -137,7 +137,13 @@ class Player {
     }
 
   newPoints() {
-    var points = Math.floor(((Math.random()*10)+1))*100;
+    var rand = Math.floor(((Math.random()*10)+1))*10+(this.score/50000);
+    var points;
+    if (rand>95) {points = 1000;}
+    else {
+      points = Math.max(Math.floor((rand-20)/10)*100,100);
+    }
+
     this.score += points;
     return new PointsAnim({canvas: this.canvas, ctx: this.ctx},
       {type: "points", value: points});
