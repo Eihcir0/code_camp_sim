@@ -127,6 +127,8 @@ table {
 
 
 .stats-bar {
+	overflow: hidden;
+	height: 455px;
   display: inline-block;
 	margin-left: 20px;
 }
@@ -148,9 +150,12 @@ table {
 }
 
 .player-pic {
-  width: 93%;
-  height: 93%;
-}
+	width: 169px;
+	position: absolute;
+	top: 496px;
+	left: 911px;
+	clip: rect(10px,170px,125px,0px);
+}}
 
 button {
 		box-shadow: 1px 2px 2px 2px;

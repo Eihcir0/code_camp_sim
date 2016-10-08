@@ -13,7 +13,7 @@ import FireAnim from
 class Player {
   constructor(name, obj) {
     this.name = name || "Richie";
-    this.clock = obj ? obj.clock : new Clock([18,40],1);
+    this.clock = obj ? obj.clock : new Clock([18,1],2);
     this.defaultMessage =
       obj ? obj.defaultMessage
       : "";
@@ -123,15 +123,23 @@ class Player {
   }
 
   newBug() {
-    this.happiness -=1;
-    this.skills[this.currentSkill]++;
+    this.happiness -=0.25;
+    this.skills[this.currentSkill] +=0.25;
+    if (this.sleepBank>30) {
+      this.newFace = (this.sleepBank>70) ?
+        {filename: "rested_teeth", duration: 10} :
+        {filename: "tired_teeth", duration: 10};
+    }
     return new BugAnim({canvas: this.canvas, ctx: this.ctx});
   }
 
   newSkillIncrease() {
     this.skills[this.currentSkill]++;
-    this.skills[this.currentSkill]++;
-    this.skills[this.currentSkill]++;
+    if (this.sleepBank>30) {
+      this.newFace = (this.sleepBank>70) ?
+      {filename: "rested_happy", duration: 10} :
+      {filename: "tired_happy", duration: 10};
+    }
     return new SkillAnim({canvas: this.canvas, ctx: this.ctx},
       {type: "skill", value: this.currentSkill});
     }
@@ -139,11 +147,22 @@ class Player {
   newPoints() {
     var rand = Math.floor(((Math.random()*10)+1))*10+(this.score/50000);
     var points;
+    console.log(rand);
     if (rand>95) {points = 1000;}
     else {
       points = Math.max(Math.floor((rand-20)/10)*100,100);
     }
-
+    if (this.sleepBank>30) {
+      this.newFace = (this.sleepBank>70) ?
+      {filename: "rested_happy", duration: 10} :
+      {filename: "tired_happy", duration: 10};
+    }
+    if (points===1000) {
+      this.happiness++;
+      if (this.sleepBank>30) {
+        this.newFace = {filename: "super_happy", duration: 20};
+      }
+    }
     this.score += points;
     return new PointsAnim({canvas: this.canvas, ctx: this.ctx},
       {type: "points", value: points});

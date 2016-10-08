@@ -98,6 +98,7 @@ class PairsSeshScreen extends React.Component {
 
         <button className="switch-button"
           onClick={this.handleClick}>SWITCH!</button>
+        
       </div>
     );}
 

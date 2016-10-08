@@ -11,6 +11,7 @@ import LectureSeshScreen from './lecture_sesh_screen.jsx';
 import PairsSeshScreen from './pairs_sesh_screen.jsx';
 import StrikeScreen from './strike_screen.jsx';
 import CongratsScreen from './congrats_screen.jsx';
+import FaceAnim from './face_anim.jsx';
 
 //before this I will have a modal that asks for the player name
 //and asks if they want to create an account
@@ -22,7 +23,6 @@ class GameMain extends React.Component {
     this.playerAnim = new playerAnim({player: this.player});
     this.week = new Week(this.player);
     this.state = {
-      currentFace: "happy1",
       currentPos: -1,
       message: this.player.defaultMessage,
       clock: this.player.clock.time(),
@@ -30,7 +30,6 @@ class GameMain extends React.Component {
       focus: this.player.focus
     };
     this.attributeTicker = 0;
-    this.currentFaceImage = this.currentFaceImage.bind(this);
     this.tick = this.tick.bind(this);
     this.updateAttributes = this.updateAttributes.bind(this);
     this.ticksPerSecond = 100; //<<=If changed then change Clock class
@@ -41,16 +40,15 @@ class GameMain extends React.Component {
 
   tick() {
     this.player.clock.tick();
-    var dt= (this.player.clock.tickCounter - this.player.clock.lastClockTickCounter) * this.player.clock.relativeSpeed;
-    if (dt>200) {
+    var dt= (this.player.clock.tickCounter - this.player.clock.lastClockTickCounter);
+    if (dt>300) {
       this.player.clock.lastClockTickCounter = this.player.clock.tickCounter;
       this.setState({
         currentPos: this.player.currentPos,
         clock: this.player.clock.time()
       });
       this.updateSession();
-      this.updateAttributes();
-      this.currentFaceUpdate(); //REDO THIS WITH FACE CLASS
+      this.updateAttributes(dt);
       this.setState({
         message: this.player.message,
         ruby: Math.floor(this.player.skills.Ruby/10),
@@ -85,12 +83,13 @@ class GameMain extends React.Component {
     }
   }
 
-  updateAttributes() { //REDO THIS SOON
+  updateAttributes(dt) { //REDO THIS SOON
     //use helper methods for each attribute
-    this.attributeTicker++;
-    if (this.attributeTicker>5) {
+
+
       if (this.player.currentPos === 11 && this.player.session !==3) {
-        this.player.focus-=0.55;}
+        this.player.focus -=0.5;
+      }
       else if (this.player.currentPos !==12 && this.player.session !==3) {
         this.player.focus++;
         this.player.focus++;
@@ -98,37 +97,6 @@ class GameMain extends React.Component {
       if (this.player.focus>100) {this.player.focus = 100;}
       if (this.player.focus<0) {this.player.focus = 0;}
 
-      this.attributeTicker=0;
-    }
-  }
-
-  currentFaceUpdate() {
-    //should use a Face class, with default image based on tiredness and happiness then it can receive temporary new faces that last for a certain time and can also be replaced
-    switch (this.player.currentEmotion) {
-      case "eyes closed":
-        this.setState({currentFace: "close eyes"});
-        break;
-      case "excited":
-        this.setState({currentFace: "happy2"});
-        break;
-      default:
-        this.setState({currentFace: "happy1"});
-
-        break;
-    }
-  }
-
-  currentFaceImage() {
-    if (this.state.currentFace === "close eyes") {
-      return (
-        <img className="player-pic"
-          src="./app/assets/images/frontface3.png"></img>
-      );
-    } else {return (
-      <img className="player-pic"
-        src="./app/assets/images/frontface2.png"></img>
-
-    );}
   }
 
   sesh() { // change this to a switch
@@ -175,23 +143,6 @@ class GameMain extends React.Component {
   }
 
 
-
-  // randomFace() {
-  //   switch (this.player.currentEmotion) {
-  //     case "excited":
-  //     var t = Math.random();
-  //     if (t < 0.2) {
-  //       this.setState({currentFace: "happy2"});
-  //     } else {
-  //       this.setState({currentFace: "happy1"});
-  //     }
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // }
-
-
   render() {
     //{array} or <component className="" onClick={}
     return (
@@ -223,7 +174,12 @@ class GameMain extends React.Component {
               </span>
               <br/>
               <br/>
-              {this.currentFaceImage()}
+              <br/>
+              <br/>
+              <br/>
+
+              <span className="player-name">{this.player.name}</span>
+              <FaceAnim player={this.player}/>
             </div>
             <div className="player-pic-holder">
             </div>

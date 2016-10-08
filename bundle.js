@@ -21486,6 +21486,10 @@
 	
 	var _congrats_screen2 = _interopRequireDefault(_congrats_screen);
 	
+	var _face_anim = __webpack_require__(211);
+	
+	var _face_anim2 = _interopRequireDefault(_face_anim);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21512,7 +21516,6 @@
 	    _this.playerAnim = new _player_anim2.default({ player: _this.player });
 	    _this.week = new _week2.default(_this.player);
 	    _this.state = {
-	      currentFace: "happy1",
 	      currentPos: -1,
 	      message: _this.player.defaultMessage,
 	      clock: _this.player.clock.time(),
@@ -21520,7 +21523,6 @@
 	      focus: _this.player.focus
 	    };
 	    _this.attributeTicker = 0;
-	    _this.currentFaceImage = _this.currentFaceImage.bind(_this);
 	    _this.tick = _this.tick.bind(_this);
 	    _this.updateAttributes = _this.updateAttributes.bind(_this);
 	    _this.ticksPerSecond = 100; //<<=If changed then change Clock class
@@ -21535,16 +21537,15 @@
 	    key: 'tick',
 	    value: function tick() {
 	      this.player.clock.tick();
-	      var dt = (this.player.clock.tickCounter - this.player.clock.lastClockTickCounter) * this.player.clock.relativeSpeed;
-	      if (dt > 200) {
+	      var dt = this.player.clock.tickCounter - this.player.clock.lastClockTickCounter;
+	      if (dt > 300) {
 	        this.player.clock.lastClockTickCounter = this.player.clock.tickCounter;
 	        this.setState({
 	          currentPos: this.player.currentPos,
 	          clock: this.player.clock.time()
 	        });
 	        this.updateSession();
-	        this.updateAttributes();
-	        this.currentFaceUpdate(); //REDO THIS WITH FACE CLASS
+	        this.updateAttributes(dt);
 	        this.setState({
 	          message: this.player.message,
 	          ruby: Math.floor(this.player.skills.Ruby / 10),
@@ -21580,53 +21581,22 @@
 	    }
 	  }, {
 	    key: 'updateAttributes',
-	    value: function updateAttributes() {
+	    value: function updateAttributes(dt) {
 	      //REDO THIS SOON
 	      //use helper methods for each attribute
-	      this.attributeTicker++;
-	      if (this.attributeTicker > 5) {
-	        if (this.player.currentPos === 11 && this.player.session !== 3) {
-	          this.player.focus -= 0.55;
-	        } else if (this.player.currentPos !== 12 && this.player.session !== 3) {
-	          this.player.focus++;
-	          this.player.focus++;
-	        }
-	        if (this.player.focus > 100) {
-	          this.player.focus = 100;
-	        }
-	        if (this.player.focus < 0) {
-	          this.player.focus = 0;
-	        }
 	
-	        this.attributeTicker = 0;
-	      }
-	    }
-	  }, {
-	    key: 'currentFaceUpdate',
-	    value: function currentFaceUpdate() {
-	      //should use a Face class, with default image based on tiredness and happiness then it can receive temporary new faces that last for a certain time and can also be replaced
-	      switch (this.player.currentEmotion) {
-	        case "eyes closed":
-	          this.setState({ currentFace: "close eyes" });
-	          break;
-	        case "excited":
-	          this.setState({ currentFace: "happy2" });
-	          break;
-	        default:
-	          this.setState({ currentFace: "happy1" });
 	
-	          break;
+	      if (this.player.currentPos === 11 && this.player.session !== 3) {
+	        this.player.focus -= 0.5;
+	      } else if (this.player.currentPos !== 12 && this.player.session !== 3) {
+	        this.player.focus++;
+	        this.player.focus++;
 	      }
-	    }
-	  }, {
-	    key: 'currentFaceImage',
-	    value: function currentFaceImage() {
-	      if (this.state.currentFace === "close eyes") {
-	        return _react2.default.createElement('img', { className: 'player-pic',
-	          src: './app/assets/images/frontface3.png' });
-	      } else {
-	        return _react2.default.createElement('img', { className: 'player-pic',
-	          src: './app/assets/images/frontface2.png' });
+	      if (this.player.focus > 100) {
+	        this.player.focus = 100;
+	      }
+	      if (this.player.focus < 0) {
+	        this.player.focus = 0;
 	      }
 	    }
 	  }, {
@@ -21662,23 +21632,6 @@
 	        return this.player.message ? this.player.message : this.player.defaultMessage;
 	      }
 	    }
-	
-	    // randomFace() {
-	    //   switch (this.player.currentEmotion) {
-	    //     case "excited":
-	    //     var t = Math.random();
-	    //     if (t < 0.2) {
-	    //       this.setState({currentFace: "happy2"});
-	    //     } else {
-	    //       this.setState({currentFace: "happy1"});
-	    //     }
-	    //       break;
-	    //     default:
-	    //       break;
-	    //   }
-	    // }
-	
-	
 	  }, {
 	    key: 'render',
 	    value: function render() {
@@ -21747,7 +21700,15 @@
 	              ),
 	              _react2.default.createElement('br', null),
 	              _react2.default.createElement('br', null),
-	              this.currentFaceImage()
+	              _react2.default.createElement('br', null),
+	              _react2.default.createElement('br', null),
+	              _react2.default.createElement('br', null),
+	              _react2.default.createElement(
+	                'span',
+	                { className: 'player-name' },
+	                this.player.name
+	              ),
+	              _react2.default.createElement(_face_anim2.default, { player: this.player })
 	            ),
 	            _react2.default.createElement('div', { className: 'player-pic-holder' })
 	          )
@@ -21875,7 +21836,7 @@
 	    _classCallCheck(this, Player);
 	
 	    this.name = name || "Richie";
-	    this.clock = obj ? obj.clock : new _clock2.default([18, 40], 1);
+	    this.clock = obj ? obj.clock : new _clock2.default([18, 1], 2);
 	    this.defaultMessage = obj ? obj.defaultMessage : "";
 	    this.currentEmotion = obj ? obj.currentEmotion : "excited";
 	    this.info = obj ? obj.info : "";
@@ -22000,16 +21961,20 @@
 	  }, {
 	    key: 'newBug',
 	    value: function newBug() {
-	      this.happiness -= 1;
-	      this.skills[this.currentSkill]++;
+	      this.happiness -= 0.25;
+	      this.skills[this.currentSkill] += 0.25;
+	      if (this.sleepBank > 30) {
+	        this.newFace = this.sleepBank > 70 ? { filename: "rested_teeth", duration: 10 } : { filename: "tired_teeth", duration: 10 };
+	      }
 	      return new _bug_anim2.default({ canvas: this.canvas, ctx: this.ctx });
 	    }
 	  }, {
 	    key: 'newSkillIncrease',
 	    value: function newSkillIncrease() {
 	      this.skills[this.currentSkill]++;
-	      this.skills[this.currentSkill]++;
-	      this.skills[this.currentSkill]++;
+	      if (this.sleepBank > 30) {
+	        this.newFace = this.sleepBank > 70 ? { filename: "rested_happy", duration: 10 } : { filename: "tired_happy", duration: 10 };
+	      }
 	      return new _skill_anim2.default({ canvas: this.canvas, ctx: this.ctx }, { type: "skill", value: this.currentSkill });
 	    }
 	  }, {
@@ -22017,12 +21982,21 @@
 	    value: function newPoints() {
 	      var rand = Math.floor(Math.random() * 10 + 1) * 10 + this.score / 50000;
 	      var points;
+	      console.log(rand);
 	      if (rand > 95) {
 	        points = 1000;
 	      } else {
 	        points = Math.max(Math.floor((rand - 20) / 10) * 100, 100);
 	      }
-	
+	      if (this.sleepBank > 30) {
+	        this.newFace = this.sleepBank > 70 ? { filename: "rested_happy", duration: 10 } : { filename: "tired_happy", duration: 10 };
+	      }
+	      if (points === 1000) {
+	        this.happiness++;
+	        if (this.sleepBank > 30) {
+	          this.newFace = { filename: "super_happy", duration: 20 };
+	        }
+	      }
 	      this.score += points;
 	      return new _points_anim2.default({ canvas: this.canvas, ctx: this.ctx }, { type: "points", value: points });
 	    }
@@ -25852,6 +25826,208 @@
 	
 	
 	exports.default = CongratsScreen;
+
+/***/ },
+/* 211 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var FaceAnim = function (_React$Component) {
+	  _inherits(FaceAnim, _React$Component);
+	
+	  function FaceAnim(props) {
+	    _classCallCheck(this, FaceAnim);
+	
+	    var _this = _possibleConstructorReturn(this, (FaceAnim.__proto__ || Object.getPrototypeOf(FaceAnim)).call(this, props));
+	
+	    _this.player = _this.props.player;
+	    _this.baseFace = _this.baseFace.bind(_this);
+	    _this.getFace = _this.getFace.bind(_this);
+	    _this.getDiv = _this.getDiv.bind(_this);
+	    _this.getFireFace = _this.getFireFace.bind(_this);
+	    _this.winkCounter = 0;
+	    _this.fireCounter = 0;
+	    _this.state = { face: null };
+	    // this.player = this.props.player;
+	
+	    return _this;
+	  }
+	
+	  _createClass(FaceAnim, [{
+	    key: "componentDidMount",
+	    value: function componentDidMount() {
+	      var _this2 = this;
+	
+	      this.interval = window.setInterval(function () {
+	        return _this2.getFace();
+	      }, 100);
+	    }
+	  }, {
+	    key: "getDiv",
+	    value: function getDiv(filename) {
+	      var fullName = "./app/assets/images/face_icons/" + filename + ".jpg";
+	      return _react2.default.createElement(
+	        "div",
+	        null,
+	        _react2.default.createElement("img", { className: "player-pic",
+	          src: fullName })
+	      );
+	    }
+	  }, {
+	    key: "setLookLeft",
+	    value: function setLookLeft() {
+	      if (Math.random() > 0.8 && this.player.sleepBank > 40) {
+	        console.log("here");
+	        this.player.newFace = this.player.happiness > 70 ? { filename: "rested_happy_look_left", duration: Math.floor(Math.random() * 30 + 1) } : { filename: "rested_unhappy_look_left", duration: Math.floor(Math.random() * 30 + 1) };
+	      }
+	    }
+	  }, {
+	    key: "getFace",
+	    value: function getFace() {
+	      if (this.player.onFire) {
+	        this.getFireFace();
+	      } else {
+	        this.face = this.getDiv(this.baseFace());
+	        this.winkCounter++;
+	        if (this.winkCounter > 50) {
+	          this.winkCounter = 0;
+	          if (!this.player.onFire) {
+	            if (Math.random() > 0.5) {
+	              this.setLookLeft();
+	            } else {
+	              this.player.newFace = { filename: "blink", duration: Math.floor(Math.random() * 4 + 1) };
+	            }
+	          }
+	        }
+	        if (this.player.newFace) {
+	          console.log("newFace");
+	          this.face = this.getDiv(this.player.newFace.filename);
+	          this.player.newFace.duration--;
+	          if (this.player.newFace.duration <= 0) {
+	            this.player.newFace = false;
+	          }
+	        }
+	      }
+	      this.setState({ face: this.face });
+	    }
+	  }, {
+	    key: "getFireFace",
+	    value: function getFireFace() {
+	      this.fireCounter++;
+	      if (this.fireCounter > 5) {
+	        this.fireCounter = 0;
+	        var rand = Math.floor(Math.random() * 8) + 1;
+	        switch (true) {
+	          case rand === 1:
+	            this.face = this.getDiv("on_fire");
+	            break;
+	          case rand === 2:
+	            this.face = this.getDiv("on_fire1");
+	            break;
+	          case rand === 3:
+	            this.face = this.getDiv("on_fire2");
+	            break;
+	          case rand === 4:
+	            this.face = this.getDiv("on_fire3");
+	            break;
+	          case rand === 5:
+	            this.face = this.getDiv("on_fire4");
+	            break;
+	          case rand === 6:
+	            this.face = this.getDiv("on_fire5");
+	            break;
+	          case rand === 7:
+	            this.face = this.getDiv("on_fire6");
+	            break;
+	          case rand === 8:
+	            this.face = this.getDiv("on_fire7");
+	            break;
+	          default:
+	            break;
+	        }
+	      }
+	      return this.face;
+	    }
+	  }, {
+	    key: "baseFace",
+	    value: function baseFace() {
+	      switch (true) {
+	        case this.player.happiness > 70:
+	          switch (true) {
+	            case this.player.sleepBank > 60:
+	              //happy rested face
+	              return "rested_happy";
+	            case this.player.sleepBank > 30:
+	              if (this.player.clock.time()[0] % 2 === 0) {
+	                return "tired_happy";
+	              } else {
+	                return "tired_happy2";
+	              }
+	            default:
+	              return "exhausted_sad";
+	          }
+	        case this.player.happiness > 40:
+	          //unhappy - sad
+	          switch (true) {
+	            case this.player.sleepBank > 60:
+	              //sad rested face
+	              return "rested_sad";
+	            case this.player.sleepBank > 30:
+	              //sad tired face
+	              return "tired_indifferent";
+	            default:
+	              //exhausted sad
+	              return "exhausted_sad";
+	          }
+	        default:
+	          //very unhappy / angry but rested
+	          switch (true) {
+	            case this.player.sleepBank > 60:
+	              //angry rested face
+	              return "rested_angry";
+	            case this.player.sleepBank > 30:
+	              //tired angry (2 faces)
+	              if (this.player.clock.time()[0] % 2 === 0) {
+	                return "tired_angry";
+	              } else {
+	                return "tired_miserable";
+	              }
+	            default:
+	              //exhausted then exhausted angry
+	              return "exhausted_angry.jpg";
+	          }
+	      }
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      return this.state.face;
+	    }
+	  }]);
+	
+	  return FaceAnim;
+	}(_react2.default.Component); //end class
+	
+	exports.default = FaceAnim;
 
 /***/ }
 /******/ ]);
