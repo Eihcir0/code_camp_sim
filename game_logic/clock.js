@@ -20,6 +20,7 @@ class Clock {
     this.tick = this.tick.bind(this);
     this.lastTime = [];
     this.tickCounter = 0;
+    this.lastClockTickCounter = this.tickCounter + 5 - 5;
   }
 
   tick(n=1){

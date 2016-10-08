@@ -11,7 +11,6 @@ class CongratsScreen extends React.Component {
 
     this.props.player.message =
     this.congrats.message;
-    debugger;
     this.handleClick = this.handleClick.bind(this);
     // this.main = this.main.bind(this);
 

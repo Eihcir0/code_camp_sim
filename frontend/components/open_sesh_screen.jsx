@@ -5,6 +5,8 @@ import StudyIconAnim from
  './../../game_logic/animation_logic/study_icon_anim.js';
 import FireAnim from
  './../../game_logic/animation_logic/fire_anim.js';
+import StudentAnim from
+ './../../game_logic/animation_logic/student_anim.js';
 
 
 class OpenSesh extends React.Component {
@@ -62,9 +64,53 @@ class OpenSesh extends React.Component {
     d.pos = [300,320];
     this.sprites.push(d);
 
+    d = new StudentAnim(this.player, [412,320], 3);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [482,319], 3);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [553,322], 3, 1);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [593,320], 3);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [628,323], 3);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [668,323], 3);
+    this.sprites.push(d);
+
+    d = new StudentAnim(this.player, [260,201], 2);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [298,204], 2);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [337,200], 2);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [373,202], 2);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [446,202], 2);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [520,200], 2);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [629,202], 2);
+    this.sprites.push(d);
+
+    d = new StudentAnim(this.player, [283,91], 1);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [398,90], 1);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [472,91], 1);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [548,90], 1);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [583,91], 1);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [617,90], 1);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [656,96], 1);
+    this.sprites.push(d);
+
   }
 
   main() {
+
     var dt = (this.player.clock.tickCounter - this.lastTickerCount);
     this.lastTickerCount = this.player.clock.tickCounter;
     this.ctx.drawImage(this.background,-28,0);
@@ -73,7 +119,7 @@ class OpenSesh extends React.Component {
 
     if ([0,2,4].includes(this.player.session)) {
       this.openSeshAnimationFrame = window.requestAnimationFrame(this.main);
-    } else {this.cancelAnimationFrame(this.openSeshAnimationFrame);debugger;}
+    } else {this.cancelAnimationFrame(this.openSeshAnimationFrame);}
 
   }
 
@@ -108,8 +154,11 @@ class OpenSesh extends React.Component {
   handleGetOffComputer() {
     this.playerAnim.soundTyping.pause();
     if (this.player.onFire) {this.player.fireOff();}
-    this.playerAnim.moveTo(0, ()=>(this.player.currentPos=0));
+    this.playerAnim.moveTo(0, ()=> {
+      this.player.currentPos=0;
+    });
   }
+
 
   handleClick(e) {
     console.log("click");
@@ -119,29 +168,38 @@ class OpenSesh extends React.Component {
     var x = e.pageX;
     if (!(this.player.currentPos === 11)) {
       if (y>520 && x<553) {
-        // execute animation for walking to secretary
-        this.player.currentPos = 10;}
+        this.playerAnim.moveTo(10, ()=> {
+          this.player.currentPos=10;
+        });
+        }
 
       if (x>315 && x<492 && y>430 && y<520) {
-           // animation walking to desk with move()
-        this.player.currentPos = 11;
+        // this.player.currentPos = 11;
+        //  animation walking to desk with move()
+        this.playerAnim.moveTo(11, ()=> {
+          this.player.currentPos=11;
+        });
       }
 
       if (x<321 && y>273 && y<418) {
         // animation walking to kitchen
-        this.player.currentPos = 9;
+        this.playerAnim.moveTo(9, ()=> {
+          this.player.currentPos=9;
+        });
+
       }
       if (x>125 && x<421 && y<186) {
         // animation walking to lecture
         if (this.player.clock.isBetween([8,30],[9,30])) {
           this.player.message = "";
-          this.player.session = 1;
           this.player.defaultMessage = "";
-          this.player.currentPos = 12;
+          this.playerAnim.moveTo(12, ()=> {
+            this.player.currentPos=12;
+            this.player.session = 1;
+          });
         }
         else {
           this.player.message = "The lecture hall doors are locked.";
-          this.player.currentPos = 0;
         }
       }
     }
@@ -181,9 +239,13 @@ class OpenSesh extends React.Component {
   renderSprites () {
     ////draw furniture first then fire, then study icons then hero
     this.sprites.forEach(sprite => {
-      if (sprite.type!=="study icon") {
+      if (sprite.type!=="study icon" && sprite.type!=="student") {
         this.ctx.drawImage(sprite.image,sprite.pos[0],sprite.pos[1]);
+      } else if (sprite.type==="student") {
+        sprite.render();
       }
+
+
       if (this.player.onFire) {this.player.fire.render();}
       if (sprite.type==="study icon") {
         sprite.render();

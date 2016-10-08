@@ -160,9 +160,54 @@ button {
 	background: blanchedalmond;
 	font-size: 36px;
 }
-.blur {
+.blur1 {
    color: transparent;
    text-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.blur2 {
+   color: transparent;
+   text-shadow: 0 0 25px rgba(0,0,0,0.5);
+}
+
+.blur3 {
+   color: transparent;
+   text-shadow: 0 0 35px rgba(0,0,0,0.5);
+}
+
+.blur4 {
+   color: transparent;
+   text-shadow: 0 0 45px rgba(0,0,0,0.5);
+}
+
+.blur5 {
+   color: transparent;
+   text-shadow: 0 0 55px rgba(0,0,0,0.5);
+}
+
+.blur6 {
+   color: transparent;
+   text-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.blur7 {
+   color: transparent;
+   text-shadow: 0 0 25px rgba(0,0,0,0.5);
+}
+
+.blur8 {
+   color: transparent;
+   text-shadow: 0 0 35px rgba(0,0,0,0.5);
+}
+
+.blur9 {
+   color: transparent;
+   text-shadow: 0 0 45px rgba(0,0,0,0.5);
+}
+
+.blur10 {
+   color: transparent;
+   text-shadow: 0 0 55px rgba(0,0,0,0.5);
 }
 
 .eyes-closed {

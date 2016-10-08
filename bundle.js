@@ -21470,19 +21470,19 @@
 	
 	var _open_sesh_screen2 = _interopRequireDefault(_open_sesh_screen);
 	
-	var _lecture_sesh_screen = __webpack_require__(200);
+	var _lecture_sesh_screen = __webpack_require__(201);
 	
 	var _lecture_sesh_screen2 = _interopRequireDefault(_lecture_sesh_screen);
 	
-	var _pairs_sesh_screen = __webpack_require__(202);
+	var _pairs_sesh_screen = __webpack_require__(203);
 	
 	var _pairs_sesh_screen2 = _interopRequireDefault(_pairs_sesh_screen);
 	
-	var _strike_screen = __webpack_require__(208);
+	var _strike_screen = __webpack_require__(209);
 	
 	var _strike_screen2 = _interopRequireDefault(_strike_screen);
 	
-	var _congrats_screen = __webpack_require__(209);
+	var _congrats_screen = __webpack_require__(210);
 	
 	var _congrats_screen2 = _interopRequireDefault(_congrats_screen);
 	
@@ -21509,14 +21509,13 @@
 	    var _this = _possibleConstructorReturn(this, (GameMain.__proto__ || Object.getPrototypeOf(GameMain)).call(this));
 	
 	    _this.player = new _player2.default("Guest");
-	    _this.clock = _this.player.clock;
 	    _this.playerAnim = new _player_anim2.default({ player: _this.player });
 	    _this.week = new _week2.default(_this.player);
 	    _this.state = {
 	      currentFace: "happy1",
 	      currentPos: -1,
 	      message: _this.player.defaultMessage,
-	      clock: _this.clock.time(),
+	      clock: _this.player.clock.time(),
 	      ruby: _this.player.skills.Ruby,
 	      focus: _this.player.focus
 	    };
@@ -21524,7 +21523,6 @@
 	    _this.currentFaceImage = _this.currentFaceImage.bind(_this);
 	    _this.tick = _this.tick.bind(_this);
 	    _this.updateAttributes = _this.updateAttributes.bind(_this);
-	    _this.lastClockTickCounter = _this.clock.tickCounter;
 	    _this.ticksPerSecond = 100; //<<=If changed then change Clock class
 	    _this.intervalTime = 1000 / _this.ticksPerSecond;
 	    _this.interval = window.setInterval(function () {
@@ -21536,13 +21534,13 @@
 	  _createClass(GameMain, [{
 	    key: 'tick',
 	    value: function tick() {
-	      this.clock.tick();
-	      var dt = (this.clock.tickCounter - this.lastClockTickCounter) * this.clock.relativeSpeed;
+	      this.player.clock.tick();
+	      var dt = (this.player.clock.tickCounter - this.player.clock.lastClockTickCounter) * this.player.clock.relativeSpeed;
 	      if (dt > 200) {
-	        this.lastClockTickCounter = this.clock.tickCounter;
+	        this.player.clock.lastClockTickCounter = this.player.clock.tickCounter;
 	        this.setState({
 	          currentPos: this.player.currentPos,
-	          clock: this.clock.time()
+	          clock: this.player.clock.time()
 	        });
 	        this.updateSession();
 	        this.updateAttributes();
@@ -21560,22 +21558,22 @@
 	    key: 'updateSession',
 	    value: function updateSession() {
 	      if (this.player.session === 0 && this.player.currentPos !== 12) {
-	        if (this.clock.is(["9", "00", "am"])) {
+	        if (this.player.clock.is(["9", "00", "am"])) {
 	          this.player.newStrike = { message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9, 1], newPos: this.player.currentPos };
-	        } else if (this.clock.is(["9", "30", "am"])) {
+	        } else if (this.player.clock.is(["9", "30", "am"])) {
 	          this.player.newStrike = { message: "You cannot enter the lecture hall after 9:30am.  You received a strike for missing morning lecture.", newTime: [9, 31], newPos: this.player.currentPos };
 	        }
 	      }
-	      if (this.clock.is(["12", "01", "pm"])) {
+	      if (this.player.clock.is(["12", "01", "pm"])) {
 	        this.player.session = 2;
 	        this.player.message = "It's lunch time. Take a lunch break but be sure to be logged in at your workstation by 1:30pm for pair programming.";
 	      }
 	
-	      if (this.clock.is(["1", "30", "pm"])) {
+	      if (this.player.clock.is(["1", "30", "pm"])) {
 	        if (this.player.currentPos !== 11) {
 	          this.player.newStrike = { message: "You received a strike for not being seated at your workstation by 1:30pm for pair programming. ", newTime: [13, 30], newClockSpeed: 720, newSession: 3, newPos: 11 };
 	        } else {
-	          this.clock = new _clock2.default([13, 31], 3);
+	          this.player.clock = new _clock2.default([13, 31], 3);
 	          this.player.session = 3;
 	        }
 	      }
@@ -21636,10 +21634,10 @@
 	    value: function sesh() {
 	      // change this to a switch
 	      if (this.player.newStrike) {
-	        this.clock.pause();
+	        this.player.clock.pause();
 	        return _react2.default.createElement(_strike_screen2.default, { player: this.player });
 	      } else if (this.player.newCongrats) {
-	        this.clock.pause();
+	        this.player.clock.pause();
 	        return _react2.default.createElement(_congrats_screen2.default, { player: this.player });
 	      } else if (this.player.session == 3) {
 	        return _react2.default.createElement(_pairs_sesh_screen2.default, { player: this.player });
@@ -21877,8 +21875,8 @@
 	    _classCallCheck(this, Player);
 	
 	    this.name = name || "Richie";
-	    this.clock = obj ? obj.clock : new _clock2.default([18, 45], 8);
-	    this.defaultMessage = obj ? obj.defaultMessage : "Get to lecture before 9:00am or you will get your first strike!";
+	    this.clock = obj ? obj.clock : new _clock2.default([8, 40], 1);
+	    this.defaultMessage = obj ? obj.defaultMessage : "";
 	    this.currentEmotion = obj ? obj.currentEmotion : "excited";
 	    this.info = obj ? obj.info : "";
 	    this.sleepBank = obj ? obj.sleepBank : 100;
@@ -21957,7 +21955,7 @@
 	      }
 	
 	      //onFire -- for now just score /1000000 * 50% (so 100k = 5%) + offset <== for testing
-	      var chanceForFireOffset = 0;
+	      var chanceForFireOffset = 0.1; //delete me
 	      var chanceForFire = this.score / 1000000 * 0.5 + chanceForFireOffset;
 	      if (this.onFire) {
 	        chanceForFire = 0;
@@ -21984,7 +21982,6 @@
 	      var _this = this;
 	
 	      this.onFire = true;
-	      console.log("fire on");
 	      window.setTimeout(function () {
 	        _this.fireOff();
 	      }, 5000);
@@ -22019,7 +22016,6 @@
 	    key: 'newPoints',
 	    value: function newPoints() {
 	      var points = Math.floor(Math.random() * 10 + 1) * 100;
-	      console.log('score increase ' + points);
 	      this.score += points;
 	      return new _points_anim2.default({ canvas: this.canvas, ctx: this.ctx }, { type: "points", value: points });
 	    }
@@ -22069,6 +22065,7 @@
 	    this.tick = this.tick.bind(this);
 	    this.lastTime = [];
 	    this.tickCounter = 0;
+	    this.lastClockTickCounter = this.tickCounter + 5 - 5;
 	  }
 	
 	  _createClass(Clock, [{
@@ -22281,8 +22278,8 @@
 	      "E": [1, 0],
 	      "W": [-1, 0],
 	      "NE": [1, -1],
-	      "NW": [-1, -1],
-	      "SE": [1, 1],
+	      "NW": [-1, -3.5],
+	      "SE": [1, 1.8],
 	      "SW": [-1, 1],
 	      "STOP": [0, 0],
 	      "seated": [0, 0]
@@ -22290,16 +22287,13 @@
 	    this.DIAGS = ["NE", "NW", "SE", "SW"];
 	    this.ctx = obj.ctx;
 	    this.canvas = obj.canvas;
-	    // this.lastDir = "S";
-	    // this.done = false;
-	    // this.blinking = obj.blinking || 0;
 	  }
 	
 	  _createClass(Moveable, [{
 	    key: "currentSprite",
 	    value: function currentSprite() {
 	      //this is really just the X offset calc'd
-	      return this.animSet * (this.width * this.animNumFrames) + this.animFrame * this.width + this.spriteXoffset;
+	      return this.animFrame * this.width + this.spriteXoffset;
 	    }
 	  }, {
 	    key: "update",
@@ -22309,29 +22303,10 @@
 	        this.updateAnimSet();
 	      }
 	      this.updateAnim(elapsed);
-	      this.move(elapsed);
-	    }
-	  }, {
-	    key: "move",
-	    value: function move(elapsed) {
-	      var newPos = this.pos.slice(0);
 	      if (this.movementOn) {
-	        var move = this.speed * (elapsed / 1000);
-	        var speedFactor = void 0;
-	
-	        if (this.DIAGS.includes(this.facing)) {
-	          //reduce diag velocity
-	          speedFactor = 0.75;
-	        } else {
-	          speedFactor = 1;
-	        }
-	        newPos[0] += Math.round(move * this.MOVES[this.facing][0]);
-	        newPos[1] += Math.round(move * speedFactor * this.MOVES[this.facing][1]);
+	        this.move(elapsed);
 	      }
-	      this.pos = newPos;
-	    } //end move()
-	
-	
+	    }
 	  }]);
 	
 	  return Moveable;
@@ -22659,7 +22634,9 @@
 	    _this.animDelay = 20;
 	    _this.movementOn = false;
 	    _this.sound = _this.numValue === 1000 ? new Audio("./app/assets/sounds/woohoo.wav") : new Audio("./app/assets/sounds/icon.wav");
-	    _this.sound.play();
+	    window.setTimeout(function () {
+	      return _this.sound.play();
+	    }, 1);
 	    _this.sunset = Math.floor(Math.random() * 2) - 0.5 > 0 ? -1 : 1;
 	    _this.done = false;
 	    _this.updateAnim = _this.updateAnim.bind(_this);
@@ -23402,44 +23379,119 @@
 	    var _this = _possibleConstructorReturn(this, (PlayerAnim.__proto__ || Object.getPrototypeOf(PlayerAnim)).call(this, obj));
 	
 	    _this.type = "hero";
+	    _this.destination = {};
 	    _this.player = obj.player;
 	    _this.render = _this.render.bind(_this);
+	    _this.moveTo = _this.moveTo.bind(_this);
+	    _this.move = _this.move.bind(_this);
+	    _this.checkArrived = _this.checkArrived.bind(_this);
 	    _this.moving = 0;
+	
 	    // 0 = at center
 	    // 1 = walking to secretary
 	    // 2 = walking from secretary
+	    // 2.5 = walking from secretary to kitchen
 	    // 3 = walking to computer
+	    //3.5 walking to computer from kitchen
 	    // 4 = walking from computer
 	    // 5 = walking to KITCHEN
 	    // 6 = walking from KITCHEN
 	    // 7 = walking to LECTURE
-	    // 8 = walking from LECTURE
+	    // 8 = walking from LECTURE // NOT USED
 	    // 9 = at KITCHEN
 	    // 10 = at secretary
 	    // 11 at computer
 	    // 12 at lecture
+	    // 13 outside of kitchen
 	
 	    _this.imageSheet = new Image();
-	    _this.imageSheet.src = "./app/assets/images/spritesheet.png";
+	    _this.imageSheet.src = "./app/assets/images/hero_spritesheet.png";
 	    _this.imageSeated = new Image();
-	    _this.imageSeated.src = "./app/assets/images/hero_seated.png";
+	    _this.imageSeated.src = "./app/assets/images/hero_seated_spritesheet.png";
 	    _this.soundTyping = new Audio("./app/assets/sounds/typing.wav");
 	    _this.animationOn = true;
-	
+	    _this.speed = 100;
 	    _this.updateAnimSet();
-	
 	    return _this;
-	  }
+	  } //end constructor
+	
 	
 	  _createClass(PlayerAnim, [{
-	    key: "moveTo",
-	    value: function moveTo(newPos, callback) {
-	      if (this.player.currentPos === 11 && newPos === 0) {
-	        this.player.currentPos = 4;
-	        //call the walking to secretary and pass callback which would
-	        //likely be either a change in a position or another moveTo with change position
-	        callback(); // <== temporary
+	    key: "checkArrived",
+	    value: function checkArrived() {
+	      switch (this.facing) {
+	        case "E":
+	          if (this.pos[0] >= this.destination.x) {
+	            this.destination.cb();
+	            return true;
+	          } else {
+	            return false;
+	          }
+	        case "S":
+	          if (this.pos[1] >= this.destination.y) {
+	            this.destination.cb();
+	            return true;
+	          } else {
+	            return false;
+	          }
+	        case "SE":
+	          if (this.pos[1] >= this.destination.y) {
+	            this.destination.cb();
+	            return true;
+	          } else {
+	            return false;
+	          }
+	        case "W":
+	          if (this.pos[0] <= this.destination.x) {
+	            this.destination.cb();
+	            return true;
+	          } else {
+	            return false;
+	          }
+	        case "N":
+	          if (this.pos[1] <= this.destination.y) {
+	            this.destination.cb();
+	            return true;
+	          } else {
+	            return false;
+	          }
+	        case "NW":
+	          if (this.pos[1] <= this.destination.y) {
+	            this.destination.cb();
+	            return true;
+	          } else {
+	            return false;
+	          }
+	        default:
+	          return false;
 	      }
+	    }
+	  }, {
+	    key: "move",
+	    value: function move(elapsed) {
+	      if (this.checkArrived()) {
+	        return;
+	      }
+	      var newPos = this.pos.slice(0);
+	      if (this.movementOn) {
+	        var move = this.speed * (elapsed / 1000);
+	        var speedFactor = void 0;
+	        if (this.DIAGS.includes(this.facing)) {
+	          //reduce diag velocity
+	          speedFactor = 0.375;
+	        } else {
+	          speedFactor = 1;
+	        }
+	        newPos[0] += Math.round(move * this.MOVES[this.facing][0]);
+	        newPos[1] += Math.round(move * speedFactor * this.MOVES[this.facing][1]);
+	      }
+	      this.pos = newPos;
+	    } //end move()
+	
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      this.ctx.drawImage(this.image, this.currentSprite(), this.spriteYoffset + this.height * this.animSet, this.width, this.height, this.pos[0], this.pos[1], 45, 68);
 	    }
 	  }, {
 	    key: "updateAnim",
@@ -23449,101 +23501,191 @@
 	
 	        if (this.animTimer >= this.animDelay) {
 	          this.animTimer = 0;
-	          // ++this.animFrame;
-	          this.animFrame = Math.floor(Math.random() * 3);
-	          if (this.animFrame === 1) {
-	            this.soundTyping.play();
-	          }
-	          if (this.animFrame >= this.animNumFrames) {
-	            this.animFrame = 0;
-	          }
+	          ++this.animFrame;
+	        }
+	        // if (this.animFrame===1) {
+	        //   this.soundTyping.play();}
+	        if (this.animFrame >= this.animNumFrames) {
+	          this.animFrame = 0;
 	        }
 	      }
 	    }
 	  }, {
-	    key: "render",
-	    value: function render() {
-	      //
-	      // this.ctx.fillStyle = "rgb(51, 118, 36)";
-	      // this.ctx.fillRect(300,300,50,50);
-	      //
-	      this.ctx.drawImage(this.image, this.currentSprite(), this.spriteYoffset, this.width, this.height, this.pos[0], this.pos[1], this.width, this.height);
-	    }
-	  }, {
 	    key: "updateAnimSet",
 	    value: function updateAnimSet() {
-	      //should refactor this with a const array?
-	      if (this.player.currentPos !== this.player.lastCurrentPos) {
-	        this.player.lastCurrentPos = this.player.currentPos;
-	        switch (this.player.currentPos) {
-	          case 0:
-	            this.pos = [200, 330];
-	            this.image = this.imageSheet;
-	            this.animSet = 0;
-	            this.animFrame = 0;
-	            this.animNumFrames = 1;
-	            this.animDelay = 300;
-	            this.animTimer = 0;
-	            this.spriteYoffset = 250;
-	            this.spriteXoffset = 37;
-	            this.width = 32;
-	            this.height = 64;
-	            this.facing = "S";
-	            this.animationOn = false;
-	            this.movementOn = false;
-	            break;
-	          case 9:
-	            this.pos = [80, 200];
-	            this.image = this.imageSheet;
-	            this.animSet = 0;
-	            this.animFrame = 0;
-	            this.animNumFrames = 1;
-	            this.animDelay = 300;
-	            this.animTimer = 0;
-	            this.spriteYoffset = 250;
-	            this.spriteXoffset = 37;
-	            this.width = 32;
-	            this.height = 64;
-	            this.facing = "S";
-	            this.animationOn = false;
-	            this.movementOn = false;
-	            break;
-	          case 10:
-	            this.pos = [90, 330];
-	            this.image = this.imageSheet;
-	            this.animSet = 0;
-	            this.animFrame = 0;
-	            this.animNumFrames = 1;
-	            this.animDelay = 300;
-	            this.animTimer = 0;
-	            this.spriteYoffset = 250;
-	            this.spriteXoffset = 37;
-	            this.width = 32;
-	            this.height = 64;
-	            this.facing = "S";
-	            this.animationOn = false;
-	            this.movementOn = false;
-	            break;
-	          case 11:
-	            this.pos = [300, 323];
-	            this.image = this.imageSeated;
-	            this.animSet = 0; // ??
-	            this.animFrame = 0; // ??
-	            this.animNumFrames = 3; // ??
-	            this.animDelay = 300; // ??
-	            this.animTimer = 0; // ??
-	            this.spriteYoffset = 0; // ??
-	            this.spriteXoffset = 0; // ??
-	            this.width = 64;
-	            this.height = 64;
-	            this.facing = "seated";
-	            this.spriteYoffset = 0;
-	            this.animationOn = true;
-	            this.movementOn = false;
-	            break;
-	          default:
-	            break;
-	        }
+	      if (this.player.currentPos === this.player.lastCurrentPos) {
+	        return;
+	      }
+	
+	      this.player.lastCurrentPos = this.player.currentPos;
+	      this.image = this.imageSheet;
+	      this.animFrame = 0;
+	      this.animDelay = 90;
+	      this.animTimer = 0;
+	      this.spriteXoffset = 0;
+	      this.spriteYoffset = 0;
+	      this.width = 25;
+	      this.height = 38;
+	      this.animationOn = true;
+	      this.movementOn = true;
+	      this.animNumFrames = 4;
+	
+	      switch (this.player.currentPos) {
+	        case 0:
+	          //at center
+	          this.pos = [200, 330];
+	          this.animSet = 0;
+	          this.animNumFrames = 1;
+	          this.animDelay = 300;
+	          this.facing = "S";
+	          this.animationOn = false;
+	          this.movementOn = false;
+	          break;
+	        case 1:
+	          //walking W to secretary
+	          this.animSet = 1;
+	          this.facing = "W";
+	          break;
+	        case 2.5:
+	          //walking N from secretary
+	          this.image = this.imageSheet;
+	          this.animSet = 3;
+	          this.facing = "N";
+	          break;
+	        case 3:
+	          //walking E to computer
+	          this.animSet = 2;
+	          this.facing = "E";
+	          break;
+	        case 3.5:
+	          // walking SE from kitchen
+	          this.animSet = 2;
+	          this.facing = "SE";
+	          break;
+	        case 4:
+	          //walking W from computer
+	          this.animSet = 1;
+	          this.facing = "W";
+	          break;
+	        case 5:
+	          //walking NW to kitchen
+	          this.animSet = 1;
+	          this.facing = "NW";
+	          break;
+	        case 6:
+	          //walking S from kitchen
+	          this.animSet = 0;
+	          this.facing = "S";
+	          break;
+	        case 7:
+	          //walking N to lecture
+	          this.animSet = 3;
+	          this.facing = "N";
+	          break;
+	        case 9:
+	          //at kitchen
+	          this.pos = [90, 200];
+	          this.animSet = 0;
+	          this.animNumFrames = 1;
+	          this.animDelay = 300;
+	          this.facing = "S";
+	          this.animationOn = false;
+	          this.movementOn = false;
+	          break;
+	        case 10:
+	          // at secretary
+	          this.pos = [90, 330];
+	          this.image = this.imageSheet;
+	          this.animSet = 0;
+	          this.animNumFrames = 1;
+	          this.animDelay = 300;
+	          this.facing = "S";
+	          this.animationOn = false;
+	          this.movementOn = false;
+	          break;
+	        case 11:
+	          // seated at computer
+	          this.pos = [302, 323];
+	          this.image = this.imageSeated;
+	          this.animSet = 3;
+	          if (this.animTimer === 0) {
+	            this.animFrame = Math.floor(Math.random() * 3) + 1;
+	          }
+	          this.animNumFrames = 3;
+	          this.animDelay = 3000;
+	          this.facing = "seated";
+	          this.movementOn = false;
+	          break;
+	        default:
+	          break;
+	      }
+	    }
+	
+	    //this fn takes a callback for what to do when destination reached
+	
+	  }, {
+	    key: "moveTo",
+	    value: function moveTo(newPos, callback) {
+	      var _this2 = this;
+	
+	      switch (true) {
+	        case (this.player.currentPos === 0 || this.player.currentPos === 10) && newPos === 11:
+	          this.destination = { x: 308, y: 330, cb: callback };
+	          this.player.currentPos = 3;
+	          break;
+	        case this.player.currentPos === 11 && newPos === 0:
+	          this.destination = { x: 200, y: 330, cb: callback };
+	          this.player.currentPos = 4;
+	          break;
+	        case (this.player.currentPos === 0 || this.player.currentPos === 13) && newPos === 12:
+	          this.facing = "N";
+	          this.destination = { x: 200, y: 50, cb: callback };
+	          this.player.currentPos = 7;
+	          break;
+	        case this.player.currentPos === 0 && newPos === 9:
+	          this.destination = { x: 90, y: 200, cb: callback };
+	          this.player.currentPos = 5;
+	          break;
+	        case this.player.currentPos === 0 && newPos === 10:
+	          this.destination = { x: 90, y: 330, cb: callback };
+	          this.player.currentPos = 1;
+	          break;
+	        case this.player.currentPos === 10 && newPos === 9:
+	          this.destination = { x: 90, y: 200, cb: callback };
+	          this.player.currentPos = 2.5;
+	          break;
+	        case this.player.currentPos === 9 && newPos === 10:
+	          this.destination = { x: 90, y: 330, cb: callback };
+	          this.player.currentPos = 6;
+	          break;
+	        case this.player.currentPos === 9 && newPos === 11:
+	          this.destination = { x: 308, y: 330, cb: callback };
+	          this.player.currentPos = 3.5;
+	          break;
+	        //if going to lecture from kitchen, go to area 13 e of kitchen first
+	        case this.player.currentPos === 9 && newPos === 12:
+	          this.destination = { x: 200, y: 200, cb: function cb() {
+	              _this2.player.currentPos = 13;
+	              _this2.moveTo(12, function () {
+	                _this2.player.message = "";
+	                _this2.player.defaultMessage = "";
+	                _this2.player.currentPos = 12;
+	                _this2.player.session = 1;
+	              });
+	            }
+	          };
+	          this.player.currentPos = 3;
+	          break;
+	        //if going to lecture from secretary, go to kitchen first
+	        case this.player.currentPos === 10 && newPos === 12:
+	          this.destination = { x: 90, y: 200, cb: function cb() {
+	              _this2.player.currentPos = 9;
+	              _this2.moveTo(12, null);
+	            } };
+	          this.player.currentPos = 2.5;
+	          break;
+	        default:
+	          break;
 	      }
 	    }
 	  }]);
@@ -23584,6 +23726,10 @@
 	var _fire_anim = __webpack_require__(176);
 	
 	var _fire_anim2 = _interopRequireDefault(_fire_anim);
+	
+	var _student_anim = __webpack_require__(200);
+	
+	var _student_anim2 = _interopRequireDefault(_student_anim);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -23659,10 +23805,54 @@
 	      d = new _desk2.default(3);
 	      d.pos = [300, 320];
 	      this.sprites.push(d);
+	
+	      d = new _student_anim2.default(this.player, [412, 320], 3);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [482, 319], 3);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [553, 322], 3, 1);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [593, 320], 3);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [628, 323], 3);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [668, 323], 3);
+	      this.sprites.push(d);
+	
+	      d = new _student_anim2.default(this.player, [260, 201], 2);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [298, 204], 2);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [337, 200], 2);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [373, 202], 2);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [446, 202], 2);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [520, 200], 2);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [629, 202], 2);
+	      this.sprites.push(d);
+	
+	      d = new _student_anim2.default(this.player, [283, 91], 1);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [398, 90], 1);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [472, 91], 1);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [548, 90], 1);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [583, 91], 1);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [617, 90], 1);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [656, 96], 1);
+	      this.sprites.push(d);
 	    }
 	  }, {
 	    key: 'main',
 	    value: function main() {
+	
 	      var dt = this.player.clock.tickCounter - this.lastTickerCount;
 	      this.lastTickerCount = this.player.clock.tickCounter;
 	      this.ctx.drawImage(this.background, -28, 0);
@@ -23672,7 +23862,7 @@
 	      if ([0, 2, 4].includes(this.player.session)) {
 	        this.openSeshAnimationFrame = window.requestAnimationFrame(this.main);
 	      } else {
-	        this.cancelAnimationFrame(this.openSeshAnimationFrame);debugger;
+	        this.cancelAnimationFrame(this.openSeshAnimationFrame);
 	      }
 	    }
 	  }, {
@@ -23723,12 +23913,14 @@
 	        this.player.fireOff();
 	      }
 	      this.playerAnim.moveTo(0, function () {
-	        return _this3.player.currentPos = 0;
+	        _this3.player.currentPos = 0;
 	      });
 	    }
 	  }, {
 	    key: 'handleClick',
 	    value: function handleClick(e) {
+	      var _this4 = this;
+	
 	      console.log("click");
 	      console.log(e.pageX);
 	      console.log(e.pageY);
@@ -23736,29 +23928,36 @@
 	      var x = e.pageX;
 	      if (!(this.player.currentPos === 11)) {
 	        if (y > 520 && x < 553) {
-	          // execute animation for walking to secretary
-	          this.player.currentPos = 10;
+	          this.playerAnim.moveTo(10, function () {
+	            _this4.player.currentPos = 10;
+	          });
 	        }
 	
 	        if (x > 315 && x < 492 && y > 430 && y < 520) {
-	          // animation walking to desk with move()
-	          this.player.currentPos = 11;
+	          // this.player.currentPos = 11;
+	          //  animation walking to desk with move()
+	          this.playerAnim.moveTo(11, function () {
+	            _this4.player.currentPos = 11;
+	          });
 	        }
 	
 	        if (x < 321 && y > 273 && y < 418) {
 	          // animation walking to kitchen
-	          this.player.currentPos = 9;
+	          this.playerAnim.moveTo(9, function () {
+	            _this4.player.currentPos = 9;
+	          });
 	        }
 	        if (x > 125 && x < 421 && y < 186) {
 	          // animation walking to lecture
 	          if (this.player.clock.isBetween([8, 30], [9, 30])) {
 	            this.player.message = "";
-	            this.player.session = 1;
 	            this.player.defaultMessage = "";
-	            this.player.currentPos = 12;
+	            this.playerAnim.moveTo(12, function () {
+	              _this4.player.currentPos = 12;
+	              _this4.player.session = 1;
+	            });
 	          } else {
 	            this.player.message = "The lecture hall doors are locked.";
-	            this.player.currentPos = 0;
 	          }
 	        }
 	      }
@@ -23769,12 +23968,12 @@
 	  }, {
 	    key: 'update',
 	    value: function update(dt) {
-	      var _this4 = this;
+	      var _this5 = this;
 	
 	      if (this.player.focus <= 0) {
 	        this.player.message = "You can't focus any longer.  Take a break.";
 	        window.setTimeout(function () {
-	          return _this4.player.message = "";
+	          return _this5.player.message = "";
 	        }, 2000);
 	        this.handleGetOffComputer();
 	      }
@@ -23809,20 +24008,23 @@
 	  }, {
 	    key: 'renderSprites',
 	    value: function renderSprites() {
-	      var _this5 = this;
+	      var _this6 = this;
 	
 	      ////draw furniture first then fire, then study icons then hero
 	      this.sprites.forEach(function (sprite) {
-	        if (sprite.type !== "study icon") {
-	          _this5.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
+	        if (sprite.type !== "study icon" && sprite.type !== "student") {
+	          _this6.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
+	        } else if (sprite.type === "student") {
+	          sprite.render();
 	        }
-	        if (_this5.player.onFire) {
-	          _this5.player.fire.render();
+	
+	        if (_this6.player.onFire) {
+	          _this6.player.fire.render();
 	        }
 	        if (sprite.type === "study icon") {
 	          sprite.render();
 	        }
-	        _this5.playerAnim.render(); // render player
+	        _this6.playerAnim.render(); // render player
 	      });
 	    }
 	  }, {
@@ -23917,13 +24119,13 @@
 	
 	    this.image = new Image();
 	    if (id === 1) {
-	      this.image.src = "./app/assets/images/newdesks.png";
+	      this.image.src = "./app/assets/images/desks.png";
 	    }
 	    if (id === 2) {
-	      this.image.src = "./app/assets/images/newdesks2.png";
+	      this.image.src = "./app/assets/images/desks2.png";
 	    }
 	    if (id === 3) {
-	      this.image.src = "./app/assets/images/newdesks3.png";
+	      this.image.src = "./app/assets/images/desks.png";
 	    }
 	    this.height = 75;
 	    this.width = 856;
@@ -23947,6 +24149,137 @@
 /* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _moveable = __webpack_require__(177);
+	
+	var _moveable2 = _interopRequireDefault(_moveable);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var StudentAnim = function (_Moveable) {
+	  _inherits(StudentAnim, _Moveable);
+	
+	  function StudentAnim(player, pos, desk, snumber) {
+	    _classCallCheck(this, StudentAnim);
+	
+	    var _this = _possibleConstructorReturn(this, (StudentAnim.__proto__ || Object.getPrototypeOf(StudentAnim)).call(this, { ctx: player.ctx, canvas: player.canvas }));
+	
+	    _this.number = snumber;
+	    if (snumber === undefined) {
+	      _this.number = Math.floor(Math.random() * 9) + 2;
+	    }
+	    _this.player = player;
+	    _this.desk = desk;
+	    _this.type = "student";
+	    _this.width = 25;
+	    _this.height = 25;
+	    _this.pos = pos;
+	
+	    _this.done = false;
+	    _this.animationOn = true;
+	    _this.movementOn = false;
+	    _this.animSet = 0; // ??
+	    _this.spriteYoffset = 0; // ??
+	    _this.spriteXoffset = 0; // ??
+	    _this.animFrame = 0; // ??
+	    _this.animNumFrames = 4; // ??
+	    _this.animDelay = 600 + Math.random() * 300; // ??
+	    _this.animTimer = 0; // ??
+	    _this.imageReady = false;
+	    _this.image = new Image();
+	    _this.turnedAround = false;
+	    switch (_this.number) {
+	      case 1:
+	        _this.image.src = "./app/assets/images/student3.png";
+	        break;
+	      case 2:
+	        _this.image.src = "./app/assets/images/student2.png";
+	        break;
+	      case 3:
+	        _this.image.src = "./app/assets/images/student1.png";
+	        break;
+	      case 4:
+	        _this.image.src = "./app/assets/images/student4.png";
+	        break;
+	      case 5:
+	        _this.image.src = "./app/assets/images/student4.png";
+	        break;
+	      case 6:
+	        _this.image.src = "./app/assets/images/student6.png";
+	        break;
+	      case 7:
+	        _this.image.src = "./app/assets/images/student6.png";
+	        break;
+	      case 8:
+	        _this.image.src = "./app/assets/images/student4.png";
+	        break;
+	      case 9:
+	        _this.image.src = "./app/assets/images/student5.png";
+	        break;
+	      case 10:
+	        _this.image.src = "./app/assets/images/student5.png";
+	        break;
+	      default:
+	
+	    }
+	
+	    return _this;
+	  }
+	
+	  _createClass(StudentAnim, [{
+	    key: "updateAnim",
+	    value: function updateAnim(elapsed) {
+	      this.animTimer += elapsed;
+	      if (this.turnedAround && !this.player.onFire) {
+	        this.animFrame = 1;
+	        this.turnedAround = false;
+	      }
+	      if (this.animTimer > this.animDelay) {
+	        this.animTimer = 0;
+	        var num = Math.floor(Math.random() * 100) + 1;
+	        this.animFrame = 0;
+	        if (num > 94 && num < 98 && this.animFrame === 0) {
+	          this.animFrame = 1;
+	        } else if (num > 98 && this.animFrame === 0) {
+	          this.animFrame = 2;
+	        }
+	      }
+	      if (this.player.onFire) {
+	        this.desk === 3 ? this.animFrame = 1 : this.animFrame = 3;
+	        this.turnedAround = true;
+	      }
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      // this.ctx.fillStyle = "rgb(51, 118, 36)";
+	      // this.ctx.fillRect(300,300,50,50);
+	      this.ctx.drawImage(this.image, this.width * this.animFrame, 0, this.width, this.height, this.pos[0], this.pos[1], 50, 60);
+	    }
+	  }]);
+	
+	  return StudentAnim;
+	}(_moveable2.default); //end class
+	
+	exports.default = StudentAnim;
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
@@ -23959,7 +24292,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _sleep_minigame = __webpack_require__(201);
+	var _sleep_minigame = __webpack_require__(202);
 	
 	var _sleep_minigame2 = _interopRequireDefault(_sleep_minigame);
 	
@@ -23984,28 +24317,29 @@
 	    // this.main = this.main.bind(this);
 	    var _this = _possibleConstructorReturn(this, (LectureSeshScreen.__proto__ || Object.getPrototypeOf(LectureSeshScreen)).call(this, props));
 	
-	    _this.props.player.focus = 100;
+	    _this.player = _this.props.player;
+	    _this.player.focus = 100;
 	    var startTime;
-	    if (_this.props.player.clock.time()[0] === "8") {
+	    if (_this.player.clock.time()[0] === "8") {
 	      startTime = [9, 0];
 	    } else {
-	      startTime = _this.props.player.clock.time();
+	      startTime = _this.player.clock.time();
 	    }
-	    _this.props.player.clock = new _clock2.default(startTime, 9);
-	    _this.startingFocus = _this.props.player.focus;
+	    _this.player.clock = new _clock2.default(startTime, 9);
+	    _this.startingFocus = _this.player.focus;
 	    _this.eyesClosedTimer = 0;
 	    _this.state = {
 	      currentSlide: 1,
 	      eyesClosed: false,
-	      focus: _this.props.player.focus,
+	      focus: _this.player.focus,
 	      faintMeter: 0,
 	      goesToSleepMeter: -50,
-	      time: _this.props.player.clock.time()
+	      time: _this.player.clock.time()
 	
 	      // lastTime: Date.now()
 	      // isLiked: false
 	    };
-	    _this.faintMeterMax = _this.props.player.sleepBank + 0;
+	    _this.faintMeterMax = _this.player.sleepBank + 0;
 	    _this.faintMeterOn = false;
 	    _this.faintMeter = 0;
 	    _this.goesToSleepMeter = -50;
@@ -24030,7 +24364,7 @@
 	  _createClass(LectureSeshScreen, [{
 	    key: 'tick',
 	    value: function tick() {
-	      var time = this.props.player.clock.time();
+	      var time = this.player.clock.time();
 	      if (time[0] === "10" && parseInt(time[1]) > 45 || time[0] === "11") {
 	        this.updateFocus();
 	        this.updateFaintMeter();
@@ -24054,7 +24388,7 @@
 	        this.faintSound = "";
 	        this.sleepSound = "";
 	        this.xxinterval = undefined;
-	        this.props.player.newCongrats = { message: 'CONGRATULATIONS!!! You made it through lecture without sleeping!', newTime: [12, 0], newPos: 0, newSession: 2 };
+	        this.player.newCongrats = { message: 'CONGRATULATIONS!!! You made it through lecture without sleeping!', newTime: [12, 0], newPos: 0, newSession: 2 };
 	      }
 	    }
 	  }, {
@@ -24066,8 +24400,8 @@
 	        clearInterval(this.xxinterval);
 	        this.sleepSound.pause();
 	        this.xxinterval = undefined;
-	        this.props.player.newStrike = { message: "You received a strike for falling asleep during lecture.", newTime: [12, 0], newPos: 0, newSession: 2, newClockSpeed: 360 };
-	        this.props.player.currentPos = 0;
+	        this.player.newStrike = { message: "You received a strike for falling asleep during lecture.", newTime: [12, 0], newPos: 0, newSession: 2, newClockSpeed: 360 };
+	        this.player.currentPos = 0;
 	      }
 	      this.setState({ goesToSleepMeter: this.goesToSleepMeter });
 	    }
@@ -24084,7 +24418,7 @@
 	          this.faintMeterOn = false;
 	        }
 	      } else {
-	        if (this.props.player.focus <= 10) {
+	        if (this.player.focus <= 10) {
 	          if (!this.faintSoundOn) {
 	            this.faintSound.play();
 	            this.faintSoundOn = true;
@@ -24096,8 +24430,8 @@
 	            this.faintSound.pause();
 	            this.faintSound = "";
 	            this.xxinterval = undefined;
-	            this.props.player.newStrike = { message: "You received a strike for passing out during lecture.", newTime: [12, 0], newPos: 0, newSession: 2 };
-	            this.props.player.currentPos = 0;
+	            this.player.newStrike = { message: "You received a strike for passing out during lecture.", newTime: [12, 0], newPos: 0, newSession: 2 };
+	            this.player.currentPos = 0;
 	          }
 	        }
 	      }
@@ -24106,36 +24440,36 @@
 	  }, {
 	    key: 'updateFocus',
 	    value: function updateFocus() {
-	      var time = this.props.player.clock.time();
+	      var time = this.player.clock.time();
 	      if (!this.state.eyesClosed) {
-	        this.props.player.focus--;
+	        this.player.focus--;
 	
 	        if (time[0] === "11" && parseInt(time[1]) > 45) {
-	          this.props.player.focus--;
+	          this.player.focus--;
 	        }
 	
-	        if (this.props.player.focus < 50 && !this.state.eyesClosed) {
-	          this.props.player.message = "OH NO!  You're losing focus!  You might pass out soon...........  (PRESS AND HOLD THE BUTTON TO CLOSE EYES AND REGAIN FOCUS)";
+	        if (this.player.focus < 50 && !this.state.eyesClosed) {
+	          this.player.message = "OH NO!  You're losing focus!  You might pass out soon...........  (PRESS AND HOLD THE BUTTON TO CLOSE EYES AND REGAIN FOCUS)";
 	        } else {
-	          this.props.player.message = "";
+	          this.player.message = "";
 	        }
 	      } else {
 	        //if eyes ARE closed:
 	        if (!this.faintMeterOn) {
-	          this.props.player.focus++;
+	          this.player.focus++;
 	        }
 	      }
-	      if (this.props.player.focus < 0) {
-	        this.props.player.focus = 0;
+	      if (this.player.focus < 0) {
+	        this.player.focus = 0;
 	      }
-	      if (this.props.player.focus > 100) {
-	        this.props.player.focus = 100;
+	      if (this.player.focus > 100) {
+	        this.player.focus = 100;
 	      }
 	    }
 	  }, {
 	    key: 'slide',
 	    value: function slide() {
-	      var time = this.props.player.clock.time();
+	      var time = this.player.clock.time();
 	      if (time[0] === "9") {
 	        if (parseInt(time[1]) < 30) {
 	          return ["One of the hardest parts of an intensive bootcamp like this is getting enough sleep...", "", "...and staying awake during lectures! "];
@@ -24155,17 +24489,17 @@
 	  }, {
 	    key: 'handleClick',
 	    value: function handleClick() {
-	      var time = this.props.player.clock.time();
+	      var time = this.player.clock.time();
 	      if (time[0] === "9") {
 	        // ADD A CLOCK FUNCTION BETWEEN()
 	        if (parseInt(time[1]) < 30) {
-	          this.props.player.clock = new _clock2.default([9, 30], 6);
+	          this.player.clock = new _clock2.default([9, 30], 6);
 	        } else {
-	          this.props.player.clock = new _clock2.default([10, 0], 6);
+	          this.player.clock = new _clock2.default([10, 0], 6);
 	        }
 	      } else if (time[0] === "10") {
 	        if (parseInt(time[1]) < 30) {
-	          this.props.player.clock = new _clock2.default([10, 30], 6);
+	          this.player.clock = new _clock2.default([10, 30], 6);
 	        }
 	      }
 	    }
@@ -24173,20 +24507,33 @@
 	    key: 'lectureSlide',
 	    value: function lectureSlide() {
 	      if (!this.state.eyesClosed) {
-	        if (this.props.player.focus < 30) {
+	        if (this.player.focus === 0) {
+	          debugger;
+	        }
+	        if (this.player.focus <= 40) {
+	          var shadow = '0 0 ' + (50 - this.player.focus) + 'px rgba(0,0,0,0.5)';
+	          var style = { color: "transparent", textShadow: '' + shadow };
+	          var raysStyle = { opacity: this.faintMeter * 2 };
+	          console.log(style);
 	          return _react2.default.createElement(
-	            'ul',
-	            { id: 'lecture-slide', className: 'lecture-slide blur' },
-	            this.slide().map(function (line, idx) {
-	              return _react2.default.createElement(
-	                'li',
-	                { key: idx, id: idx },
-	                line,
-	                ' ',
-	                _react2.default.createElement('br', null)
-	              );
-	            }),
-	            _react2.default.createElement('img', { src: './app/assets/images/ned3-blur.png', className: 'teacher-image' })
+	            'div',
+	            null,
+	            _react2.default.createElement(
+	              'ul',
+	              { id: 'lecture-slide', className: 'lecture-slide', style: style },
+	              this.slide().map(function (line, idx) {
+	                return _react2.default.createElement(
+	                  'li',
+	                  { key: idx, id: idx },
+	                  line,
+	                  ' ',
+	                  _react2.default.createElement('br', null)
+	                );
+	              }),
+	              _react2.default.createElement('img', { src: './app/assets/images/ned3-blur.png', className: 'teacher-image' })
+	            ),
+	            _react2.default.createElement('img', { src: './app/assets/images/rays.jpeg',
+	              className: 'rays', style: raysStyle })
 	          );
 	        } else {
 	          return _react2.default.createElement(
@@ -24204,7 +24551,7 @@
 	          );
 	        }
 	      } else {
-	        return _react2.default.createElement(_sleep_minigame2.default, { goesToSleepMeter: this.state.goesToSleepMeter, faintMeter: this.state.faintMeter, player: this.props.player });
+	        return _react2.default.createElement(_sleep_minigame2.default, { goesToSleepMeter: this.state.goesToSleepMeter, faintMeter: this.state.faintMeter, player: this.player });
 	      }
 	    }
 	  }, {
@@ -24217,27 +24564,27 @@
 	      this.sleepSound.play();
 	      this.eyesClosedTimer++;
 	      this.setState({ eyesClosed: true });
-	      this.props.player.currentEmotion = "eyes closed";
+	      this.player.currentEmotion = "eyes closed";
 	    }
 	  }, {
 	    key: 'handleCloseEyesOff',
 	    value: function handleCloseEyesOff() {
-	      if (this.props.player.focus < 50) {
+	      if (this.player.focus < 50) {
 	        this.faintSound.play();
 	        this.faintSoundOn = true;
 	      } else {
-	        this.faintSound = new Audio("./app/assets/sounds/siren.wav");
+	        this.faintSound = new Audio("./app/assets/sounds/trippy.wav");
 	        this.faintSoundOn = false;
 	      }
 	      this.sleepSound.pause();
 	      this.eyesClosed++;
 	      this.setState({ eyesClosed: false });
-	      this.props.player.currentEmotion = "excited";
+	      this.player.currentEmotion = "excited";
 	    }
 	  }, {
 	    key: 'button',
 	    value: function button() {
-	      if (this.props.player.focus < 30 && !this.state.eyesClosed) {
+	      if (this.player.focus < 30 && !this.state.eyesClosed) {
 	        return _react2.default.createElement(
 	          'button',
 	          { className: 'middle-button',
@@ -24277,7 +24624,7 @@
 	exports.default = LectureSeshScreen;
 
 /***/ },
-/* 201 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24337,7 +24684,7 @@
 	exports.default = SleepMinigame;
 
 /***/ },
-/* 202 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24352,19 +24699,19 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _pairs_sesh_driving_screen = __webpack_require__(203);
+	var _pairs_sesh_driving_screen = __webpack_require__(204);
 	
 	var _pairs_sesh_driving_screen2 = _interopRequireDefault(_pairs_sesh_driving_screen);
 	
-	var _pairs_sesh_navigating_screen = __webpack_require__(205);
+	var _pairs_sesh_navigating_screen = __webpack_require__(206);
 	
 	var _pairs_sesh_navigating_screen2 = _interopRequireDefault(_pairs_sesh_navigating_screen);
 	
-	var _pairs_sesh_open_screen = __webpack_require__(206);
+	var _pairs_sesh_open_screen = __webpack_require__(207);
 	
 	var _pairs_sesh_open_screen2 = _interopRequireDefault(_pairs_sesh_open_screen);
 	
-	var _pairs_sesh_results = __webpack_require__(207);
+	var _pairs_sesh_results = __webpack_require__(208);
 	
 	var _pairs_sesh_results2 = _interopRequireDefault(_pairs_sesh_results);
 	
@@ -24498,7 +24845,7 @@
 	exports.default = PairsSeshScreen;
 
 /***/ },
-/* 203 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24517,7 +24864,7 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _pairs_line = __webpack_require__(204);
+	var _pairs_line = __webpack_require__(205);
 	
 	var _pairs_line2 = _interopRequireDefault(_pairs_line);
 	
@@ -24788,7 +25135,7 @@
 	exports.default = PairsSeshDrivingScreen;
 
 /***/ },
-/* 204 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24891,7 +25238,7 @@
 	exports.default = PairsLine;
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25182,7 +25529,7 @@
 	exports.default = PairsSeshNavigatingScreen;
 
 /***/ },
-/* 206 */
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25225,7 +25572,7 @@
 	exports.default = PairsSeshOpenScreen;
 
 /***/ },
-/* 207 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25244,7 +25591,7 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _pairs_line = __webpack_require__(204);
+	var _pairs_line = __webpack_require__(205);
 	
 	var _pairs_line2 = _interopRequireDefault(_pairs_line);
 	
@@ -25318,7 +25665,7 @@
 	exports.default = PairsSeshResults;
 
 /***/ },
-/* 208 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25407,7 +25754,7 @@
 	exports.default = StrikeScreen;
 
 /***/ },
-/* 209 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25448,7 +25795,6 @@
 	    _this.buzzerSound.play();
 	
 	    _this.props.player.message = _this.congrats.message;
-	    debugger;
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    // this.main = this.main.bind(this);
 	

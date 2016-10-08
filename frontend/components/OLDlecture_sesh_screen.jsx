@@ -176,24 +176,125 @@ class LectureSeshScreen extends React.Component {
 
   lectureSlide() {
     if (!(this.state.eyesClosed)) {
-      if (this.player.focus === 0) {debugger;}
-      if (this.player.focus<=40) {
-      var shadow = `0 0 ${50-this.player.focus}px rgba(0,0,0,0.5)`;
-      var style = {color: "transparent", textShadow: `${shadow}` };
-      var raysStyle = {opacity: this.faintMeter * 2};
-      console.log(style);
+      if (this.player.focus<5) {
       return (
-        <div>
-          <ul id="lecture-slide" className="lecture-slide" style={style}>
-              {this.slide().map((line,idx)=>
-                <li key={idx} id={idx}>
-                  {line} <br/>
-                </li>)}
-              <img src="./app/assets/images/ned3-blur.png" className="teacher-image"/>
-          </ul>
-          <img src="./app/assets/images/rays.jpeg"
-            className="rays" style={raysStyle} />
-      </div>
+        <ul id="lecture-slide" className="lecture-slide blur10">
+            {this.slide().map((line,idx)=>
+              <li key={idx} id={idx}>
+                {line} <br/>
+              </li>)}
+            <img src="./app/assets/images/ned3-blur.png" className="teacher-image"/>
+        </ul>
+      );}
+      if (this.player.focus<10) {
+      return (
+        <ul id="lecture-slide" className="lecture-slide blur9">
+            {this.slide().map((line,idx)=>
+              <li key={idx} id={idx}>
+                {line} <br/>
+              </li>)}
+            <img src="./app/assets/images/ned3-blur.png" className="teacher-image"/>
+        </ul>
+      );}
+      if (this.player.focus<15) {
+      return (
+        <ul id="lecture-slide" className="lecture-slide blur8">
+            {this.slide().map((line,idx)=>
+              <li key={idx} id={idx}>
+                {line} <br/>
+              </li>)}
+            <img src="./app/assets/images/ned3-blur.png" className="teacher-image"/>
+        </ul>
+      );}
+      if (this.player.focus<20) {
+      return (
+        <ul id="lecture-slide" className="lecture-slide blur7">
+            {this.slide().map((line,idx)=>
+              <li key={idx} id={idx}>
+                {line} <br/>
+              </li>)}
+            <img src="./app/assets/images/ned3-blur.png" className="teacher-image"/>
+        </ul>
+      );}
+      if (this.player.focus<25) {
+      return (
+        <ul id="lecture-slide" className="lecture-slide blur6">
+            {this.slide().map((line,idx)=>
+              <li key={idx} id={idx}>
+                {line} <br/>
+              </li>)}
+            <img src="./app/assets/images/ned3-blur.png" className="teacher-image"/>
+        </ul>
+      );}
+      if (this.player.focus<30) {
+      return (
+        <ul id="lecture-slide" className="lecture-slide blur5">
+            {this.slide().map((line,idx)=>
+              <li key={idx} id={idx}>
+                {line} <br/>
+              </li>)}
+            <img src="./app/assets/images/ned3-blur.png" className="teacher-image"/>
+        </ul>
+      );}
+      if (this.player.focus<35) {
+      return (
+        <ul id="lecture-slide" className="lecture-slide blur4">
+            {this.slide().map((line,idx)=>
+              <li key={idx} id={idx}>
+                {line} <br/>
+              </li>)}
+            <img src="./app/assets/images/ned3-blur.png" className="teacher-image"/>
+        </ul>
+      );}
+      if (this.player.focus<40) {
+      return (
+        <ul id="lecture-slide" className="lecture-slide blur3">
+            {this.slide().map((line,idx)=>
+              <li key={idx} id={idx}>
+                {line} <br/>
+              </li>)}
+            <img src="./app/assets/images/ned3-blur.png" className="teacher-image"/>
+        </ul>
+      );}
+      if (this.player.focus<45) {
+      return (
+        <ul id="lecture-slide" className="lecture-slide blur2">
+            {this.slide().map((line,idx)=>
+              <li key={idx} id={idx}>
+                {line} <br/>
+              </li>)}
+            <img src="./app/assets/images/ned3-blur.png" className="teacher-image"/>
+        </ul>
+      );}
+      if (this.player.focus<50) {
+      return (
+        <ul id="lecture-slide" className="lecture-slide blur1">
+            {this.slide().map((line,idx)=>
+              <li key={idx} id={idx}>
+                {line} <br/>
+              </li>)}
+            <img src="./app/assets/images/ned3-blur.png" className="teacher-image"/>
+        </ul>
+      );}
+      if (this.player.focus<30) {
+      return (
+        <ul id="lecture-slide" className="lecture-slide blur5">
+            {this.slide().map((line,idx)=>
+              <li key={idx} id={idx}>
+                {line} <br/>
+              </li>)}
+            <img src="./app/assets/images/ned3-blur.png" className="teacher-image"/>
+        </ul>
+      );}
+      if (this.player.focus<30) {
+      return (
+        <ul id="lecture-slide" className="lecture-slide blur5">
+            {this.slide().map((line,idx)=>
+              <li key={idx} id={idx}>
+                {line} <br/>
+              </li>)}
+            <img src="./app/assets/images/ned3-blur.png" className="teacher-image"/>
+        </ul>
       );}
       else {
           return (
@@ -228,7 +329,7 @@ class LectureSeshScreen extends React.Component {
       this.faintSound.play();
       this.faintSoundOn = true;}
     else {
-      this.faintSound = new Audio("./app/assets/sounds/trippy.wav");
+      this.faintSound = new Audio("./app/assets/sounds/siren.wav");
       this.faintSoundOn = false;
     }
     this.sleepSound.pause();

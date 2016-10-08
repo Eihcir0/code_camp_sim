@@ -189,9 +189,29 @@ button {
  -o-user-select: none;
  user-select: none;
 }
-.blur {
+.blur1 {
+   color: transparent;
+   text-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.blur2 {
+   color: transparent;
+   text-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.blur3 {
    color: transparent;
    text-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.blur4 {
+   color: transparent;
+   text-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.blur5 {
+   color: transparent;
+   text-shadow: 0 0 25px rgba(0,0,0,0.5);
 }
 
 .eyes-closed {

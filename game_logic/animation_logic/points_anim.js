@@ -17,7 +17,7 @@ class PointsAnim extends StudyIcon {
     this.sound = this.numValue === 1000 ?
     new Audio("./app/assets/sounds/woohoo.wav") :
     new Audio("./app/assets/sounds/icon.wav");
-    this.sound.play();
+    window.setTimeout(()=>this.sound.play(),1);
     this.sunset = (Math.floor(Math.random()*2)-0.5) > 0 ? -1 : 1;
     this.done = false;
     this.updateAnim=this.updateAnim.bind(this);
