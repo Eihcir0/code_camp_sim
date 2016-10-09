@@ -52,7 +52,7 @@ class PairsSeshDrivingScreen extends React.Component {
 
   tick() {
     if (!(this.props.stopped)) {
-      if (this.props.player.clock.is(["6","00","pm"])) {
+      if (this.props.player.clock.isBetween([17,0],[18,0])) {
         this.clearInt();
       } else {
         this.updateSentences();
@@ -68,6 +68,8 @@ class PairsSeshDrivingScreen extends React.Component {
   }
 
   addExplosion(a) {
+    var skill = this.props.player.currentSkill;
+    this.props.player.skills[skill]+=3;
     this.explosions.push({yPos: a.yPos, timer: 0});
   }
 

@@ -13,17 +13,19 @@ import FireAnim from
 class Player {
   constructor(name, obj) {
     this.name = name || "Richie";
-    this.clock = obj ? obj.clock : new Clock([18,1],2);
+    this.clock = obj ? obj.clock : new Clock([8,45],3);
     this.defaultMessage =
       obj ? obj.defaultMessage
-      : "";
+      : "I'm the brains, you're the muscle, got it?  Now use your muscles to move the mouse!";
     this.currentEmotion = obj ? obj.currentEmotion : "excited";
     this.info = obj ? obj.info : "";
-    this.sleepBank = obj ? obj.sleepBank : 100;
-    this.happiness = obj ? obj.happiness : 100;
+
+    this.sleepBank = obj ? obj.sleepBank : 90;
+    this.happiness = obj ? obj.happiness : 80;
     this.focus = obj ? obj.focus : 100;
     this.score = obj ? obj.score : 0;
-    this.liked = obj ? obj.liked : 50; //not used
+    this.chanceForFireOffset = 0; //delete me
+
     this.currentPos = obj ? obj.currentPos : 0;
     this.lastCurrentPos = obj ? obj.lastCurrentPos : -1;
     this.message = obj ? obj.message : "";
@@ -85,8 +87,8 @@ class Player {
     if (!(gotSomething)) {return false;}
 
     //onFire -- for now just score /1000000 * 50% (so 100k = 5%) + offset <== for testing
-    var chanceForFireOffset = 0; //delete me
-    var chanceForFire = (((this.score) / 1000000) * 0.5) + chanceForFireOffset;
+
+    var chanceForFire = (((this.score) / 1000000) * 0.5) + this.chanceForFireOffset;
     if (this.onFire) {chanceForFire = 0;}
 
     // out of 1000 so /1000 to convert to % then /2

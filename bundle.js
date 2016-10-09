@@ -21515,9 +21515,10 @@
 	    _this.player = new _player2.default("Guest");
 	    _this.playerAnim = new _player_anim2.default({ player: _this.player });
 	    _this.week = new _week2.default(_this.player);
+	
 	    _this.state = {
 	      currentPos: -1,
-	      message: _this.player.defaultMessage,
+	      message: _this.player.message,
 	      clock: _this.player.clock.time(),
 	      ruby: _this.player.skills.Ruby,
 	      focus: _this.player.focus
@@ -21546,13 +21547,12 @@
 	        });
 	        this.updateSession();
 	        this.updateAttributes(dt);
-	        this.setState({
-	          message: this.player.message,
-	          ruby: Math.floor(this.player.skills.Ruby / 10),
-	          focus: this.player.focus
-	        });
 	      }
-	      // debugger;
+	      this.setState({
+	        message: this.updateMessage(),
+	        ruby: Math.floor(this.player.skills.Ruby / 10),
+	        focus: this.player.focus
+	      });
 	      //animationFramE ????
 	    }
 	  }, {
@@ -21560,9 +21560,9 @@
 	    value: function updateSession() {
 	      if (this.player.session === 0 && this.player.currentPos !== 12) {
 	        if (this.player.clock.is(["9", "00", "am"])) {
-	          this.player.newStrike = { message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9, 1], newPos: this.player.currentPos };
+	          this.player.newStrike = { message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9, 1], newPos: this.player.currentPos, newClockSpeed: 3 };
 	        } else if (this.player.clock.is(["9", "30", "am"])) {
-	          this.player.newStrike = { message: "You cannot enter the lecture hall after 9:30am.  You received a strike for missing morning lecture.", newTime: [9, 31], newPos: this.player.currentPos };
+	          this.player.newStrike = { message: "You cannot enter the lecture hall after 9:30am.  You received a strike for missing morning lecture.", newTime: [9, 31], newClockSpeed: 3, newPos: this.player.currentPos };
 	        }
 	      }
 	      if (this.player.clock.is(["12", "01", "pm"])) {
@@ -21572,7 +21572,7 @@
 	
 	      if (this.player.clock.is(["1", "30", "pm"])) {
 	        if (this.player.currentPos !== 11) {
-	          this.player.newStrike = { message: "You received a strike for not being seated at your workstation by 1:30pm for pair programming. ", newTime: [13, 30], newClockSpeed: 720, newSession: 3, newPos: 11 };
+	          this.player.newStrike = { message: "You received a strike for not being seated at your workstation by 1:30pm for pair programming. ", newTime: [13, 30], newClockSpeed: 3, newSession: 3, newPos: 11 };
 	        } else {
 	          this.player.clock = new _clock2.default([13, 31], 3);
 	          this.player.session = 3;
@@ -21589,6 +21589,9 @@
 	      if (this.player.currentPos === 11 && this.player.session !== 3) {
 	        this.player.focus -= 0.5;
 	      } else if (this.player.currentPos !== 12 && this.player.session !== 3) {
+	        if (this.player.focus >= 30) {
+	          this.player.focus++;
+	        }
 	        this.player.focus++;
 	        this.player.focus++;
 	      }
@@ -21603,6 +21606,7 @@
 	    key: 'sesh',
 	    value: function sesh() {
 	      // change this to a switch
+	
 	      if (this.player.newStrike) {
 	        this.player.clock.pause();
 	        return _react2.default.createElement(_strike_screen2.default, { player: this.player });
@@ -21621,14 +21625,19 @@
 	      }
 	    }
 	  }, {
-	    key: 'message',
-	    value: function message() {
+	    key: 'updateMessage',
+	    value: function updateMessage() {
+	      if (this.player.message === "You can't focus any longer.  Take a break." && this.player.focus > 30) {
+	        this.player.message = this.player.oldMessage;
+	      }
+	
 	      if (this.player.currentPos === 10) {
 	        //change this
 	        return this.week.day.secretaryMessage();
 	      } else if (this.player.onFire) {
 	        return "YOU'RE ON FIRE!";
 	      } else {
+	
 	        return this.player.message ? this.player.message : this.player.defaultMessage;
 	      }
 	    }
@@ -21642,7 +21651,7 @@
 	        _react2.default.createElement(
 	          'span',
 	          { className: 'game-title' },
-	          'CODE CAMP SIM'
+	          'CODE CAMP SIM (ver 0.7.2)'
 	        ),
 	        _react2.default.createElement(
 	          'div',
@@ -21716,7 +21725,7 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'game-messages' },
-	          this.message(),
+	          this.state.message,
 	          ' '
 	        )
 	      );
@@ -21836,15 +21845,17 @@
 	    _classCallCheck(this, Player);
 	
 	    this.name = name || "Richie";
-	    this.clock = obj ? obj.clock : new _clock2.default([18, 1], 2);
-	    this.defaultMessage = obj ? obj.defaultMessage : "";
+	    this.clock = obj ? obj.clock : new _clock2.default([8, 45], 3);
+	    this.defaultMessage = obj ? obj.defaultMessage : "I'm the brains, you're the muscle, got it?  Now use your muscles to move the mouse!";
 	    this.currentEmotion = obj ? obj.currentEmotion : "excited";
 	    this.info = obj ? obj.info : "";
-	    this.sleepBank = obj ? obj.sleepBank : 100;
-	    this.happiness = obj ? obj.happiness : 100;
+	
+	    this.sleepBank = obj ? obj.sleepBank : 90;
+	    this.happiness = obj ? obj.happiness : 80;
 	    this.focus = obj ? obj.focus : 100;
 	    this.score = obj ? obj.score : 0;
-	    this.liked = obj ? obj.liked : 50; //not used
+	    this.chanceForFireOffset = 0; //delete me
+	
 	    this.currentPos = obj ? obj.currentPos : 0;
 	    this.lastCurrentPos = obj ? obj.lastCurrentPos : -1;
 	    this.message = obj ? obj.message : "";
@@ -21916,8 +21927,8 @@
 	      }
 	
 	      //onFire -- for now just score /1000000 * 50% (so 100k = 5%) + offset <== for testing
-	      var chanceForFireOffset = 0; //delete me
-	      var chanceForFire = this.score / 1000000 * 0.5 + chanceForFireOffset;
+	
+	      var chanceForFire = this.score / 1000000 * 0.5 + this.chanceForFireOffset;
 	      if (this.onFire) {
 	        chanceForFire = 0;
 	      }
@@ -23739,6 +23750,8 @@
 	    _this.render = _this.render.bind(_this);
 	    _this.checkForDoneSprites = _this.checkForDoneSprites.bind(_this);
 	    _this.handleClick = _this.handleClick.bind(_this);
+	    _this.handleBoards = _this.handleBoards.bind(_this);
+	    _this.handleSave = _this.handleSave.bind(_this);
 	    _this.initializeSprites = _this.initializeSprites.bind(_this);
 	    _this.buttons = _this.buttons.bind(_this);
 	    _this.handleGetOffComputer = _this.handleGetOffComputer.bind(_this);
@@ -23773,65 +23786,6 @@
 	      this.background.onload = function () {
 	        return _this2.main();
 	      };
-	    }
-	  }, {
-	    key: 'initializeSprites',
-	    value: function initializeSprites() {
-	      //need to change this up between animated and not-animated
-	      this.sprites.push(new _secretary2.default());
-	      var d = new _desk2.default(1);
-	      d.pos = [290, 90];
-	      this.sprites.push(d);
-	      d = new _desk2.default(2);
-	      d.pos = [250, 200];
-	      this.sprites.push(d);
-	      d = new _desk2.default(3);
-	      d.pos = [300, 320];
-	      this.sprites.push(d);
-	
-	      d = new _student_anim2.default(this.player, [412, 320], 3);
-	      this.player.rightStudent = d;
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [482, 319], 3);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [553, 322], 3, 1);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [593, 320], 3);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [628, 323], 3);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [668, 323], 3);
-	      this.sprites.push(d);
-	
-	      d = new _student_anim2.default(this.player, [260, 201], 2);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [298, 204], 2);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [337, 200], 2);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [373, 202], 2);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [446, 202], 2);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [520, 200], 2);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [629, 202], 2);
-	      this.sprites.push(d);
-	
-	      d = new _student_anim2.default(this.player, [283, 91], 1);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [398, 90], 1);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [472, 91], 1);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [548, 90], 1);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [583, 91], 1);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [617, 90], 1);
-	      this.sprites.push(d);
-	      d = new _student_anim2.default(this.player, [656, 96], 1);
-	      this.sprites.push(d);
 	    }
 	  }, {
 	    key: 'main',
@@ -23870,7 +23824,8 @@
 	          { className: 'middle-buttons-area' },
 	          _react2.default.createElement(
 	            'button',
-	            { className: 'middle-button1' },
+	            { className: 'middle-button1',
+	              onClick: this.handleSave },
 	            'SAVE GAME'
 	          ),
 	          _react2.default.createElement(
@@ -23880,12 +23835,26 @@
 	            'LEAVE WORKSTATION'
 	          ),
 	          _react2.default.createElement(
-	            'button',
-	            { className: 'middle-button3' },
-	            'CHECK BULLETIN BOARDS'
+	            'form',
+	            { target: '_blank', action: 'https://gist.github.com/Eihcir0/865d67dc23378110ec761986ccca4370' },
+	            _react2.default.createElement(
+	              'button',
+	              { className: 'middle-button3', type: 'submit', value: 'GO TO GIST' },
+	              'GO TO GIST'
+	            )
 	          )
 	        );
 	      }
+	    }
+	  }, {
+	    key: 'handleSave',
+	    value: function handleSave() {
+	      this.player.message = "🚧 This feature is currently underdevelopment 🚧";
+	    }
+	  }, {
+	    key: 'handleBoards',
+	    value: function handleBoards() {
+	      this.player.message = "🚧 This feature is currently underdevelopment 🚧";
 	    }
 	  }, {
 	    key: 'handleGetOffComputer',
@@ -23952,13 +23921,12 @@
 	  }, {
 	    key: 'update',
 	    value: function update(dt) {
-	      var _this5 = this;
-	
 	      if (this.player.focus <= 0) {
+	        if (!(this.player.message === "You can't focus any longer.  Take a break.")) {
+	          this.player.oldMessage = this.player.message;
+	        }
+	
 	        this.player.message = "You can't focus any longer.  Take a break.";
-	        window.setTimeout(function () {
-	          return _this5.player.message = "";
-	        }, 2000);
 	        this.handleGetOffComputer();
 	      }
 	      this.updateCount += dt;
@@ -23992,23 +23960,23 @@
 	  }, {
 	    key: 'renderSprites',
 	    value: function renderSprites() {
-	      var _this6 = this;
+	      var _this5 = this;
 	
 	      ////draw furniture first then fire, then study icons then hero
 	      this.sprites.forEach(function (sprite) {
 	        if (sprite.type !== "study icon" && sprite.type !== "student") {
-	          _this6.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
-	        } else if (sprite.type === "student") {
+	          _this5.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
+	        } else if (sprite.type === "student" && !_this5.player.clock.isBetween([9, 1], [11, 59]) && !_this5.player.clock.isBetween([0, 0], [6, 0])) {
 	          sprite.render();
 	        }
 	
-	        if (_this6.player.onFire) {
-	          _this6.player.fire.render();
+	        if (_this5.player.onFire) {
+	          _this5.player.fire.render();
 	        }
 	        if (sprite.type === "study icon") {
 	          sprite.render();
 	        }
-	        _this6.playerAnim.render(); // render player
+	        _this5.playerAnim.render(); // render player
 	      });
 	    }
 	  }, {
@@ -24037,6 +24005,67 @@
 	        this.buttons()
 	      );
 	    }
+	  }, {
+	    key: 'initializeSprites',
+	    value: function initializeSprites() {
+	      //need to change this up between animated and not-animated
+	      this.sprites.push(new _secretary2.default());
+	      var d = new _desk2.default(1);
+	      d.pos = [290, 90];
+	      this.sprites.push(d);
+	      d = new _desk2.default(2);
+	      d.pos = [250, 200];
+	      this.sprites.push(d);
+	      d = new _desk2.default(3);
+	      d.pos = [300, 320];
+	      this.sprites.push(d);
+	
+	      d = new _student_anim2.default(this.player, [412, 320], 3);
+	      this.player.rightStudent = d;
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [482, 319], 3);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [553, 322], 3, 1);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [593, 320], 3);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [628, 323], 3);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [668, 323], 3);
+	      this.sprites.push(d);
+	
+	      d = new _student_anim2.default(this.player, [260, 201], 2);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [298, 204], 2);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [337, 200], 2);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [373, 202], 2);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [446, 202], 2);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [520, 200], 2);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [629, 202], 2);
+	      this.sprites.push(d);
+	
+	      d = new _student_anim2.default(this.player, [283, 91], 1);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [398, 90], 1);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [472, 91], 1);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [548, 90], 1);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [583, 91], 1);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [617, 90], 1);
+	      this.sprites.push(d);
+	      d = new _student_anim2.default(this.player, [656, 96], 1);
+	      this.sprites.push(d);
+	    } //end initialize()
+	
+	
 	  }]);
 	
 	  return OpenSesh;
@@ -24312,6 +24341,7 @@
 	    _this.player.clock = new _clock2.default(startTime, 9);
 	    _this.startingFocus = _this.player.focus;
 	    _this.eyesClosedTimer = 0;
+	    _this.startTime = _this.player.clock.tickCounter;
 	    _this.state = {
 	      currentSlide: 1,
 	      eyesClosed: false,
@@ -24357,10 +24387,6 @@
 	        }
 	      }
 	      this.checkWinner(time);
-	
-	      // var rays = document.getElementById("lecture-slide");
-	      // rays.setAttribute("style","-"
-	      // + "webkit-transform:rotate(" + 1 + "deg)");
 	    }
 	  }, {
 	    key: 'checkWinner',
@@ -24372,7 +24398,7 @@
 	        this.faintSound = "";
 	        this.sleepSound = "";
 	        this.xxinterval = undefined;
-	        this.player.newCongrats = { message: 'CONGRATULATIONS!!! You made it through lecture without sleeping!', newTime: [12, 0], newPos: 0, newSession: 2 };
+	        this.player.newCongrats = { message: 'CONGRATULATIONS!!! You made it through lecture without sleeping!', newTime: [12, 0], newClockSpeed: 3, newPos: 0, newSession: 2 };
 	      }
 	    }
 	  }, {
@@ -24384,7 +24410,7 @@
 	        clearInterval(this.xxinterval);
 	        this.sleepSound.pause();
 	        this.xxinterval = undefined;
-	        this.player.newStrike = { message: "You received a strike for falling asleep during lecture.", newTime: [12, 0], newPos: 0, newSession: 2, newClockSpeed: 360 };
+	        this.player.newStrike = { message: "You received a strike for falling asleep during lecture.", newTime: [12, 0], newPos: 0, newSession: 2, newClockSpeed: 3 };
 	        this.player.currentPos = 0;
 	      }
 	      this.setState({ goesToSleepMeter: this.goesToSleepMeter });
@@ -24408,7 +24434,14 @@
 	        }
 	
 	        if (this.player.focus <= 10) {
+	          switch (Math.floor(Math.random() * 3) + 1) {
+	            case 1:
+	              this.player.newFace = { filename: "trippy1", duration: 100 };
+	              break;
+	            default:
+	              this.player.newFace = { filename: "trippy2", duration: 100 };
 	
+	          }
 	          this.faintMeter++;
 	          this.faintMeter++;
 	          if (this.faintMeter >= this.faintMeterMax) {
@@ -24497,7 +24530,6 @@
 	          var shadow = '0 0 ' + (50 - this.player.focus) + 'px rgba(0,0,0,0.5)';
 	          var style = { color: "transparent", textShadow: '' + shadow };
 	          var raysStyle = { opacity: this.faintMeter / 100 };
-	          console.log(style);
 	          return _react2.default.createElement(
 	            'div',
 	            null,
@@ -24548,6 +24580,7 @@
 	      this.eyesClosedTimer++;
 	      this.setState({ eyesClosed: true });
 	      this.player.currentEmotion = "eyes closed";
+	      this.startTime = this.player.clock.tickCounter;
 	    }
 	  }, {
 	    key: 'handleCloseEyesOff',
@@ -24560,6 +24593,7 @@
 	        this.faintSoundOn = false;
 	      }
 	      this.sleepSound.pause();
+	      this.startTime = this.player.clock.tickCounter;
 	      this.eyesClosed++;
 	      this.setState({ eyesClosed: false });
 	      this.player.currentEmotion = "excited";
@@ -24567,19 +24601,40 @@
 	  }, {
 	    key: 'button',
 	    value: function button() {
-	      if (this.player.focus < 30 && !this.state.eyesClosed) {
+	      var button = _react2.default.createElement('div', null);
+	      var now = this.player.clock.tickCounter;
+	      if (now - this.startTime > 1500 * this.player.clock.relativeSpeed) {
+	        if (!this.state.eyesClosed) {
+	          button = _react2.default.createElement(
+	            'button',
+	            { className: 'middle-button',
+	              onClick: this.handleCloseEyesOn },
+	            'CLOSE EYES'
+	          );
+	        } else {
+	          button = _react2.default.createElement(
+	            'button',
+	            { className: 'middle-button',
+	              onClick: this.handleCloseEyesOff },
+	            'OPEN EYES'
+	          );
+	        }
+	      }
+	      if (this.player.focus < 50 && !this.state.eyesClosed) {
 	        return _react2.default.createElement(
-	          'button',
-	          { className: 'middle-button',
-	            onClick: this.handleCloseEyesOn },
-	          'CLOSE EYES'
+	          'div',
+	          { className: 'eyes-open' },
+	          _react2.default.createElement('img', { src: './app/assets/images/eyes_open.png',
+	            className: 'eyes' }),
+	          button
 	        );
 	      } else if (this.state.eyesClosed) {
 	        return _react2.default.createElement(
-	          'button',
-	          { className: 'middle-button',
-	            onClick: this.handleCloseEyesOff },
-	          'OPEN EYES'
+	          'div',
+	          { className: 'eyes-open' },
+	          _react2.default.createElement('img', { src: './app/assets/images/eyes_closed.png',
+	            className: 'eyes' }),
+	          button
 	        );
 	      }
 	    }
@@ -24636,26 +24691,33 @@
 	  function SleepMinigame(props) {
 	    _classCallCheck(this, SleepMinigame);
 	
-	    // this.main = this.main.bind(this);
-	
 	    var _this = _possibleConstructorReturn(this, (SleepMinigame.__proto__ || Object.getPrototypeOf(SleepMinigame)).call(this, props));
 	
-	    _this.state = {
-	      // lastTime: Date.now()
-	      // isLiked: false
-	    };
-	
+	    _this.props.player.newFace = { filename: "blink", duration: 1000 };
 	    return _this;
 	  }
 	
 	  _createClass(SleepMinigame, [{
+	    key: "sheepStyle",
+	    value: function sheepStyle() {
+	      var righty = this.props.goesToSleepMeter * 3 + 600 + "px";
+	      console.log(righty);
+	      return { right: righty };
+	    }
+	
+	    //old meter: <meter className="faint-meter-bar" value={this.props.goesToSleepMeter} low={this.props.player.sleepBank -0.5} max={this.props.player.sleepBank} />
+	
+	  }, {
 	    key: "render",
 	    value: function render() {
+	      var starsStyle = { opacity: this.props.goesToSleepMeter / 100 * 2 };
 	      return _react2.default.createElement(
 	        "div",
 	        { className: "eyes-closed" },
-	        "BE CAREFUL. IF THIS BAR FILLS UP THEN YOU FALL ASLEEP!",
-	        _react2.default.createElement("meter", { className: "faint-meter-bar", value: this.props.goesToSleepMeter, low: this.props.player.sleepBank - 0.5, max: this.props.player.sleepBank })
+	        "YOU ARE GETTING SLEEPY....VERY SLEEEPY....",
+	        _react2.default.createElement("img", { src: "./app/assets/images/sheep2.png", className: "sheep-image", style: this.sheepStyle() }),
+	        _react2.default.createElement("img", { src: "./app/assets/images/moon.png",
+	          className: "rays", style: starsStyle })
 	      );
 	    }
 	  }]);
@@ -24698,6 +24760,10 @@
 	
 	var _pairs_sesh_results2 = _interopRequireDefault(_pairs_sesh_results);
 	
+	var _clock = __webpack_require__(175);
+	
+	var _clock2 = _interopRequireDefault(_clock);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24715,10 +24781,12 @@
 	    // this.currentSesh = this.currentSesh.bind(this);
 	    var _this = _possibleConstructorReturn(this, (PairsSeshScreen.__proto__ || Object.getPrototypeOf(PairsSeshScreen)).call(this, props));
 	
+	    _this.props.player.clock = new _clock2.default([13, 31], 8);
 	    _this.handleClick = _this.handleClick.bind(_this);
+	    _this.handleOpenClick = _this.handleOpenClick.bind(_this);
 	    _this.sesh = _this.sesh.bind(_this);
 	    _this.newSwitch = _this.newSwitch.bind(_this);
-	    _this.current = 1;
+	    _this.current = 0;
 	    _this.stopDriving = false;
 	    _this.stopNav = true;
 	    _this.drivingSentences = [];
@@ -24768,15 +24836,34 @@
 	      }
 	    }
 	  }, {
+	    key: 'handleOpenClick',
+	    value: function handleOpenClick() {
+	      this.props.player.clock.unpause();
+	      this.current = 1;
+	    }
+	  }, {
 	    key: 'sesh',
 	    value: function sesh() {
-	
-	      if (this.props.player.clock.is(["6", "00", "pm"])) {
+	      if (this.current === 0) {
 	        this.props.player.clock.pause();
-	        this.current === 3;
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'pairs-open' },
+	          'Its time for PAIR PROGRAMMING! The real point of pair programming in Code Camp is to learn how to be a good, collaborative pair programmer. You shouldnt worry as much about the code as you should try to switch with your partner every 30 minutes.',
+	          _react2.default.createElement(
+	            'button',
+	            { className: 'lets-pair', onClick: this.handleOpenClick },
+	            'LETS PAIR!'
+	          )
+	        );
+	      }
+	      if (this.props.player.clock.is(["5", "00", "pm"])) {
+	
+	        this.props.player.clock.pause();
 	        this.stopDriving = true;
 	        this.stopNavigating = true;
 	        this.props.player.message = "Today's pair programming results are in!";
+	        this.current === 3;
 	        return _react2.default.createElement(_pairs_sesh_results2.default, {
 	          drivingLines: this.drivingLines,
 	          navigatingLines: this.navigatingLines,
@@ -24925,7 +25012,7 @@
 	    key: 'tick',
 	    value: function tick() {
 	      if (!this.props.stopped) {
-	        if (this.props.player.clock.is(["6", "00", "pm"])) {
+	        if (this.props.player.clock.isBetween([17, 0], [18, 0])) {
 	          this.clearInt();
 	        } else {
 	          this.updateSentences();
@@ -24942,6 +25029,8 @@
 	  }, {
 	    key: 'addExplosion',
 	    value: function addExplosion(a) {
+	      var skill = this.props.player.currentSkill;
+	      this.props.player.skills[skill] += 3;
 	      this.explosions.push({ yPos: a.yPos, timer: 0 });
 	    }
 	  }, {
@@ -25318,7 +25407,8 @@
 	    key: 'tick',
 	    value: function tick() {
 	      if (!this.props.stopped) {
-	        if (this.props.player.clock.is(["6", "00", "pm"])) {
+	        if (this.props.player.clock.isBetween([17, 0], [19, 0])) {
+	          console.log("HERE BUDDY");
 	          this.clearInt();
 	        } else {
 	          this.updateSentences();
@@ -25335,6 +25425,8 @@
 	  }, {
 	    key: 'addExplosion',
 	    value: function addExplosion(a) {
+	      var skill = this.props.player.currentSkill;
+	      this.props.player.skills[skill] += 3;
 	      this.explosions.push({ yPos: a.yPos, timer: 0 });
 	    }
 	  }, {
@@ -25521,6 +25613,8 @@
 	  value: true
 	});
 	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
 	var _react = __webpack_require__(1);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -25543,13 +25637,37 @@
 	  function PairsSeshOpenScreen() {
 	    _classCallCheck(this, PairsSeshOpenScreen);
 	
-	    return _possibleConstructorReturn(this, (PairsSeshOpenScreen.__proto__ || Object.getPrototypeOf(PairsSeshOpenScreen)).apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, (PairsSeshOpenScreen.__proto__ || Object.getPrototypeOf(PairsSeshOpenScreen)).call(this));
+	
+	    _this.handleClick = _this.handleClick.bind(_this);
+	
+	    return _this;
 	  }
 	
-	  return PairsSeshOpenScreen;
-	}(_react2.default.Component);
+	  _createClass(PairsSeshOpenScreen, [{
+	    key: 'handleClick',
+	    value: function handleClick() {
+	      this.props.player.clock.unpause();
+	      this.props.current = 1;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'pairs-open' },
+	        'It\'s time for PAIR PROGRAMMING! The real point of pair programming in Code Camp is to learn how to be a good, collaborative pair programmer. You shouldn\'t worry as much about the code as you should try to switch with your partner every 30 minutes.',
+	        _react2.default.createElement(
+	          'button',
+	          { className: 'lets-pair', onClick: this.handleClick },
+	          'LET\'S PAIR!'
+	        )
+	      );
+	    }
+	  }]);
 	
-	//end component
+	  return PairsSeshOpenScreen;
+	}(_react2.default.Component); //end component
 	
 	
 	exports.default = PairsSeshOpenScreen;
@@ -25596,14 +25714,192 @@
 	
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.startTime = Date.now();
+	    _this.calculating = _this.calculating.bind(_this);
+	    _this.ticker = 0;
+	    new Audio("./app/assets/sounds/typing.wav").play();
+	    _this.interval = window.setInterval(function () {
+	      return _this.ticker++;
+	    }, 100);
+	    _this.redStyle = { color: "red" };
+	    _this.greenStyle = { color: "geen" };
+	    _this.graded = false;
 	    return _this;
 	  }
 	
 	  _createClass(PairsSeshResults, [{
+	    key: 'calculating',
+	    value: function calculating() {
+	
+	      // if (this.ticker<20) {
+	      // return <div><br/> Calculating results of todays pair programming...<br/><br/></div>;
+	      // } else {
+	      //   return <div><br/><br/><br/><br/></div>;
+	      // }
+	    }
+	  }, {
+	    key: 'totalSwitches',
+	    value: function totalSwitches() {
+	      var totSwitches = this.props.goodSwitches + this.props.badSwitches;
+	      if (this.ticker === 20) {
+	        new Audio("./app/assets/sounds/explosion.wav").play();
+	      }
+	      if (this.ticker < 20) {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          'TOTAL SWITCHES: '
+	        );
+	      } else {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          'TOTAL SWITCHES:',
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'pair-result-number', style: totSwitches === 6 ? this.greenStyle : this.redStyle },
+	            totSwitches
+	          )
+	        );
+	      }
+	    }
+	  }, {
+	    key: 'goodSwitches',
+	    value: function goodSwitches() {
+	      if (this.ticker === 40) {
+	        new Audio("./app/assets/sounds/explosion.wav").play();
+	      }
+	      if (this.ticker < 40) {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          'GOOD SWITCHES (around 30 minutes): '
+	        );
+	      } else {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          'GOOD SWITCHES (around 30 minutes):',
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'pair-result-number',
+	              style: this.props.goodSwitches === 6 ? this.greenStyle : this.redStyle },
+	            this.props.goodSwitches
+	          )
+	        );
+	      }
+	    }
+	  }, {
+	    key: 'badSwitches',
+	    value: function badSwitches() {
+	      if (this.ticker === 60) {
+	        new Audio("./app/assets/sounds/explosion.wav").play();
+	      }
+	      if (this.ticker < 60) {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          'BAD SWITCHES: '
+	        );
+	      } else {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          'BAD SWITCHES:',
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'pair-result-number',
+	              style: this.props.badSwitches === 0 ? this.greenStyle : this.redStyle },
+	            this.props.badSwitches
+	          )
+	        );
+	      }
+	    }
+	  }, {
+	    key: 'grade',
+	    value: function grade() {
+	      var grade;
+	
+	      var points = this.props.goodSwitches;
+	      if (this.props.totalSwitches < 5 || this.props.totalSwitches > 10) {
+	        points -= 3;
+	      }
+	      switch (true) {
+	        case points <= 2:
+	          grade = "F";
+	          break;
+	        case points === 3:
+	          grade = "D";
+	          break;
+	        case points === 4:
+	          grade = "C";
+	          break;
+	        case points === 5:
+	          grade = "B";
+	          break;
+	        case points === 6:
+	          grade = "A";
+	          break;
+	
+	        default:
+	
+	      }
+	      if (this.ticker === 100) {
+	        if (["A", "B"].includes(grade) && this.graded === false) {
+	          new Audio("./app/assets/sounds/congrats-ding.wav").play();
+	          grade === "A" ? this.props.player.happiness += 20 : this.props.player.happiness += 10;
+	          this.graded = true;
+	        } else if (grade === "F" && this.graded === false) {
+	          new Audio("./app/assets/sounds/buzzer.mp3").play();
+	          this.props.player.happiness -= 10;
+	          this.graded = true;
+	        } else {
+	          new Audio("./app/assets/sounds/explosion.wav").play();
+	          if (grade === "D" && this.graded === false) {
+	            this.props.player.happiness -= 3;
+	          }
+	          this.graded = true;
+	        }
+	      }
+	      if (this.ticker < 100) {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          'YOUR PAIR PROGRAMMING GRADE FOR THE DAY:'
+	        );
+	      } else {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          'YOUR PAIR PROGRAMMING GRADE FOR THE DAY:',
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'grade',
+	              style: ["A", "B", "C"].includes(grade) ? this.greenStyle : this.redStyle },
+	            grade
+	          )
+	        );
+	      }
+	    }
+	  }, {
 	    key: 'handleClick',
 	    value: function handleClick() {
 	      var newClockSpeed;
-	      if (Date.now() - this.startTime < 2000) {
+	      //cancel interval
+	      if (this.graded === false) {
 	        return;
 	      }
 	      this.props.player.message = "You're done for the day!  Keep working or leave whenever you want!";
@@ -25617,28 +25913,26 @@
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'pairs-results', onClick: this.handleClick },
-	        'driving lines:',
-	        this.props.drivingLines[0],
-	        ' out of ',
-	        this.props.drivingLines[1],
-	        ' ',
 	        _react2.default.createElement('br', null),
-	        'navigating lines:',
-	        this.props.navigatingLines[0],
-	        ' out of ',
-	        this.props.navigatingLines[1],
-	        ' ',
-	        _react2.default.createElement('br', null),
-	        'good switches: ',
-	        this.props.goodSwitches,
-	        ' ',
-	        _react2.default.createElement('br', null),
-	        'bad Switches: ',
-	        this.props.badSwitches,
-	        ' ',
-	        _react2.default.createElement('br', null)
+	        this.calculating(),
+	        this.totalSwitches(),
+	        this.goodSwitches(),
+	        this.badSwitches(),
+	        this.grade()
 	      );
 	    }
+	
+	    // render () {   OLD ONE
+	    //   return (
+	    //     <div className="pairs-results" onClick={this.handleClick}>
+	    //       driving lines:{this.props.drivingLines[0]} out of {this.props.drivingLines[1]} <br/>
+	    // navigating lines:{this.props.navigatingLines[0]} out of {this.props.navigatingLines[1]} <br/>
+	    //     good switches: {this.props.goodSwitches} <br/>
+	    //   bad Switches: {this.props.badSwitches} <br/>
+	    //     </div>
+	    //   );
+	    // }
+	
 	  }]);
 	
 	  return PairsSeshResults;
@@ -25693,6 +25987,8 @@
 	    _this.props.player.strikes = _this.props.player.strikes + "X";
 	    _this.props.player.message = _this.strike.message + ('  You now have ' + _this.props.player.strikes.length + '\n    strike' + (_this.props.player.strikes.length > 1 ? "s" : "") + '!');
 	    _this.handleClick = _this.handleClick.bind(_this);
+	    _this.props.player.newFace = { filename: "tired_angry", duration: 10000 };
+	
 	    return _this;
 	  }
 	
@@ -25706,8 +26002,9 @@
 	        if (this.strike.newClockSpeed) {
 	          newClockSpeed = this.strike.newClockSpeed;
 	        } else {
-	          newClockSpeed = 6;
+	          newClockSpeed = 3;
 	        }
+	        this.props.player.newFace = false;
 	        this.props.player.clock = new _clock2.default(this.strike.newTime, newClockSpeed);
 	        if (this.strike.newPos) {
 	          this.props.player.currentPos = this.strike.newPos;
@@ -25782,6 +26079,8 @@
 	
 	    _this.props.player.message = _this.congrats.message;
 	    _this.handleClick = _this.handleClick.bind(_this);
+	    _this.props.player.newFace = { filename: "super_happy", duration: 10 };
+	
 	    // this.main = this.main.bind(this);
 	
 	
@@ -25798,7 +26097,7 @@
 	        if (this.congrats.newClockSpeed) {
 	          newClockSpeed = this.congrats.newClockSpeed;
 	        } else {
-	          newClockSpeed = 6;
+	          newClockSpeed = 3;
 	        }
 	        this.props.player.clock = new _clock2.default(this.congrats.newTime, newClockSpeed);
 	        if (!(this.congrats.newPos === undefined)) {
@@ -25895,7 +26194,8 @@
 	  }, {
 	    key: "setLookLeft",
 	    value: function setLookLeft() {
-	      if (Math.random() > 0.8 && this.player.sleepBank > 40) {
+	      if (Math.random() > 0 && this.player.sleepBank > 40) {
+	        //>0?? a little much
 	        console.log("here");
 	        this.player.newFace = this.player.happiness > 70 ? { filename: "rested_happy_look_left", duration: Math.floor(Math.random() * 30 + 1) } : { filename: "rested_unhappy_look_left", duration: Math.floor(Math.random() * 30 + 1) };
 	      }
@@ -25908,7 +26208,7 @@
 	      } else {
 	        this.face = this.getDiv(this.baseFace());
 	        this.winkCounter++;
-	        if (this.winkCounter > 50) {
+	        if (this.winkCounter > 50 && this.newFace === false) {
 	          this.winkCounter = 0;
 	          if (!this.player.onFire) {
 	            if (Math.random() > 0.5) {

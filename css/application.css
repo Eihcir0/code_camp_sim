@@ -153,12 +153,12 @@ table {
 	width: 169px;
 	position: absolute;
 	top: 496px;
-	left: 911px;
+	left: 912px;
 	clip: rect(10px,170px,125px,0px);
 }}
 
 button {
-		box-shadow: 1px 2px 2px 2px;
+		/*box-shadow: 1px 2px 2px 2px;*/
     width: 120px;
     position: absolute;
     top: 520px;
@@ -166,6 +166,9 @@ button {
     margin: 10px;
     border-radius: 6px;
     background-color: silver;
+		outline: none;
+		user-select: none;
+
 }
 
 #canvas {
@@ -175,6 +178,7 @@ button {
 	margin-top: 20px;
 	margin-bottom: 30px;
 	margin-left: 50px;
+	padding-right: 1px;
 }
 
 .lecture-slide {
@@ -224,6 +228,7 @@ button {
 	height: 400px;
 	margin-top: 20px;
 	padding: 50px;
+	padding-right: 1px;
 	line-height: 50px;
 	background: black;
 	color: white;
@@ -231,7 +236,8 @@ button {
 }
 
 .strike {
-	width: 800px;
+	width: 752px;
+	height: 553px;
 	margin-left: 100px;
 	background: black;
 	color: red;
@@ -239,7 +245,7 @@ button {
 }
 
 .congrats {
-	width: 800px;
+	width: 752px;
 	background: black;
 	color: green;
 	font-size: 72px;
@@ -266,6 +272,9 @@ button {
 	border-radius: 8px;
 	background-color: blanchedalmond;
 	display: inline-block;;
+	position: absolute;
+	left: 360px;
+	top: 550px;
 }
 
 .x {
@@ -348,13 +357,19 @@ textarea {
 }
 
 .switch-button {
-	height: 100px;
-	font-size: 24px;
-	outline: none;
+    height: 100px;
+		font-family: 'Exo 2', sans-serif;
+    font-size: 24px;
+    outline: none;
+    position: absolute;
+    top: 522px;
+    left: 231px;
+    border-radius: 100px;
+    width: 200px;
 }
 
 .pairs-results {
-	width: 800px;
+	width: 752px;
 	margin-left: 100px;
 	background: black;
 	color: white;
@@ -408,4 +423,60 @@ top: 128px;
 left: 91px;
 height: 500px;
 width: 797px;
+}
+
+
+.boards {
+	color: white;
+	display: inline-block;;
+}
+
+.sheep-image {
+	position: absolute;
+	top: 250px;
+}
+
+.eyes {
+    position: absolute;
+    top: 400px;
+    left: 345px;
+}
+
+#canvas2 {
+	padding-left: 51px;
+	padding-bottom: 49px;
+}
+.lecture-slide-container {
+	padding-right: 1px;
+}
+
+.pairs-open {
+    color: black;
+    background-color: blanchedalmond;
+    font-size: 41px;
+    width: 752px;
+    padding: 50px;
+		padding-bottom: 65px;
+}
+
+.lets-pair {
+	display: block;
+	padding: 30px;
+	margin: 30px;
+	margin-left: 300px;
+	font-size: 24px;
+	font-family: 'Exo 2', sans-serif;
+	border-radius: 48px;
+	outline: none;
+	user-select: none;
+
+}
+
+.grade {
+	font-size: 150px;
+	padding: 25px
+}
+.pair-result-number {
+	font-size: 24px;
+	margin-left: 25px
 }

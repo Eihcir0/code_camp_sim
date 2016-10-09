@@ -17,6 +17,7 @@ class LectureSeshScreen extends React.Component {
     this.player.clock = new Clock(startTime,9);
     this.startingFocus = this.player.focus;
     this.eyesClosedTimer = 0;
+    this.startTime = this.player.clock.tickCounter;
     this.state= {
       currentSlide: 1,
       eyesClosed: false,
@@ -56,10 +57,6 @@ class LectureSeshScreen extends React.Component {
       }
     this.checkWinner(time);
 
-    // var rays = document.getElementById("lecture-slide");
-		// rays.setAttribute("style","-"
-    // + "webkit-transform:rotate(" + 1 + "deg)");
-
   }
 
   checkWinner(time) {
@@ -70,7 +67,7 @@ class LectureSeshScreen extends React.Component {
         this.faintSound = "";
         this.sleepSound = "";
         this.xxinterval = undefined;
-        this.player.newCongrats = {message: `CONGRATULATIONS!!! You made it through lecture without sleeping!`, newTime: [12,0], newPos: 0, newSession: 2};
+        this.player.newCongrats = {message: `CONGRATULATIONS!!! You made it through lecture without sleeping!`, newTime: [12,0], newClockSpeed: 3, newPos: 0, newSession: 2};
     }
   }
 
@@ -81,7 +78,7 @@ class LectureSeshScreen extends React.Component {
       clearInterval(this.xxinterval);
       this.sleepSound.pause();
       this.xxinterval = undefined;
-      this.player.newStrike = {message: "You received a strike for falling asleep during lecture.", newTime: [12,0], newPos: 0, newSession: 2, newClockSpeed: 360};
+      this.player.newStrike = {message: "You received a strike for falling asleep during lecture.", newTime: [12,0], newPos: 0, newSession: 2, newClockSpeed: 3};
       this.player.currentPos = 0;
       }
     this.setState({goesToSleepMeter: this.goesToSleepMeter});
@@ -105,9 +102,16 @@ class LectureSeshScreen extends React.Component {
         this.faintSoundOn=true;}
 
       if (this.player.focus <= 10) {
+        switch (Math.floor(Math.random()*3)+1) {
+          case 1:
+            this.player.newFace = {filename: "trippy1", duration: 100};
+            break;
+          default:
+          this.player.newFace = {filename: "trippy2", duration: 100};
 
-      this.faintMeter++;
-      this.faintMeter++;
+        }
+        this.faintMeter++;
+        this.faintMeter++;
       if (this.faintMeter >= this.faintMeterMax) {
         clearInterval(this.xxinterval);
         this.faintSound.pause();
@@ -182,7 +186,6 @@ class LectureSeshScreen extends React.Component {
       var shadow = `0 0 ${50-this.player.focus}px rgba(0,0,0,0.5)`;
       var style = {color: "transparent", textShadow: `${shadow}` };
       var raysStyle = {opacity: (this.faintMeter)/100};
-      console.log(style);
       return (
         <div>
           <ul id="lecture-slide" className="lecture-slide" style={style}>
@@ -222,6 +225,7 @@ class LectureSeshScreen extends React.Component {
     this.eyesClosedTimer++;
     this.setState({eyesClosed: true});
     this.player.currentEmotion = "eyes closed";
+    this.startTime = this.player.clock.tickCounter;
   }
 
   handleCloseEyesOff() {
@@ -233,28 +237,56 @@ class LectureSeshScreen extends React.Component {
       this.faintSoundOn = false;
     }
     this.sleepSound.pause();
+    this.startTime = this.player.clock.tickCounter;
     this.eyesClosed++;
     this.setState({eyesClosed: false});
     this.player.currentEmotion = "excited";
   }
 
   button() {
-    if (this.player.focus < 30 && (!(this.state.eyesClosed)) ) {
+    var button = <div/>;
+    var now = this.player.clock.tickCounter;
+    if ((now - this.startTime) > (1500*this.player.clock.relativeSpeed)) {
+      if (!(this.state.eyesClosed)) {
+      button = (
+        <button className="middle-button"
+          onClick={this.handleCloseEyesOn}>
+          CLOSE EYES
+        </button>
+      );}
+      else {
+        button = (
+          <button className="middle-button"
+            onClick={this.handleCloseEyesOff}>
+            OPEN EYES
+          </button>
+        );
+      }
+    }
+    if (this.player.focus < 50 && (!(this.state.eyesClosed)) ) {
       return (
-      <button className="middle-button"
-      onClick={this.handleCloseEyesOn}>
-        CLOSE EYES
-      </button>
+
+        <div className="eyes-open">
+
+          <img src="./app/assets/images/eyes_open.png"
+            className="eyes" />
+          {button}
+
+        </div>
+
       );
     } else if (this.state.eyesClosed) {
       return (
-      <button className="middle-button"
-      onClick={this.handleCloseEyesOff}>
-        OPEN EYES
-      </button>
+        <div className="eyes-open">
+          <img src="./app/assets/images/eyes_closed.png"
+            className="eyes"/>
+          {button}
+        </div>
       );
     }
   }
+
+
 
   render () {
     return (

@@ -22,9 +22,10 @@ class GameMain extends React.Component {
     this.player = new Player("Guest");
     this.playerAnim = new playerAnim({player: this.player});
     this.week = new Week(this.player);
+
     this.state = {
       currentPos: -1,
-      message: this.player.defaultMessage,
+      message: this.player.message,
       clock: this.player.clock.time(),
       ruby: this.player.skills.Ruby,
       focus: this.player.focus
@@ -38,6 +39,7 @@ class GameMain extends React.Component {
   }
 
 
+
   tick() {
     this.player.clock.tick();
     var dt= (this.player.clock.tickCounter - this.player.clock.lastClockTickCounter);
@@ -49,22 +51,22 @@ class GameMain extends React.Component {
       });
       this.updateSession();
       this.updateAttributes(dt);
-      this.setState({
-        message: this.player.message,
-        ruby: Math.floor(this.player.skills.Ruby/10),
-        focus: this.player.focus
-    });}
-    // debugger;
+    }
+    this.setState({
+      message: this.updateMessage(),
+      ruby: Math.floor(this.player.skills.Ruby/10),
+      focus: this.player.focus
+    });
     //animationFramE ????
   }
 
   updateSession() {
     if (this.player.session === 0 && this.player.currentPos !==12) {
       if (this.player.clock.is(["9","00","am"])) {
-       this.player.newStrike = {message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9,1], newPos: this.player.currentPos};
+       this.player.newStrike = {message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9,1], newPos: this.player.currentPos, newClockSpeed : 3, };
       }
       else if (this.player.clock.is(["9","30","am"])) {
-       this.player.newStrike = {message: "You cannot enter the lecture hall after 9:30am.  You received a strike for missing morning lecture.", newTime: [9,31], newPos: this.player.currentPos};
+       this.player.newStrike = {message: "You cannot enter the lecture hall after 9:30am.  You received a strike for missing morning lecture.", newTime: [9,31], newClockSpeed : 3, newPos: this.player.currentPos};
       }
     }
     if (this.player.clock.is(["12","01","pm"])) {
@@ -74,7 +76,7 @@ class GameMain extends React.Component {
 
     if (this.player.clock.is(["1","30","pm"])) {
       if (this.player.currentPos !== 11) {
-        this.player.newStrike = {message: "You received a strike for not being seated at your workstation by 1:30pm for pair programming. ", newTime: [13,30], newClockSpeed: 720, newSession: 3, newPos: 11};
+        this.player.newStrike = {message: "You received a strike for not being seated at your workstation by 1:30pm for pair programming. ", newTime: [13,30], newClockSpeed: 3, newSession: 3, newPos: 11};
       }
       else {
         this.player.clock = new Clock([13,31], 3);
@@ -91,6 +93,7 @@ class GameMain extends React.Component {
         this.player.focus -=0.5;
       }
       else if (this.player.currentPos !==12 && this.player.session !==3) {
+        if (this.player.focus>=30) {this.player.focus++;}
         this.player.focus++;
         this.player.focus++;
       }
@@ -100,6 +103,7 @@ class GameMain extends React.Component {
   }
 
   sesh() { // change this to a switch
+
     if (this.player.newStrike) {
       this.player.clock.pause();
       return (
@@ -130,7 +134,12 @@ class GameMain extends React.Component {
     }
   }
 
-  message() {
+  updateMessage() {
+    if (this.player.message==="You can't focus any longer.  Take a break."
+    && this.player.focus>30) {
+      this.player.message = this.player.oldMessage;
+    }
+
     if (this.player.currentPos === 10) { //change this
       return this.week.day.secretaryMessage();
     }
@@ -138,6 +147,7 @@ class GameMain extends React.Component {
       return "YOU'RE ON FIRE!";
     }
     else {
+
       return (this.player.message ? this.player.message : this.player.defaultMessage);
     }
   }
@@ -147,7 +157,8 @@ class GameMain extends React.Component {
     //{array} or <component className="" onClick={}
     return (
       <section>
-        <span className="game-title">CODE CAMP SIM</span>
+        <span className="game-title">CODE CAMP SIM (ver 0.7.2)</span>
+
         <div className="game-middle-container">
           {this.sesh()}
           <div className="game-right-side">
@@ -185,7 +196,7 @@ class GameMain extends React.Component {
             </div>
           </div>
         </div>
-        <div className="game-messages">{this.message()} </div>
+        <div className="game-messages">{this.state.message} </div>
       </section>
     );
   }

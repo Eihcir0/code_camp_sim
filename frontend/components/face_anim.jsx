@@ -31,7 +31,7 @@ class FaceAnim extends React.Component {
   }
 
   setLookLeft() {
-    if (Math.random()>0.8 && this.player.sleepBank>40) {
+    if (Math.random()>0 && this.player.sleepBank>40) { //>0?? a little much
       console.log("here");
       this.player.newFace = (this.player.happiness>70) ?
       {filename:"rested_happy_look_left", duration: Math.floor(Math.random()*30+1)} :
@@ -45,7 +45,7 @@ class FaceAnim extends React.Component {
     } else {
     this.face = this.getDiv(this.baseFace());
     this.winkCounter++;
-    if (this.winkCounter>50) {
+    if (this.winkCounter>50 && this.newFace===false) {
       this.winkCounter=0;
       if (!this.player.onFire) {
         if (Math.random()>0.5) {

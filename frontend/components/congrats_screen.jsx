@@ -12,6 +12,8 @@ class CongratsScreen extends React.Component {
     this.props.player.message =
     this.congrats.message;
     this.handleClick = this.handleClick.bind(this);
+    this.props.player.newFace = {filename: "super_happy", duration: 10};
+
     // this.main = this.main.bind(this);
 
 
@@ -24,7 +26,7 @@ class CongratsScreen extends React.Component {
       if (this.congrats.newClockSpeed) {
         newClockSpeed = this.congrats.newClockSpeed;
       } else {
-        newClockSpeed = 6;
+        newClockSpeed = 3;
       }
       this.props.player.clock = new Clock (this.congrats.newTime, newClockSpeed);
       if (!(this.congrats.newPos===undefined)) {

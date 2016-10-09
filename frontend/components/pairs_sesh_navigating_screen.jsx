@@ -55,7 +55,8 @@ class PairsSeshNavigatingScreen extends React.Component {
 
   tick() {
     if (!(this.props.stopped)) {
-      if (this.props.player.clock.is(["6","00","pm"])) {
+      if (this.props.player.clock.isBetween([17,0],[19,0])) {
+        console.log("HERE BUDDY");
         this.clearInt();
       } else {
         this.updateSentences();
@@ -71,6 +72,8 @@ class PairsSeshNavigatingScreen extends React.Component {
   }
 
   addExplosion(a) {
+    var skill = this.props.player.currentSkill;
+    this.props.player.skills[skill]+=3;
     this.explosions.push({yPos: a.yPos, timer: 0});
   }
 

@@ -3,15 +3,18 @@ import PairsSeshDrivingScreen from './pairs_sesh_driving_screen.jsx';
 import PairsSeshNavigatingScreen from './pairs_sesh_navigating_screen.jsx';
 import PairsSeshOpenScreen from './pairs_sesh_open_screen.jsx';
 import PairsSeshResults from './pairs_sesh_results.jsx';
+import Clock from './../../game_logic/clock.js';
 
 class PairsSeshScreen extends React.Component {
   constructor (props) {
     super(props);
     // this.currentSesh = this.currentSesh.bind(this);
+    this.props.player.clock = new Clock([13,31],8);
     this.handleClick = this.handleClick.bind(this);
+    this.handleOpenClick = this.handleOpenClick.bind(this);
     this.sesh = this.sesh.bind(this);
     this.newSwitch = this.newSwitch.bind(this);
-    this.current = 1;
+    this.current = 0;
     this.stopDriving = false;
     this.stopNav = true;
     this.drivingSentences = [];
@@ -58,14 +61,32 @@ class PairsSeshScreen extends React.Component {
       }
     }
 
-  sesh() {
 
-    if (this.props.player.clock.is(["6","00","pm"])) {
+  handleOpenClick() {
+    this.props.player.clock.unpause();
+    this.current = 1;
+  }
+
+  sesh() {
+    if (this.current === 0) {
       this.props.player.clock.pause();
-      this.current ===3;
+      return (
+        <div className="pairs-open">
+          Its time for PAIR PROGRAMMING!
+          The real point of pair programming in Code Camp is to learn how to
+          be a good, collaborative pair programmer. You shouldnt worry as much about
+          the code as you should try to switch with your partner every 30 minutes.
+          <button className="lets-pair" onClick={this.handleOpenClick}>LETS PAIR!</button>
+        </div>
+      );
+    }
+    if (this.props.player.clock.is(["5","00","pm"])) {
+
+      this.props.player.clock.pause();
       this.stopDriving = true;
       this.stopNavigating = true;
       this.props.player.message = "Today's pair programming results are in!";
+      this.current ===3;
       return (
         <PairsSeshResults
           drivingLines = {this.drivingLines}
@@ -98,7 +119,7 @@ class PairsSeshScreen extends React.Component {
 
         <button className="switch-button"
           onClick={this.handleClick}>SWITCH!</button>
-        
+
       </div>
     );}
 

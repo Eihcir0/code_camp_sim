@@ -21,6 +21,8 @@ class OpenSesh extends React.Component {
     this.render = this.render.bind(this);
     this.checkForDoneSprites = this.checkForDoneSprites.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.handleBoards = this.handleBoards.bind(this);
+    this.handleSave = this.handleSave.bind(this);
     this.initializeSprites = this.initializeSprites.bind(this);
     this.buttons = this.buttons.bind(this);
     this.handleGetOffComputer = this.handleGetOffComputer.bind(this);
@@ -51,64 +53,6 @@ class OpenSesh extends React.Component {
 
   }
 
-  initializeSprites () {
-    //need to change this up between animated and not-animated
-    this.sprites.push(new Secretary);
-    var d = new Desk(1);
-    d.pos = [290,90];
-    this.sprites.push(d);
-    d = new Desk(2);
-    d.pos = [250,200];
-    this.sprites.push(d);
-    d = new Desk(3);
-    d.pos = [300,320];
-    this.sprites.push(d);
-
-    d = new StudentAnim(this.player, [412,320], 3);
-    this.player.rightStudent = d;
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [482,319], 3);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [553,322], 3, 1);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [593,320], 3);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [628,323], 3);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [668,323], 3);
-    this.sprites.push(d);
-
-    d = new StudentAnim(this.player, [260,201], 2);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [298,204], 2);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [337,200], 2);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [373,202], 2);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [446,202], 2);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [520,200], 2);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [629,202], 2);
-    this.sprites.push(d);
-
-    d = new StudentAnim(this.player, [283,91], 1);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [398,90], 1);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [472,91], 1);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [548,90], 1);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [583,91], 1);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [617,90], 1);
-    this.sprites.push(d);
-    d = new StudentAnim(this.player, [656,96], 1);
-    this.sprites.push(d);
-
-  }
 
   main() {
 
@@ -137,20 +81,36 @@ class OpenSesh extends React.Component {
     if (this.player.currentPos === 11)  {
       return (
         <div className="middle-buttons-area">
-          <button className="middle-button1">
+          <button className="middle-button1"
+            onClick={this.handleSave}>
             SAVE GAME
           </button>
           <button className="middle-button2"
             onClick={this.handleGetOffComputer}>
             LEAVE WORKSTATION
           </button>
-          <button className="middle-button3">
-            CHECK BULLETIN BOARDS
-          </button>
+
+          <form target="_blank" action="https://gist.github.com/Eihcir0/865d67dc23378110ec761986ccca4370">
+              <button className="middle-button3" type="submit" value="GO TO GIST">
+                GO TO GIST
+              </button>
+          </form>
         </div>
       );
     }
   }
+
+  handleSave() {
+    this.player.message = "🚧 This feature is currently underdevelopment 🚧";
+  }
+
+
+  handleBoards() {
+    this.player.message = "🚧 This feature is currently underdevelopment 🚧";
+
+  }
+
+
 
   handleGetOffComputer() {
     this.playerAnim.soundTyping.pause();
@@ -209,8 +169,11 @@ class OpenSesh extends React.Component {
   //need to add a "on hover" ie mouseover section.  will change the classes of some overlays to make it darker.
   update (dt) {
       if (this.player.focus<=0) {
+        if (!(this.player.message === "You can't focus any longer.  Take a break.")) {
+          this.player.oldMessage = this.player.message;
+        }
+
         this.player.message="You can't focus any longer.  Take a break.";
-        window.setTimeout(()=> (this.player.message=""), 2000);
         this.handleGetOffComputer();
       }
       this.updateCount += dt;
@@ -242,7 +205,11 @@ class OpenSesh extends React.Component {
     this.sprites.forEach(sprite => {
       if (sprite.type!=="study icon" && sprite.type!=="student") {
         this.ctx.drawImage(sprite.image,sprite.pos[0],sprite.pos[1]);
-      } else if (sprite.type==="student") {
+      } else if (
+        sprite.type==="student" &&
+        (!(this.player.clock.isBetween([9,1],[11,59]))) &&
+        (!(this.player.clock.isBetween([0,0],[6,0])))
+      ) {
         sprite.render();
       }
 
@@ -279,6 +246,64 @@ class OpenSesh extends React.Component {
       </div>
     );
   }
+  initializeSprites () {
+    //need to change this up between animated and not-animated
+    this.sprites.push(new Secretary);
+    var d = new Desk(1);
+    d.pos = [290,90];
+    this.sprites.push(d);
+    d = new Desk(2);
+    d.pos = [250,200];
+    this.sprites.push(d);
+    d = new Desk(3);
+    d.pos = [300,320];
+    this.sprites.push(d);
+
+    d = new StudentAnim(this.player, [412,320], 3);
+    this.player.rightStudent = d;
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [482,319], 3);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [553,322], 3, 1);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [593,320], 3);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [628,323], 3);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [668,323], 3);
+    this.sprites.push(d);
+
+    d = new StudentAnim(this.player, [260,201], 2);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [298,204], 2);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [337,200], 2);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [373,202], 2);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [446,202], 2);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [520,200], 2);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [629,202], 2);
+    this.sprites.push(d);
+
+    d = new StudentAnim(this.player, [283,91], 1);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [398,90], 1);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [472,91], 1);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [548,90], 1);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [583,91], 1);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [617,90], 1);
+    this.sprites.push(d);
+    d = new StudentAnim(this.player, [656,96], 1);
+    this.sprites.push(d);
+
+  }//end initialize()
 
 
 }//end component
