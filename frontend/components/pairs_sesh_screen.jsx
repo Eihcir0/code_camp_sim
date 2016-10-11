@@ -84,7 +84,7 @@ class PairsSeshScreen extends React.Component {
 
       this.props.player.clock.pause();
       this.stopDriving = true;
-      this.stopNavigating = true;
+      this.stopNav = true;
       this.props.player.message = "Today's pair programming results are in!";
       this.current ===3;
       return (

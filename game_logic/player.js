@@ -13,10 +13,11 @@ import FireAnim from
 class Player {
   constructor(name, obj) {
     this.name = name || "Richie";
-    this.clock = obj ? obj.clock : new Clock([8,45],3);
-    this.defaultMessage =
-      obj ? obj.defaultMessage
-      : "I'm the brains, you're the muscle, got it?  Now use your muscles to move the mouse!";
+    this.defaultClockSpeed = obj ? obj.defaultClockSpeed : 3;
+    this.clock = obj ? obj.clock : new Clock([8,45],this.defaultClockSpeed);
+    this.tempMessage =
+      obj ? obj.tempMessage
+      : "I'm the brains, you're the muscle!  Use your muscles to move the mouse!";
     this.currentEmotion = obj ? obj.currentEmotion : "excited";
     this.info = obj ? obj.info : "";
 
@@ -32,6 +33,10 @@ class Player {
     this.lastIconTickerCount = obj ? obj.lastIconTickerCount : 0;
     this.onFire = obj ? obj.onFire : false;
     this.fire = undefined;
+
+    this.eatingLunch = false; //these should be in the day
+    this.ateLunch = false;
+    this.noLunchPenalty = 1;// (0.5 cuts it in half)
     this.strikes = obj ? obj.strikes : "";
     this.session = obj ? obj.session : 0; //
     this.pos = obj ? obj.pos : [280,300];

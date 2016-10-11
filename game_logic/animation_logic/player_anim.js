@@ -284,6 +284,7 @@ class PlayerAnim extends Moveable {
         default:
           break;
     }
+    this.player.tempMessage="";
   }
 
 

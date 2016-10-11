@@ -73,6 +73,7 @@ table {
 }
 
 .game-buttons {
+	outline: none;
   height: 500px;
   width: 156px;
   background-color: lightgrey;
@@ -167,6 +168,12 @@ button {
     border-radius: 6px;
     background-color: silver;
 		outline: none;
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		-o-user-select: none;
 		user-select: none;
 
 }
@@ -275,6 +282,7 @@ button {
 	position: absolute;
 	left: 360px;
 	top: 550px;
+	outline: none;
 }
 
 .x {
@@ -382,6 +390,14 @@ textarea {
 }*/
 
 .middle-button1 {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+		outline: none;
     width: 80px;
     position: absolute;
     height: 70px;
@@ -394,6 +410,14 @@ textarea {
 }
 
 .middle-button2 {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+		outline: none;
     position: absolute;
     top: 532px;
     left: 457px;
@@ -406,6 +430,15 @@ textarea {
 }
 
 .middle-button3 {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+
+	user-select: none;
+		outline: none;
     position: absolute;
     height: 70px;
     top: 533px;
@@ -416,13 +449,53 @@ textarea {
     border-radius: 8px;
     background-color: blanchedalmond;
 }
+.middle-button4 {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+
+		user-select: none;
+    outline: none;
+    position: absolute;
+    top: 262px;
+    left: 229px;
+    height: 70px;
+    width: 120px;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: blanchedalmond;
+}
+.middle-button5 {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+
+		user-select: none;
+    outline: none;
+    position: absolute;
+    top: 362px;
+    left: 229px;
+    height: 70px;
+    width: 120px;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: blanchedalmond;
+}
 
 .rays {
-position: absolute;
-top: 128px;
-left: 91px;
-height: 500px;
-width: 797px;
+	position: absolute;
+	top: 128px;
+	left: 91px;
+	height: 500px;
+	width: 797px;
 }
 
 
@@ -468,6 +541,13 @@ width: 797px;
 	font-family: 'Exo 2', sans-serif;
 	border-radius: 48px;
 	outline: none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+
 	user-select: none;
 
 }
@@ -479,4 +559,64 @@ width: 797px;
 .pair-result-number {
 	font-size: 24px;
 	margin-left: 25px
+}
+
+
+
+#hover1 {
+  width: 129px;
+  height: 128px;
+  background: black;
+  opacity: 0;
+  position: absolute;
+  top: 427px;
+  left: 369px;
+	cursor: pointer;
+}
+#hover1:hover {
+	opacity: 0.4;
+}
+
+#hover2 {
+  width: 291px;
+  height: 88px;
+  background: black;
+  opacity: 0;
+  position: absolute;
+  top: 127px;
+  left: 160px;
+  cursor: pointer;
+	}
+
+#hover2:hover {
+  opacity: .4;
+}
+
+#hover3 {
+  width: 149px;
+  height: 190px;
+  background: black;
+  opacity: 0;
+  position: absolute;
+  top: 230px;
+  left: 86px;
+	cursor: pointer;
+}
+
+#hover3:hover {
+  opacity: .4;
+}
+
+#hover4 {
+	width: 135px;
+	height: 109px;
+	background: black;
+	opacity: 0;
+	position: absolute;
+	top: 505px;
+	left: 106px;
+	cursor: pointer;
+}
+#hover4:hover {
+	opacity: .4;
 }

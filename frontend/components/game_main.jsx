@@ -19,6 +19,7 @@ import FaceAnim from './face_anim.jsx';
 class GameMain extends React.Component {
   constructor() {
     super();
+    //HAVE TO DEAL WITH ATE LUNCH SHIT - reset each day, these should be tracked in day
     this.player = new Player("Guest");
     this.playerAnim = new playerAnim({player: this.player});
     this.week = new Week(this.player);
@@ -33,6 +34,7 @@ class GameMain extends React.Component {
     this.attributeTicker = 0;
     this.tick = this.tick.bind(this);
     this.updateAttributes = this.updateAttributes.bind(this);
+    this.checkAteLunch = this.checkAteLunch.bind(this);
     this.ticksPerSecond = 100; //<<=If changed then change Clock class
     this.intervalTime = 1000 / this.ticksPerSecond;
     this.interval = window.setInterval(()=>this.tick(),this.intervalTime);
@@ -50,6 +52,7 @@ class GameMain extends React.Component {
         clock: this.player.clock.time()
       });
       this.updateSession();
+
       this.updateAttributes(dt);
     }
     this.setState({
@@ -61,12 +64,13 @@ class GameMain extends React.Component {
   }
 
   updateSession() {
+    //WARNINGS SHOULD GO FIRST
     if (this.player.session === 0 && this.player.currentPos !==12) {
       if (this.player.clock.is(["9","00","am"])) {
-       this.player.newStrike = {message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9,1], newPos: this.player.currentPos, newClockSpeed : 3, };
+       this.player.newStrike = {message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9,1], newPos: this.player.currentPos, newClockSpeed: this.player.defaultClockSpeed, };
       }
       else if (this.player.clock.is(["9","30","am"])) {
-       this.player.newStrike = {message: "You cannot enter the lecture hall after 9:30am.  You received a strike for missing morning lecture.", newTime: [9,31], newClockSpeed : 3, newPos: this.player.currentPos};
+       this.player.newStrike = {message: "You cannot enter the lecture hall after 9:30am.  You received a strike for missing morning lecture.", newTime: [9,31], newClockSpeed: this.player.defaultClockSpeed, newPos: this.player.currentPos};
       }
     }
     if (this.player.clock.is(["12","01","pm"])) {
@@ -76,28 +80,47 @@ class GameMain extends React.Component {
 
     if (this.player.clock.is(["1","30","pm"])) {
       if (this.player.currentPos !== 11) {
-        this.player.newStrike = {message: "You received a strike for not being seated at your workstation by 1:30pm for pair programming. ", newTime: [13,30], newClockSpeed: 3, newSession: 3, newPos: 11};
+        if (this.player.eatingLunch) {
+          this.player.eatingLunch =false;
+          this.player.ateLunch=true;}
+        this.checkAteLunch();
+        this.player.newStrike = {message: "You received a strike for not being seated at your workstation by 1:30pm for pair programming. ", newTime: [13,30], newClockSpeed: this.player.defaultClockSpeed, newSession: 3, newPos: 11};
       }
       else {
-        this.player.clock = new Clock([13,31], 3);
+        this.checkAteLunch();
+        this.player.clock = new Clock([13,31], this.player.defaultClockSpeed);
         this.player.session = 3;
       }
+    }
+  }
+
+  checkAteLunch() {
+    //if the player hasnt eaten lunch then they get a penalty for rest of day on max energy...launch a new warning.
+    if (!(this.player.ateLunch)) {
+      //ADD A WARNING SCREEN
+      this.player.message = "BECAUSE YOU DIDN'T TAKE A LUNCH BREAK YOU ARE LIMITED TO HALF ENERGY FOR THE DAY";
+      console.log("BECAUSE YOU DIDN'T TAKE A LUNCH BREAK YOU ARE LIMITED TO HALF ENERGY FOR THE DAY");
+      this.player.noLunchPenalty = 0.5;
+
     }
   }
 
   updateAttributes(dt) { //REDO THIS SOON
     //use helper methods for each attribute
 
-
+      var maxEnergy = this.player.sleepBank*this.player.noLunchPenalty;
+      console.log(maxEnergy);
       if (this.player.currentPos === 11 && this.player.session !==3) {
         this.player.focus -=0.5;
       }
       else if (this.player.currentPos !==12 && this.player.session !==3) {
-        if (this.player.focus>=30) {this.player.focus++;}
-        this.player.focus++;
-        this.player.focus++;
+        if (this.player.focus>=30) {
+          this.player.focus+=2.7;
+        }
+
+        this.player.focus+=0.3;
       }
-      if (this.player.focus>100) {this.player.focus = 100;}
+      if (this.player.focus>maxEnergy) {this.player.focus = maxEnergy;}
       if (this.player.focus<0) {this.player.focus = 0;}
 
   }
@@ -135,6 +158,10 @@ class GameMain extends React.Component {
   }
 
   updateMessage() {
+    if (this.player.tempMessage) {
+      // if (this.player.oldMessage!==this.player.tempMessage) {this.player.message = this.tempMessage;}
+      return this.player.tempMessage;
+    }
     if (this.player.message==="You can't focus any longer.  Take a break."
     && this.player.focus>30) {
       this.player.message = this.player.oldMessage;

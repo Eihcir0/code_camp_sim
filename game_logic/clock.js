@@ -5,8 +5,10 @@ class Clock {
     //start can be military [18,30] or [6,30,"pm"]
     this.start[0] = parseInt(start[0]);
     this.start[1] = parseInt(start[1]);
+
     if (start[2]) {
-      this.start[0] += (start[2]==="pm" ? 12 : 0);
+      this.start[0] += (
+        (start[2] === "pm" && this.start[0] !== 12) ? 12 : 0);
     }
 
     //60 => 1 real second / 1 game minute or 60 real seconds for 1 gm hr
@@ -47,10 +49,18 @@ class Clock {
     return newTime;
   }
 
-  diff(lastTime) { //THIS CURRENTLY DOESN'T ACCOUNT FOR AM/PM
+  diff(lastTime) { //THIS CURRENTLY DOESN'T ACCOUNT FOR AFTER MIDNIGHT
+    var newLastTime = lastTime.slice(0);
+    newLastTime[0] = parseInt(newLastTime[0]);
     var currentTime = this.time();
-    var hoursDiff = parseInt(currentTime[0]) - parseInt(lastTime[0]);
-    var minsDiff = parseInt(currentTime[1]) - parseInt(lastTime[1]);
+
+    if (newLastTime.length===3) {
+      if (newLastTime[2]==="pm") { newLastTime[0] = parseInt(newLastTime[0]) + 12;}
+    }
+
+    if (currentTime[2]==="pm") {currentTime[0] = parseInt(currentTime[0]) + 12;}
+    var hoursDiff = parseInt(currentTime[0]) - parseInt(newLastTime[0]);
+    var minsDiff = parseInt(currentTime[1]) - parseInt(newLastTime[1]);
     return (hoursDiff*60 + minsDiff);
   }
 
@@ -61,9 +71,20 @@ class Clock {
     && time[2]===currentTime[2];
   }
 
+//this is kinda backwards, i change to am/pm then back
   isBetween(startTime,endTime) {
-    if (startTime.length < 3) {startTime.push("am");}
-    if (endTime.length < 3) {endTime.push("am");}
+    if (startTime.length < 3) {
+      if (startTime[0] <12) {startTime.push("am");}
+      else {
+        startTime.push("pm");
+        startTime[0]+= startTime[0]==12 ? 0 : 12;}
+    }
+    if (endTime.length < 3) {
+      if (startTime[0] <12) {endTime.push("am");}
+      else {
+        endTime[0] += endTime[0]==12 ? 0 : 12;
+        endTime.push("pm");}
+    }
     var startHour = startTime[0] + (startTime[2] == "pm" ? 12 : 0);
     var endHour = endTime[0] + (endTime[2] == "pm" ? 12 : 0);
     var startMinute = startTime[1];

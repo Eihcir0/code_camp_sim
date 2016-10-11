@@ -80,10 +80,10 @@ class StudentAnim extends Moveable {
       this.turnedAround = false;}
       if (this.animTimer > this.animDelay) {
         this.animTimer = 0;
-        var num=Math.floor(Math.random()*100)+1;
+        var num=Math.floor(Math.random()*1000)+1;
         this.animFrame=0;
-        if (num>94 && num<98 && this.animFrame===0) {this.animFrame=1;}
-        else if (num>98 && this.animFrame===0) {this.animFrame=2;}
+        if (num>990 && num<995 && this.animFrame===0) {this.animFrame=1;}
+        else if (num>995 && this.animFrame===0) {this.animFrame=2;}
       }
       if (this.player.onFire) {
         this.desk === 3 ? this.animFrame=1 : this.animFrame=3;

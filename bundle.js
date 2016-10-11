@@ -21470,23 +21470,23 @@
 	
 	var _open_sesh_screen2 = _interopRequireDefault(_open_sesh_screen);
 	
-	var _lecture_sesh_screen = __webpack_require__(201);
+	var _lecture_sesh_screen = __webpack_require__(202);
 	
 	var _lecture_sesh_screen2 = _interopRequireDefault(_lecture_sesh_screen);
 	
-	var _pairs_sesh_screen = __webpack_require__(203);
+	var _pairs_sesh_screen = __webpack_require__(204);
 	
 	var _pairs_sesh_screen2 = _interopRequireDefault(_pairs_sesh_screen);
 	
-	var _strike_screen = __webpack_require__(209);
+	var _strike_screen = __webpack_require__(210);
 	
 	var _strike_screen2 = _interopRequireDefault(_strike_screen);
 	
-	var _congrats_screen = __webpack_require__(210);
+	var _congrats_screen = __webpack_require__(211);
 	
 	var _congrats_screen2 = _interopRequireDefault(_congrats_screen);
 	
-	var _face_anim = __webpack_require__(211);
+	var _face_anim = __webpack_require__(212);
 	
 	var _face_anim2 = _interopRequireDefault(_face_anim);
 	
@@ -21510,6 +21510,7 @@
 	  function GameMain() {
 	    _classCallCheck(this, GameMain);
 	
+	    //HAVE TO DEAL WITH ATE LUNCH SHIT - reset each day, these should be tracked in day
 	    var _this = _possibleConstructorReturn(this, (GameMain.__proto__ || Object.getPrototypeOf(GameMain)).call(this));
 	
 	    _this.player = new _player2.default("Guest");
@@ -21526,6 +21527,7 @@
 	    _this.attributeTicker = 0;
 	    _this.tick = _this.tick.bind(_this);
 	    _this.updateAttributes = _this.updateAttributes.bind(_this);
+	    _this.checkAteLunch = _this.checkAteLunch.bind(_this);
 	    _this.ticksPerSecond = 100; //<<=If changed then change Clock class
 	    _this.intervalTime = 1000 / _this.ticksPerSecond;
 	    _this.interval = window.setInterval(function () {
@@ -21546,6 +21548,7 @@
 	          clock: this.player.clock.time()
 	        });
 	        this.updateSession();
+	
 	        this.updateAttributes(dt);
 	      }
 	      this.setState({
@@ -21558,11 +21561,12 @@
 	  }, {
 	    key: 'updateSession',
 	    value: function updateSession() {
+	      //WARNINGS SHOULD GO FIRST
 	      if (this.player.session === 0 && this.player.currentPos !== 12) {
 	        if (this.player.clock.is(["9", "00", "am"])) {
-	          this.player.newStrike = { message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9, 1], newPos: this.player.currentPos, newClockSpeed: 3 };
+	          this.player.newStrike = { message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9, 1], newPos: this.player.currentPos, newClockSpeed: this.player.defaultClockSpeed };
 	        } else if (this.player.clock.is(["9", "30", "am"])) {
-	          this.player.newStrike = { message: "You cannot enter the lecture hall after 9:30am.  You received a strike for missing morning lecture.", newTime: [9, 31], newClockSpeed: 3, newPos: this.player.currentPos };
+	          this.player.newStrike = { message: "You cannot enter the lecture hall after 9:30am.  You received a strike for missing morning lecture.", newTime: [9, 31], newClockSpeed: this.player.defaultClockSpeed, newPos: this.player.currentPos };
 	        }
 	      }
 	      if (this.player.clock.is(["12", "01", "pm"])) {
@@ -21572,11 +21576,28 @@
 	
 	      if (this.player.clock.is(["1", "30", "pm"])) {
 	        if (this.player.currentPos !== 11) {
-	          this.player.newStrike = { message: "You received a strike for not being seated at your workstation by 1:30pm for pair programming. ", newTime: [13, 30], newClockSpeed: 3, newSession: 3, newPos: 11 };
+	          if (this.player.eatingLunch) {
+	            this.player.eatingLunch = false;
+	            this.player.ateLunch = true;
+	          }
+	          this.checkAteLunch();
+	          this.player.newStrike = { message: "You received a strike for not being seated at your workstation by 1:30pm for pair programming. ", newTime: [13, 30], newClockSpeed: this.player.defaultClockSpeed, newSession: 3, newPos: 11 };
 	        } else {
-	          this.player.clock = new _clock2.default([13, 31], 3);
+	          this.checkAteLunch();
+	          this.player.clock = new _clock2.default([13, 31], this.player.defaultClockSpeed);
 	          this.player.session = 3;
 	        }
+	      }
+	    }
+	  }, {
+	    key: 'checkAteLunch',
+	    value: function checkAteLunch() {
+	      //if the player hasnt eaten lunch then they get a penalty for rest of day on max energy...launch a new warning.
+	      if (!this.player.ateLunch) {
+	        //ADD A WARNING SCREEN
+	        this.player.message = "BECAUSE YOU DIDN'T TAKE A LUNCH BREAK YOU ARE LIMITED TO HALF ENERGY FOR THE DAY";
+	        console.log("BECAUSE YOU DIDN'T TAKE A LUNCH BREAK YOU ARE LIMITED TO HALF ENERGY FOR THE DAY");
+	        this.player.noLunchPenalty = 0.5;
 	      }
 	    }
 	  }, {
@@ -21585,18 +21606,19 @@
 	      //REDO THIS SOON
 	      //use helper methods for each attribute
 	
-	
+	      var maxEnergy = this.player.sleepBank * this.player.noLunchPenalty;
+	      console.log(maxEnergy);
 	      if (this.player.currentPos === 11 && this.player.session !== 3) {
 	        this.player.focus -= 0.5;
 	      } else if (this.player.currentPos !== 12 && this.player.session !== 3) {
 	        if (this.player.focus >= 30) {
-	          this.player.focus++;
+	          this.player.focus += 2.7;
 	        }
-	        this.player.focus++;
-	        this.player.focus++;
+	
+	        this.player.focus += 0.3;
 	      }
-	      if (this.player.focus > 100) {
-	        this.player.focus = 100;
+	      if (this.player.focus > maxEnergy) {
+	        this.player.focus = maxEnergy;
 	      }
 	      if (this.player.focus < 0) {
 	        this.player.focus = 0;
@@ -21627,6 +21649,10 @@
 	  }, {
 	    key: 'updateMessage',
 	    value: function updateMessage() {
+	      if (this.player.tempMessage) {
+	        // if (this.player.oldMessage!==this.player.tempMessage) {this.player.message = this.tempMessage;}
+	        return this.player.tempMessage;
+	      }
 	      if (this.player.message === "You can't focus any longer.  Take a break." && this.player.focus > 30) {
 	        this.player.message = this.player.oldMessage;
 	      }
@@ -21845,8 +21871,9 @@
 	    _classCallCheck(this, Player);
 	
 	    this.name = name || "Richie";
-	    this.clock = obj ? obj.clock : new _clock2.default([8, 45], 3);
-	    this.defaultMessage = obj ? obj.defaultMessage : "I'm the brains, you're the muscle, got it?  Now use your muscles to move the mouse!";
+	    this.defaultClockSpeed = obj ? obj.defaultClockSpeed : 3;
+	    this.clock = obj ? obj.clock : new _clock2.default([8, 45], this.defaultClockSpeed);
+	    this.tempMessage = obj ? obj.tempMessage : "I'm the brains, you're the muscle!  Use your muscles to move the mouse!";
 	    this.currentEmotion = obj ? obj.currentEmotion : "excited";
 	    this.info = obj ? obj.info : "";
 	
@@ -21862,6 +21889,10 @@
 	    this.lastIconTickerCount = obj ? obj.lastIconTickerCount : 0;
 	    this.onFire = obj ? obj.onFire : false;
 	    this.fire = undefined;
+	
+	    this.eatingLunch = false; //these should be in the day
+	    this.ateLunch = false;
+	    this.noLunchPenalty = 1; // (0.5 cuts it in half)
 	    this.strikes = obj ? obj.strikes : "";
 	    this.session = obj ? obj.session : 0; //
 	    this.pos = obj ? obj.pos : [280, 300];
@@ -22042,8 +22073,9 @@
 	    //start can be military [18,30] or [6,30,"pm"]
 	    this.start[0] = parseInt(start[0]);
 	    this.start[1] = parseInt(start[1]);
+	
 	    if (start[2]) {
-	      this.start[0] += start[2] === "pm" ? 12 : 0;
+	      this.start[0] += start[2] === "pm" && this.start[0] !== 12 ? 12 : 0;
 	    }
 	
 	    //60 => 1 real second / 1 game minute or 60 real seconds for 1 gm hr
@@ -22099,10 +22131,22 @@
 	  }, {
 	    key: "diff",
 	    value: function diff(lastTime) {
-	      //THIS CURRENTLY DOESN'T ACCOUNT FOR AM/PM
+	      //THIS CURRENTLY DOESN'T ACCOUNT FOR AFTER MIDNIGHT
+	      var newLastTime = lastTime.slice(0);
+	      newLastTime[0] = parseInt(newLastTime[0]);
 	      var currentTime = this.time();
-	      var hoursDiff = parseInt(currentTime[0]) - parseInt(lastTime[0]);
-	      var minsDiff = parseInt(currentTime[1]) - parseInt(lastTime[1]);
+	
+	      if (newLastTime.length === 3) {
+	        if (newLastTime[2] === "pm") {
+	          newLastTime[0] = parseInt(newLastTime[0]) + 12;
+	        }
+	      }
+	
+	      if (currentTime[2] === "pm") {
+	        currentTime[0] = parseInt(currentTime[0]) + 12;
+	      }
+	      var hoursDiff = parseInt(currentTime[0]) - parseInt(newLastTime[0]);
+	      var minsDiff = parseInt(currentTime[1]) - parseInt(newLastTime[1]);
 	      return hoursDiff * 60 + minsDiff;
 	    }
 	  }, {
@@ -22111,14 +22155,27 @@
 	      var currentTime = this.time();
 	      return time[0] === currentTime[0] && time[1] === currentTime[1] && time[2] === currentTime[2];
 	    }
+	
+	    //this is kinda backwards, i change to am/pm then back
+	
 	  }, {
 	    key: "isBetween",
 	    value: function isBetween(startTime, endTime) {
 	      if (startTime.length < 3) {
-	        startTime.push("am");
+	        if (startTime[0] < 12) {
+	          startTime.push("am");
+	        } else {
+	          startTime.push("pm");
+	          startTime[0] += startTime[0] == 12 ? 0 : 12;
+	        }
 	      }
 	      if (endTime.length < 3) {
-	        endTime.push("am");
+	        if (startTime[0] < 12) {
+	          endTime.push("am");
+	        } else {
+	          endTime[0] += endTime[0] == 12 ? 0 : 12;
+	          endTime.push("pm");
+	        }
 	      }
 	      var startHour = startTime[0] + (startTime[2] == "pm" ? 12 : 0);
 	      var endHour = endTime[0] + (endTime[2] == "pm" ? 12 : 0);
@@ -22340,7 +22397,7 @@
 	
 	
 	    _this.type = "study icon";
-	
+	    _this.sizeMultiplier = 1;
 	    return _this;
 	  }
 	
@@ -22389,7 +22446,7 @@
 	    _this.iconType = "bug";
 	    _this.value = "bug";
 	
-	    _this.pos = [300, 325];
+	    _this.pos = [292, 305];
 	    _this.animationOn = true;
 	    _this.movementOn = false;
 	    _this.height = 30;
@@ -22421,20 +22478,23 @@
 	        this.animTimer = 0;
 	        ++this.animFrame;
 	        this.pos[1]++;
-	        if (this.animFrame > 45) {
+	        if (this.animFrame > 60) {
 	          this.pos[0] += -this.sunset;
 	          this.pos[0] += -this.sunset;
-	        } else if (this.animFrame > 37) {
+	        } else if (this.animFrame > 50) {
+	          this.pos[0] += +this.sunset;
+	          this.pos[0] += +this.sunset;
+	        } else if (this.animFrame > 42) {
+	          this.pos[0] += -this.sunset;
+	          this.pos[0] += -this.sunset;
+	        } else if (this.animFrame > 30) {
 	          this.pos[0] += this.sunset;
 	          this.pos[0] += this.sunset;
-	        } else if (this.animFrame > 25) {
-	          this.pos[0] += -this.sunset;
-	          this.pos[0] += -this.sunset;
 	        } else {
-	          this.pos[0] += this.sunset;
-	          this.pos[0] += this.sunset;
+	          this.pos[0] += -this.sunset;
+	          this.pos[0] += -this.sunset;
 	        }
-	        if (this.animFrame > 50) {
+	        if (this.animFrame > 70) {
 	          this.done = true;
 	        }
 	      } //end animTime>animDelay
@@ -23681,6 +23741,7 @@
 	        default:
 	          break;
 	      }
+	      this.player.tempMessage = "";
 	    }
 	  }]);
 	
@@ -23713,6 +23774,10 @@
 	
 	var _desk2 = _interopRequireDefault(_desk);
 	
+	var _clock = __webpack_require__(175);
+	
+	var _clock2 = _interopRequireDefault(_clock);
+	
 	var _study_icon_anim = __webpack_require__(178);
 	
 	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
@@ -23721,7 +23786,11 @@
 	
 	var _fire_anim2 = _interopRequireDefault(_fire_anim);
 	
-	var _student_anim = __webpack_require__(200);
+	var _food_anim = __webpack_require__(200);
+	
+	var _food_anim2 = _interopRequireDefault(_food_anim);
+	
+	var _student_anim = __webpack_require__(201);
 	
 	var _student_anim2 = _interopRequireDefault(_student_anim);
 	
@@ -23741,33 +23810,73 @@
 	
 	    var _this = _possibleConstructorReturn(this, (OpenSesh.__proto__ || Object.getPrototypeOf(OpenSesh)).call(this, props));
 	
-	    console.log("new openSesh screen");
 	    _this.player = _this.props.player;
 	    _this.playerAnim = _this.props.playerAnim;
+	
 	    _this.main = _this.main.bind(_this);
 	    _this.renderSprites = _this.renderSprites.bind(_this);
 	    _this.update = _this.update.bind(_this);
 	    _this.render = _this.render.bind(_this);
 	    _this.checkForDoneSprites = _this.checkForDoneSprites.bind(_this);
-	    _this.handleClick = _this.handleClick.bind(_this);
-	    _this.handleBoards = _this.handleBoards.bind(_this);
+	    _this.checkFocus = _this.checkFocus.bind(_this);
+	
+	    _this.quadrants = _this.quadrants.bind(_this);
+	    _this.mouseOverWorkStation = _this.mouseOverWorkStation.bind(_this);
+	    _this.mouseOverLecture = _this.mouseOverLecture.bind(_this);
+	    _this.mouseOverKitchen = _this.mouseOverKitchen.bind(_this);
+	    _this.mouseOverCandanessa = _this.mouseOverCandanessa.bind(_this);
+	    _this.clickWorkStation = _this.clickWorkStation.bind(_this);
+	    _this.clickLecture = _this.clickLecture.bind(_this);
+	    _this.clickKitchen = _this.clickKitchen.bind(_this);
+	    _this.clickCandanessa = _this.clickCandanessa.bind(_this);
+	    _this.drinksCoffee = _this.drinksCoffee.bind(_this);
+	    _this.eatsDonut = _this.eatsDonut.bind(_this);
+	    _this.eatsLunch = _this.eatsLunch.bind(_this);
+	
 	    _this.handleSave = _this.handleSave.bind(_this);
 	    _this.initializeSprites = _this.initializeSprites.bind(_this);
 	    _this.buttons = _this.buttons.bind(_this);
 	    _this.handleGetOffComputer = _this.handleGetOffComputer.bind(_this);
 	    _this.cancelAnimationFrame = _this.cancelAnimationFrame.bind(_this);
+	
 	    _this.background = new Image();
 	    _this.background.src = './app/assets/images/newfloor.png';
 	    _this.sprites = [];
 	    _this.lastTickerCount = _this.player.clock.tickCounter;
 	    _this.updateCount = 0;
-	    _this.state = {
-	      // lastTime: Date.now()
-	      // isLiked: false
-	    };
-	    // this.onClick = this.onClick.bind(this);
+	    _this.ateDonut = false;
+	    _this.lastCoffee = [4, 0, "am"];
+	
+	    // var funs = [ //bind functions
+	    //   this.main,
+	    //   this.renderSprites,
+	    //   this.update,
+	    //   this.render,
+	    //   this.checkForDoneSprites,
+	    //   this.checkFocus,
+	    //
+	    //   this.quadrants,
+	    //   this.mouseOverWorkStation,
+	    //   this.mouseOverLecture,
+	    //   this.mouseOverKitchen,
+	    //   this.mouseOverCandanessa,
+	    //   this.clickWorkStation,
+	    //   this.clickLecture,
+	    //   this.clickKitchen,
+	    //   this.clickCandanessa,
+	    //
+	    //   this.handleSave,
+	    //   this.initializeSprites,
+	    //   this.buttons,
+	    //   this.handleGetOffComputer,
+	    //   this.cancelAnimationFrame
+	    // ];
+	    // var that = this;
+	    // funs.forEach(fun => {
+	    //   this.fun = this.fun.bind(that);
+	    // });
 	    return _this;
-	  }
+	  } //end constructor
 	
 	  _createClass(OpenSesh, [{
 	    key: 'componentDidMount',
@@ -23783,13 +23892,30 @@
 	      this.playerAnim.ctx = this.ctx;
 	      this.playerAnim.canvas = this.canvas;
 	      this.initializeSprites();
+	      this.hover1 = document.getElementById('hover1');
+	
 	      this.background.onload = function () {
 	        return _this2.main();
 	      };
 	    }
 	  }, {
+	    key: 'endLunch',
+	    value: function endLunch() {
+	      this.player.eatingLunch = false;
+	      this.player.ateLunch = true;
+	      this.tempMessage = "";
+	      var now = this.player.clock.time();
+	      this.lunchTime = null;
+	      this.player.clock = new _clock2.default(now, this.player.defaultClockSpeed);
+	    }
+	  }, {
 	    key: 'main',
 	    value: function main() {
+	      if (this.player.eatingLunch) {
+	        if (this.player.clock.diff(this.lunchTime) > this.lunchMinutes) {
+	          this.endLunch();
+	        }
+	      }
 	
 	      var dt = this.player.clock.tickCounter - this.lastTickerCount;
 	      this.lastTickerCount = this.player.clock.tickCounter;
@@ -23797,10 +23923,14 @@
 	      this.update(dt);
 	      this.renderSprites();
 	
-	      if ([0, 2, 4].includes(this.player.session)) {
-	        this.openSeshAnimationFrame = window.requestAnimationFrame(this.main);
-	      } else {
+	      if (this.player.newStrike) {
 	        this.cancelAnimationFrame(this.openSeshAnimationFrame);
+	      } else {
+	        if ([0, 2, 4].includes(this.player.session)) {
+	          this.openSeshAnimationFrame = window.requestAnimationFrame(this.main);
+	        } else {
+	          this.cancelAnimationFrame(this.openSeshAnimationFrame);
+	        }
 	      }
 	    }
 	  }, {
@@ -23816,34 +23946,111 @@
 	      }
 	    }
 	  }, {
+	    key: 'workStationButtons',
+	    value: function workStationButtons() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'middle-buttons-area' },
+	        _react2.default.createElement(
+	          'button',
+	          { className: 'middle-button1',
+	            onClick: this.handleSave },
+	          'SAVE GAME'
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          { className: 'middle-button2',
+	            onClick: this.handleGetOffComputer },
+	          'LEAVE WORKSTATION'
+	        ),
+	        _react2.default.createElement(
+	          'form',
+	          { target: '_blank', action: 'https://gist.github.com/Eihcir0/865d67dc23378110ec761986ccca4370' },
+	          _react2.default.createElement(
+	            'button',
+	            { className: 'middle-button3',
+	              type: 'submit', value: 'GO TO GIST' },
+	            'GO TO GIST'
+	          )
+	        )
+	      );
+	    }
+	  }, {
+	    key: 'drinksCoffee',
+	    value: function drinksCoffee() {
+	      if (this.player.clock.diff(this.lastCoffee) < 30) {
+	        this.player.tempMessage = "COFFEE BREWING...";
+	      } else {
+	        this.lastCoffee = this.player.clock.time();
+	        this.player.focus += 35;
+	        var coffee = new _food_anim2.default({ canvas: this.canvas, ctx: this.ctx }, "coffee");
+	        this.sprites.push(coffee);
+	      }
+	    }
+	  }, {
+	    key: 'eatsDonut',
+	    value: function eatsDonut() {}
+	  }, {
+	    key: 'eatsLunch',
+	    value: function eatsLunch() {
+	      if (!this.player.ateLunch) {
+	        this.player.eatingLunch = true;
+	        this.tempMessage = "TAKING LUNCH BREAK";
+	        this.player.focus = 100;
+	        this.player.happiness += 2;
+	        var now = this.player.clock.time();
+	        this.lunchTime = now;
+	        this.lunchMinutes = 5 + Math.floor(Math.random() * 30);
+	        if (this.lunchMinutes > 10) {
+	          this.player.tempMessage = "Stuck in the microwave line!!!";
+	        }
+	        this.player.clock = new _clock2.default(now, this.player.defaultClockSpeed * 3);
+	      }
+	    }
+	  }, {
+	    key: 'kitchenButtons',
+	    value: function kitchenButtons() {
+	      var eatButton = null;
+	      if (this.player.eatingLunch) {
+	        return null;
+	      }
+	      if (!this.player.ateLunch && this.player.clock.isBetween([12, 1], [13, 29])) {
+	        eatButton = _react2.default.createElement(
+	          'button',
+	          { className: 'middle-button5',
+	            onClick: this.eatsLunch },
+	          '🍲 LUNCH BREAK'
+	        );
+	      }
+	      if (this.player.clock.isBetween([8, 45], [8, 59])) {
+	        eatButton = _react2.default.createElement(
+	          'button',
+	          { className: 'middle-button5',
+	            onClick: this.eatsDonut },
+	          '🍩 EAT DONUT'
+	        );
+	      }
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'middle-buttons-area' },
+	        _react2.default.createElement(
+	          'button',
+	          { className: 'middle-button4',
+	            onClick: this.drinksCoffee },
+	          '☕ DRINK COFFEE'
+	        ),
+	        eatButton
+	      );
+	    }
+	  }, {
 	    key: 'buttons',
 	    value: function buttons() {
-	      if (this.player.currentPos === 11) {
-	        return _react2.default.createElement(
-	          'div',
-	          { className: 'middle-buttons-area' },
-	          _react2.default.createElement(
-	            'button',
-	            { className: 'middle-button1',
-	              onClick: this.handleSave },
-	            'SAVE GAME'
-	          ),
-	          _react2.default.createElement(
-	            'button',
-	            { className: 'middle-button2',
-	              onClick: this.handleGetOffComputer },
-	            'LEAVE WORKSTATION'
-	          ),
-	          _react2.default.createElement(
-	            'form',
-	            { target: '_blank', action: 'https://gist.github.com/Eihcir0/865d67dc23378110ec761986ccca4370' },
-	            _react2.default.createElement(
-	              'button',
-	              { className: 'middle-button3', type: 'submit', value: 'GO TO GIST' },
-	              'GO TO GIST'
-	            )
-	          )
-	        );
+	      if (this.player.working()) {
+	        return this.workStationButtons();
+	      }
+	      if (this.player.currentPos === 9) {
+	        return this.kitchenButtons();
 	      }
 	    }
 	  }, {
@@ -23870,65 +24077,137 @@
 	      });
 	    }
 	  }, {
-	    key: 'handleClick',
-	    value: function handleClick(e) {
+	    key: 'quadrants',
+	    value: function quadrants() {
 	      var _this4 = this;
 	
-	      console.log("click");
-	      console.log(e.pageX);
-	      console.log(e.pageY);
-	      var y = e.pageY;
-	      var x = e.pageX;
-	      if (!(this.player.currentPos === 11)) {
-	        if (y > 520 && x < 553) {
-	          this.playerAnim.moveTo(10, function () {
-	            _this4.player.currentPos = 10;
-	          });
-	        }
-	
-	        if (x > 315 && x < 492 && y > 430 && y < 520) {
-	          // this.player.currentPos = 11;
-	          //  animation walking to desk with move()
-	          this.playerAnim.moveTo(11, function () {
-	            _this4.player.currentPos = 11;
-	          });
-	        }
-	
-	        if (x < 321 && y > 273 && y < 418) {
-	          // animation walking to kitchen
-	          this.playerAnim.moveTo(9, function () {
-	            _this4.player.currentPos = 9;
-	          });
-	        }
-	        if (x > 125 && x < 421 && y < 186) {
-	          // animation walking to lecture
-	          if (this.player.clock.isBetween([8, 30], [9, 30])) {
-	            this.player.message = "";
-	            this.player.defaultMessage = "";
-	            this.playerAnim.moveTo(12, function () {
-	              _this4.player.currentPos = 12;
-	              _this4.player.session = 1;
-	            });
-	          } else {
-	            this.player.message = "The lecture hall doors are locked.";
-	          }
-	        }
+	      if (this.player.eatingLunch) {
+	        return null;
 	      }
-	    } //end handle click
+	      var candanessa = null;
+	      var kitchen = null;
+	      if (this.player.clock.isBetween([7, 0], [17, 0]) && this.player.currentPos !== 10) {
+	        candanessa = _react2.default.createElement('div', { id: 'hover4',
+	          onMouseOver: this.mouseOverCandanessa,
+	          onClick: this.clickCandanessa,
+	          onMouseOut: function onMouseOut() {
+	            _this4.player.tempMessage = "";
+	          } });
+	      }
+	      if (this.player.currentPos !== 9) {
+	        kitchen = _react2.default.createElement('div', { id: 'hover3',
+	          onMouseOver: this.mouseOverKitchen,
+	          onClick: this.clickKitchen,
+	          onMouseOut: function onMouseOut() {
+	            _this4.player.tempMessage = "";
+	          } });
+	      }
+	      if (!this.player.working()) {
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'hovers' },
+	          _react2.default.createElement('div', { id: 'hover1',
+	            onMouseOver: this.mouseOverWorkStation,
+	            onClick: this.clickWorkStation,
+	            onMouseOut: function onMouseOut() {
+	              _this4.player.tempMessage = "";
+	            } }),
+	          _react2.default.createElement('div', { id: 'hover2',
+	            onMouseOver: this.mouseOverLecture,
+	            onClick: this.clickLecture,
+	            onMouseOut: function onMouseOut() {
+	              _this4.player.tempMessage = "";
+	            } }),
+	          kitchen,
+	          candanessa
+	        );
+	      }
+	    }
+	  }, {
+	    key: 'clickLecture',
+	    value: function clickLecture() {
+	      var _this5 = this;
 	
-	    //need to add a "on hover" ie mouseover section.  will change the classes of some overlays to make it darker.
+	      if (this.player.clock.isBetween([8, 30], [9, 30])) {
+	        this.player.message = "";
+	        this.player.defaultMessage = "";
+	        this.playerAnim.moveTo(12, function () {
+	          _this5.player.currentPos = 12;
+	          _this5.player.session = 1;
+	        });
+	      } else {
+	        this.player.message = "The lecture hall doors are locked.";
+	      }
+	    }
+	  }, {
+	    key: 'mouseOverLecture',
+	    value: function mouseOverLecture() {
+	      if (this.player.clock.isBetween([8, 30], [9, 30])) {
+	        this.player.tempMessage = "Go to lecture";
+	      } else {
+	        this.player.tempMessage = "The lecture hall doors are locked.";
+	      }
+	    }
+	  }, {
+	    key: 'clickWorkStation',
+	    value: function clickWorkStation() {
+	      var _this6 = this;
 	
+	      this.playerAnim.moveTo(11, function () {
+	        _this6.player.currentPos = 11;
+	      });
+	    }
+	  }, {
+	    key: 'mouseOverWorkStation',
+	    value: function mouseOverWorkStation() {
+	      this.player.tempMessage = "Go to workstation";
+	    }
+	  }, {
+	    key: 'clickKitchen',
+	    value: function clickKitchen() {
+	      var _this7 = this;
+	
+	      if (this.player.clock.isBetween([8, 45], [8, 59])) {
+	        this.player.tempMessage = "Oh look!  Someone left donuts in the kitchen!";
+	      }
+	      this.playerAnim.moveTo(9, function () {
+	        _this7.player.currentPos = 9;
+	      });
+	    }
+	  }, {
+	    key: 'mouseOverKitchen',
+	    value: function mouseOverKitchen() {
+	      this.player.tempMessage = "Go to kitchen";
+	    }
+	  }, {
+	    key: 'clickCandanessa',
+	    value: function clickCandanessa() {
+	      var _this8 = this;
+	
+	      this.playerAnim.moveTo(10, function () {
+	        _this8.player.currentPos = 10;
+	      });
+	    }
+	  }, {
+	    key: 'mouseOverCandanessa',
+	    value: function mouseOverCandanessa() {
+	      this.player.tempMessage = "Talk to Candanessa";
+	    }
+	  }, {
+	    key: 'checkFocus',
+	    value: function checkFocus() {
+	      if (this.player.focus > 0) {
+	        return;
+	      }
+	      if (!(this.player.message === "You can't focus any longer.  Take a break.")) {
+	        this.player.oldMessage = this.player.message;
+	      }
+	      this.handleGetOffComputer();
+	    }
 	  }, {
 	    key: 'update',
 	    value: function update(dt) {
-	      if (this.player.focus <= 0) {
-	        if (!(this.player.message === "You can't focus any longer.  Take a break.")) {
-	          this.player.oldMessage = this.player.message;
-	        }
-	
-	        this.player.message = "You can't focus any longer.  Take a break.";
-	        this.handleGetOffComputer();
-	      }
+	      this.checkFocus();
 	      this.updateCount += dt;
 	      if (this.player.working()) {
 	        if (this.updateCount > 100) {
@@ -23960,24 +24239,24 @@
 	  }, {
 	    key: 'renderSprites',
 	    value: function renderSprites() {
-	      var _this5 = this;
+	      var _this9 = this;
 	
 	      ////draw furniture first then fire, then study icons then hero
 	      this.sprites.forEach(function (sprite) {
 	        if (sprite.type !== "study icon" && sprite.type !== "student") {
-	          _this5.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
-	        } else if (sprite.type === "student" && !_this5.player.clock.isBetween([9, 1], [11, 59]) && !_this5.player.clock.isBetween([0, 0], [6, 0])) {
+	          _this9.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
+	        } else if (sprite.type === "student" && !_this9.player.clock.isBetween([9, 1], [11, 59]) && !_this9.player.clock.isBetween([0, 0], [6, 0])) {
 	          sprite.render();
 	        }
 	
-	        if (_this5.player.onFire) {
-	          _this5.player.fire.render();
+	        if (_this9.player.onFire) {
+	          _this9.player.fire.render();
 	        }
 	        if (sprite.type === "study icon") {
 	          sprite.render();
 	        }
-	        _this5.playerAnim.render(); // render player
 	      });
+	      this.playerAnim.render(); // render player
 	    }
 	  }, {
 	    key: 'checkForDoneSprites',
@@ -23991,19 +24270,6 @@
 	          i -= 1;
 	        }
 	      }
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'canvas-container' },
-	        _react2.default.createElement('canvas', { id: 'canvas',
-	          width: '800',
-	          height: '520',
-	          onClick: this.handleClick }),
-	        this.buttons()
-	      );
 	    }
 	  }, {
 	    key: 'initializeSprites',
@@ -24066,6 +24332,19 @@
 	    } //end initialize()
 	
 	
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'canvas-container' },
+	        this.quadrants(),
+	        _react2.default.createElement('canvas', { id: 'canvas',
+	          width: '800',
+	          height: '520' }),
+	        this.buttons()
+	      );
+	    }
 	  }]);
 	
 	  return OpenSesh;
@@ -24160,6 +24439,122 @@
 
 /***/ },
 /* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _moveable = __webpack_require__(177);
+	
+	var _moveable2 = _interopRequireDefault(_moveable);
+	
+	var _study_icon_anim = __webpack_require__(178);
+	
+	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var FoodAnim = function (_StudyIcon) {
+	  _inherits(FoodAnim, _StudyIcon);
+	
+	  function FoodAnim(obj, type) {
+	    _classCallCheck(this, FoodAnim);
+	
+	    var _this = _possibleConstructorReturn(this, (FoodAnim.__proto__ || Object.getPrototypeOf(FoodAnim)).call(this, obj)); //obj = canvas/ctx
+	
+	
+	    _this.foodType = type;
+	    _this.pos = [92, 180];
+	    _this.animationOn = false;
+	    _this.movementOn = false;
+	    _this.animSettings();
+	    _this.imageReady = false;
+	    _this.image = new Image();
+	    _this.image.src = _this.getImage();
+	    window.setTimeout(function () {
+	      return _this.sound.play();
+	    }, 100);
+	    _this.moves = 0;
+	    _this.sunset = Math.floor(Math.random() * 2) - 0.5 > 0 ? -1 : 1;
+	    _this.done = false;
+	
+	    _this.getImage = _this.getImage.bind(_this);
+	    _this.animSettings = _this.animSettings.bind(_this);
+	    _this.updateAnim = _this.updateAnim.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(FoodAnim, [{
+	    key: 'animSettings',
+	    value: function animSettings() {
+	      switch (this.foodType) {
+	        case "coffee":
+	          this.width = 256;
+	          this.height = 256;
+	          this.animSet = 0;
+	          this.spriteYoffset = 0;
+	          this.animFrame = 0;
+	          this.animNumFrames = 1;
+	          this.animDelay = 20;
+	          this.animTimer = 0;
+	          this.sizeMultiplier = 3;
+	          this.sound = new Audio("./app/assets/sounds/coffee.wav");
+	          break;
+	        default:
+	          break;
+	      }
+	    }
+	  }, {
+	    key: 'getImage',
+	    value: function getImage() {
+	      switch (this.foodType) {
+	        case "coffee":
+	          return "./app/assets/images/coffee.png";
+	        default:
+	          return undefined;
+	
+	      }
+	    }
+	  }, {
+	    key: 'updateAnim',
+	    value: function updateAnim(elapsed) {
+	      this.animTimer += elapsed;
+	      if (this.animTimer >= this.animDelay) {
+	        this.animTimer = 0;
+	        ++this.animFrame;
+	        this.pos[1]--;
+	        if (this.animFrame > 90) {
+	          this.done = true;
+	        }
+	      } //end animTime>animDelay
+	    } //end function
+	
+	
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      this.ctx.drawImage(this.image, 0, 0, this.width, this.height, this.pos[0], this.pos[1], 20 * this.sizeMultiplier, 16 * this.sizeMultiplier);
+	    }
+	  }]);
+	
+	  return FoodAnim;
+	}(_study_icon_anim2.default); //end class
+	
+	exports.default = FoodAnim;
+
+/***/ },
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24262,11 +24657,11 @@
 	      }
 	      if (this.animTimer > this.animDelay) {
 	        this.animTimer = 0;
-	        var num = Math.floor(Math.random() * 100) + 1;
+	        var num = Math.floor(Math.random() * 1000) + 1;
 	        this.animFrame = 0;
-	        if (num > 94 && num < 98 && this.animFrame === 0) {
+	        if (num > 990 && num < 995 && this.animFrame === 0) {
 	          this.animFrame = 1;
-	        } else if (num > 98 && this.animFrame === 0) {
+	        } else if (num > 995 && this.animFrame === 0) {
 	          this.animFrame = 2;
 	        }
 	      }
@@ -24290,7 +24685,7 @@
 	exports.default = StudentAnim;
 
 /***/ },
-/* 201 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24305,7 +24700,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _sleep_minigame = __webpack_require__(202);
+	var _sleep_minigame = __webpack_require__(203);
 	
 	var _sleep_minigame2 = _interopRequireDefault(_sleep_minigame);
 	
@@ -24398,7 +24793,7 @@
 	        this.faintSound = "";
 	        this.sleepSound = "";
 	        this.xxinterval = undefined;
-	        this.player.newCongrats = { message: 'CONGRATULATIONS!!! You made it through lecture without sleeping!', newTime: [12, 0], newClockSpeed: 3, newPos: 0, newSession: 2 };
+	        this.player.newCongrats = { message: 'CONGRATULATIONS!!! You made it through lecture without sleeping!', newTime: [12, 0], newClockSpeed: this.player.defaultClockSpeed, newPos: 0, newSession: 2 };
 	      }
 	    }
 	  }, {
@@ -24410,7 +24805,7 @@
 	        clearInterval(this.xxinterval);
 	        this.sleepSound.pause();
 	        this.xxinterval = undefined;
-	        this.player.newStrike = { message: "You received a strike for falling asleep during lecture.", newTime: [12, 0], newPos: 0, newSession: 2, newClockSpeed: 3 };
+	        this.player.newStrike = { message: "You received a strike for falling asleep during lecture.", newTime: [12, 0], newPos: 0, newSession: 2, newClockSpeed: this.player.defaultClockSpeed };
 	        this.player.currentPos = 0;
 	      }
 	      this.setState({ goesToSleepMeter: this.goesToSleepMeter });
@@ -24512,13 +24907,13 @@
 	      if (time[0] === "9") {
 	        // ADD A CLOCK FUNCTION BETWEEN()
 	        if (parseInt(time[1]) < 30) {
-	          this.player.clock = new _clock2.default([9, 30], 6);
+	          this.player.clock = new _clock2.default([9, 30], this.player.defaultClockSpeed * 2);
 	        } else {
-	          this.player.clock = new _clock2.default([10, 0], 6);
+	          this.player.clock = new _clock2.default([10, 0], this.player.defaultClockSpeed * 2);
 	        }
 	      } else if (time[0] === "10") {
 	        if (parseInt(time[1]) < 30) {
-	          this.player.clock = new _clock2.default([10, 30], 6);
+	          this.player.clock = new _clock2.default([10, 30], this.player.defaultClockSpeed * 2);
 	        }
 	      }
 	    }
@@ -24662,7 +25057,7 @@
 	exports.default = LectureSeshScreen;
 
 /***/ },
-/* 202 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24729,7 +25124,7 @@
 	exports.default = SleepMinigame;
 
 /***/ },
-/* 203 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24744,19 +25139,19 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _pairs_sesh_driving_screen = __webpack_require__(204);
+	var _pairs_sesh_driving_screen = __webpack_require__(205);
 	
 	var _pairs_sesh_driving_screen2 = _interopRequireDefault(_pairs_sesh_driving_screen);
 	
-	var _pairs_sesh_navigating_screen = __webpack_require__(206);
+	var _pairs_sesh_navigating_screen = __webpack_require__(207);
 	
 	var _pairs_sesh_navigating_screen2 = _interopRequireDefault(_pairs_sesh_navigating_screen);
 	
-	var _pairs_sesh_open_screen = __webpack_require__(207);
+	var _pairs_sesh_open_screen = __webpack_require__(208);
 	
 	var _pairs_sesh_open_screen2 = _interopRequireDefault(_pairs_sesh_open_screen);
 	
-	var _pairs_sesh_results = __webpack_require__(208);
+	var _pairs_sesh_results = __webpack_require__(209);
 	
 	var _pairs_sesh_results2 = _interopRequireDefault(_pairs_sesh_results);
 	
@@ -24861,7 +25256,7 @@
 	
 	        this.props.player.clock.pause();
 	        this.stopDriving = true;
-	        this.stopNavigating = true;
+	        this.stopNav = true;
 	        this.props.player.message = "Today's pair programming results are in!";
 	        this.current === 3;
 	        return _react2.default.createElement(_pairs_sesh_results2.default, {
@@ -24915,7 +25310,7 @@
 	exports.default = PairsSeshScreen;
 
 /***/ },
-/* 204 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24934,7 +25329,7 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _pairs_line = __webpack_require__(205);
+	var _pairs_line = __webpack_require__(206);
 	
 	var _pairs_line2 = _interopRequireDefault(_pairs_line);
 	
@@ -25207,7 +25602,7 @@
 	exports.default = PairsSeshDrivingScreen;
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25310,7 +25705,7 @@
 	exports.default = PairsLine;
 
 /***/ },
-/* 206 */
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25604,7 +25999,7 @@
 	exports.default = PairsSeshNavigatingScreen;
 
 /***/ },
-/* 207 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25673,7 +26068,7 @@
 	exports.default = PairsSeshOpenScreen;
 
 /***/ },
-/* 208 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25692,7 +26087,7 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _pairs_line = __webpack_require__(205);
+	var _pairs_line = __webpack_require__(206);
 	
 	var _pairs_line2 = _interopRequireDefault(_pairs_line);
 	
@@ -25905,7 +26300,7 @@
 	      this.props.player.message = "You're done for the day!  Keep working or leave whenever you want!";
 	      this.props.player.currentPos = 0;
 	      this.props.player.session = 4;
-	      this.props.player.clock = new _clock2.default([18, 1], 3);
+	      this.props.player.clock = new _clock2.default([18, 1], this.player.player.defaultClockSpeed);
 	    }
 	  }, {
 	    key: 'render',
@@ -25942,7 +26337,7 @@
 	exports.default = PairsSeshResults;
 
 /***/ },
-/* 209 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25985,7 +26380,7 @@
 	      _this.props.player.onFire = false;
 	    }
 	    _this.props.player.strikes = _this.props.player.strikes + "X";
-	    _this.props.player.message = _this.strike.message + ('  You now have ' + _this.props.player.strikes.length + '\n    strike' + (_this.props.player.strikes.length > 1 ? "s" : "") + '!');
+	    _this.props.player.tempMessage = _this.strike.message + ('  You now have ' + _this.props.player.strikes.length + '\n    strike' + (_this.props.player.strikes.length > 1 ? "s" : "") + '!');
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.props.player.newFace = { filename: "tired_angry", duration: 10000 };
 	
@@ -26002,7 +26397,7 @@
 	        if (this.strike.newClockSpeed) {
 	          newClockSpeed = this.strike.newClockSpeed;
 	        } else {
-	          newClockSpeed = 3;
+	          newClockSpeed = this.props.player.defaultClockSpeed;
 	        }
 	        this.props.player.newFace = false;
 	        this.props.player.clock = new _clock2.default(this.strike.newTime, newClockSpeed);
@@ -26037,7 +26432,7 @@
 	exports.default = StrikeScreen;
 
 /***/ },
-/* 210 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26077,7 +26472,7 @@
 	    _this.buzzerSound = new Audio("./app/assets/sounds/congrats-ding.wav");
 	    _this.buzzerSound.play();
 	
-	    _this.props.player.message = _this.congrats.message;
+	    _this.props.player.tempMessage = _this.congrats.message;
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.props.player.newFace = { filename: "super_happy", duration: 10 };
 	
@@ -26097,7 +26492,7 @@
 	        if (this.congrats.newClockSpeed) {
 	          newClockSpeed = this.congrats.newClockSpeed;
 	        } else {
-	          newClockSpeed = 3;
+	          newClockSpeed = this.props.player.defaultClockSpeed;
 	        }
 	        this.props.player.clock = new _clock2.default(this.congrats.newTime, newClockSpeed);
 	        if (!(this.congrats.newPos === undefined)) {
@@ -26127,7 +26522,7 @@
 	exports.default = CongratsScreen;
 
 /***/ },
-/* 211 */
+/* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26208,9 +26603,9 @@
 	      } else {
 	        this.face = this.getDiv(this.baseFace());
 	        this.winkCounter++;
-	        if (this.winkCounter > 50 && this.newFace === false) {
+	        if (this.winkCounter > 50) {
 	          this.winkCounter = 0;
-	          if (!this.player.onFire) {
+	          if (!this.player.onFire && !(this.newFace === false)) {
 	            if (Math.random() > 0.5) {
 	              this.setLookLeft();
 	            } else {

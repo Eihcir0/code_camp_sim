@@ -10,7 +10,7 @@ class StrikeScreen extends React.Component {
     this.buzzerSound.play();
     if (this.props.player.onFire) {this.props.player.onFire=false;}
     this.props.player.strikes = this.props.player.strikes + "X";
-    this.props.player.message = this.strike.message +
+    this.props.player.tempMessage = this.strike.message +
     `  You now have ${this.props.player.strikes.length}
     strike${this.props.player.strikes.length>1 ? "s" : ""}!`;
     this.handleClick = this.handleClick.bind(this);
@@ -26,7 +26,7 @@ class StrikeScreen extends React.Component {
       if (this.strike.newClockSpeed) {
         newClockSpeed = this.strike.newClockSpeed;
       } else {
-        newClockSpeed = 3;
+        newClockSpeed = this.props.player.defaultClockSpeed;
       }
       this.props.player.newFace=false;
       this.props.player.clock = new Clock (this.strike.newTime, newClockSpeed);

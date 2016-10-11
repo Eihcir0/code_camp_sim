@@ -9,7 +9,7 @@ class CongratsScreen extends React.Component {
     this.buzzerSound = new Audio("./app/assets/sounds/congrats-ding.wav");
     this.buzzerSound.play();
 
-    this.props.player.message =
+    this.props.player.tempMessage =
     this.congrats.message;
     this.handleClick = this.handleClick.bind(this);
     this.props.player.newFace = {filename: "super_happy", duration: 10};
@@ -26,7 +26,7 @@ class CongratsScreen extends React.Component {
       if (this.congrats.newClockSpeed) {
         newClockSpeed = this.congrats.newClockSpeed;
       } else {
-        newClockSpeed = 3;
+        newClockSpeed = this.props.player.defaultClockSpeed;
       }
       this.props.player.clock = new Clock (this.congrats.newTime, newClockSpeed);
       if (!(this.congrats.newPos===undefined)) {

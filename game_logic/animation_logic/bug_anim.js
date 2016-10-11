@@ -7,7 +7,7 @@ class BugAnim extends StudyIcon {
     this.iconType = "bug";
     this.value = "bug";
 
-    this.pos = [300, 325];
+    this.pos = [292, 305];
     this.animationOn = true;
     this.movementOn = false;
     this.height=30;
@@ -37,20 +37,24 @@ class BugAnim extends StudyIcon {
         this.animTimer = 0;
         ++this.animFrame;
         this.pos[1]++;
-        if (this.animFrame > 45) {
+        if (this.animFrame > 60) {
           this.pos[0] += -this.sunset;
           this.pos[0] += -this.sunset;
-        } else if (this.animFrame> 37) {
-          this.pos[0] += this.sunset;
-          this.pos[0] += this.sunset;
-        } else if (this.animFrame> 25) {
-          this.pos[0] += -this.sunset;
-          this.pos[0] += -this.sunset;
-        } else {
-          this.pos[0] += this.sunset;
-          this.pos[0] += this.sunset;
         }
-        if (this.animFrame > 50) {this.done = true;}
+        else if (this.animFrame > 50) {
+          this.pos[0] += +this.sunset;
+          this.pos[0] += +this.sunset;
+        } else if (this.animFrame> 42) {
+          this.pos[0] += -this.sunset;
+          this.pos[0] += -this.sunset;
+        } else if (this.animFrame> 30) {
+          this.pos[0] += this.sunset;
+          this.pos[0] += this.sunset;
+        } else {
+          this.pos[0] += -this.sunset;
+          this.pos[0] += -this.sunset;
+        }
+        if (this.animFrame > 70) {this.done = true;}
       }//end animTime>animDelay
     }//end function
 

@@ -67,7 +67,7 @@ class LectureSeshScreen extends React.Component {
         this.faintSound = "";
         this.sleepSound = "";
         this.xxinterval = undefined;
-        this.player.newCongrats = {message: `CONGRATULATIONS!!! You made it through lecture without sleeping!`, newTime: [12,0], newClockSpeed: 3, newPos: 0, newSession: 2};
+        this.player.newCongrats = {message: `CONGRATULATIONS!!! You made it through lecture without sleeping!`, newTime: [12,0], newClockSpeed: this.player.defaultClockSpeed, newPos: 0, newSession: 2};
     }
   }
 
@@ -78,7 +78,7 @@ class LectureSeshScreen extends React.Component {
       clearInterval(this.xxinterval);
       this.sleepSound.pause();
       this.xxinterval = undefined;
-      this.player.newStrike = {message: "You received a strike for falling asleep during lecture.", newTime: [12,0], newPos: 0, newSession: 2, newClockSpeed: 3};
+      this.player.newStrike = {message: "You received a strike for falling asleep during lecture.", newTime: [12,0], newPos: 0, newSession: 2, newClockSpeed: this.player.defaultClockSpeed};
       this.player.currentPos = 0;
       }
     this.setState({goesToSleepMeter: this.goesToSleepMeter});
@@ -169,13 +169,13 @@ class LectureSeshScreen extends React.Component {
     var time = this.player.clock.time();
     if (time[0]==="9") { // ADD A CLOCK FUNCTION BETWEEN()
       if (parseInt(time[1])<30) {
-        this.player.clock = new Clock([9,30],6);
+        this.player.clock = new Clock([9,30],this.player.defaultClockSpeed*2);
     } else {
-      this.player.clock = new Clock([10,0],6);
+      this.player.clock = new Clock([10,0],this.player.defaultClockSpeed*2);
       }
     } else if (time[0]==="10") {
       if (parseInt(time[1])<30) {
-        this.player.clock = new Clock([10,30],6);
+        this.player.clock = new Clock([10,30],this.player.defaultClockSpeed*2);
       }
     }
   }
