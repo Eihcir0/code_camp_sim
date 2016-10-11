@@ -15,7 +15,7 @@ class Game {  ////I DON'T THINK WE NEED A GAME CLASS
   }
 
   advanceWeek() {
-    this.player.day += 1;
+    this.player.dayNum += 1;
   }
   gameIsOver() {
     return false; // UPDATE ME!

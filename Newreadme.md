@@ -21,7 +21,7 @@ I'm a recent App Academy bootcamp grad and this was my final project.  My goal i
 
 ### Technologies & Technical Challenges
 
-This simulation will be written mostly in React.js with some vanilla JavaScript components leveraging HTML5 Canvas.  The backend will be written in Ruby on Rails with a SQLite database.  
+This simulation will be written mostly in React.js with some vanilla JavaScript components leveraging HTML5 Canvas.  The backend will be written in ruby on Rails with a SQLite database.  
 
 The primary technical challenges will be:
 

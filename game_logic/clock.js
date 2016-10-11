@@ -55,10 +55,10 @@ class Clock {
     var currentTime = this.time();
 
     if (newLastTime.length===3) {
-      if (newLastTime[2]==="pm") { newLastTime[0] = parseInt(newLastTime[0]) + 12;}
+      if (newLastTime[2]==="pm" && newLastTime[0] !== 12) { newLastTime[0] = parseInt(newLastTime[0]) + 12;}
     }
 
-    if (currentTime[2]==="pm") {currentTime[0] = parseInt(currentTime[0]) + 12;}
+    if (currentTime[2]==="pm" && currentTime[0] !== "12") {currentTime[0] = parseInt(currentTime[0]) + 12;}
     var hoursDiff = parseInt(currentTime[0]) - parseInt(newLastTime[0]);
     var minsDiff = parseInt(currentTime[1]) - parseInt(newLastTime[1]);
     return (hoursDiff*60 + minsDiff);
@@ -73,14 +73,14 @@ class Clock {
 
 //this is kinda backwards, i change to am/pm then back
   isBetween(startTime,endTime) {
-    if (startTime.length < 3) {
+    if (startTime.length === 3) {
       if (startTime[0] <12) {startTime.push("am");}
       else {
         startTime.push("pm");
         startTime[0]+= startTime[0]==12 ? 0 : 12;}
     }
-    if (endTime.length < 3) {
-      if (startTime[0] <12) {endTime.push("am");}
+    if (endTime.length === 3) {
+      if (endTime[0] <12) {endTime.push("am");}
       else {
         endTime[0] += endTime[0]==12 ? 0 : 12;
         endTime.push("pm");}
@@ -90,7 +90,7 @@ class Clock {
     var startMinute = startTime[1];
     var endMinute = endTime[1];
     var currentTime = this.time();
-    var currentHour = parseInt(currentTime[0])+ (currentTime[2] == "pm" ? 12 : 0);
+    var currentHour = parseInt(currentTime[0])+ ((currentTime[2] == "pm" && currentTime[0] !=="12") ? 12 : 0);
     var currentMinute = parseInt(currentTime[1]);
     if (currentHour > startHour && currentHour < endHour) {
         return true;
@@ -98,7 +98,7 @@ class Clock {
     if (currentHour == startHour && currentMinute>=startMinute) {
       return true;
     }
-    if (currentHour == endHour && currentMinute<=endMinute) {
+    if (currentHour == endHour && currentMinute<=endMinute && currentMinute>=startMinute) {
       return true;
     }
     return false;

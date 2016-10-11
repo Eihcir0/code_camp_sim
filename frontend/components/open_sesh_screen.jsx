@@ -31,14 +31,22 @@ class OpenSesh extends React.Component {
     this.mouseOverLecture = this.mouseOverLecture.bind(this);
     this.mouseOverKitchen = this.mouseOverKitchen.bind(this);
     this.mouseOverCandanessa = this.mouseOverCandanessa.bind(this);
+    this.mouseOverExit = this.mouseOverExit.bind(this);
     this.clickWorkStation = this.clickWorkStation.bind(this);
     this.clickLecture = this.clickLecture.bind(this);
     this.clickKitchen = this.clickKitchen.bind(this);
     this.clickCandanessa = this.clickCandanessa.bind(this);
+    this.clickCandanessa = this.clickCandanessa.bind(this);
+    this.clickExit = this.clickExit.bind(this);
     this.drinksCoffee = this.drinksCoffee.bind(this);
     this.eatsDonut = this.eatsDonut.bind(this);
     this.eatsLunch = this.eatsLunch.bind(this);
-
+    this.leavingEarly = this.leavingEarly.bind(this);
+    this.leaving = this.leaving.bind(this);
+    this.leavingButtons = this.leavingButtons.bind(this);
+    this.handleLeave = this.handleLeave.bind(this);
+    this.handleDontLeave = this.handleDontLeave.bind(this);
+    this.handle1159 = this.handle1159.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.initializeSprites = this.initializeSprites.bind(this);
     this.buttons = this.buttons.bind(this);
@@ -50,9 +58,9 @@ class OpenSesh extends React.Component {
     this.sprites = [];
     this.lastTickerCount = this.player.clock.tickCounter;
     this.updateCount = 0;
-    this.ateDonut = false;
-    this.lastCoffee = [4,0,"am"];
-
+    this.player.ateDonut = false;
+    this.player.lastCoffee = [4,0,"am"];
+    this.leavingTime = false;
 
 
     // var funs = [ //bind functions
@@ -101,24 +109,16 @@ class OpenSesh extends React.Component {
 
   }
 
-  endLunch() {
-    this.player.eatingLunch = false;
-    this.player.ateLunch = true;
-    this.tempMessage = "";
-    var now = this.player.clock.time();
-    this.lunchTime = null;
-    this.player.clock = new Clock(now, this.player.defaultClockSpeed);
-
-  }
-
-  main() {
+  main() { //refactor!
+    if (this.player.clock.is(["12","00","am"])) {this.handle1159();}
+    if (this.player.clock.is(["2","00","am"])) {this.handleLeave();}
     if (this.player.eatingLunch) {
       if (this.player.clock.diff(this.lunchTime) > this.lunchMinutes) {
         this.endLunch();
       }
     }
 
-
+    if (this.player.clock.paused) {return;}
     var dt = (this.player.clock.tickCounter - this.lastTickerCount);
     this.lastTickerCount = this.player.clock.tickCounter;
     this.ctx.drawImage(this.background,-28,0);
@@ -138,11 +138,61 @@ class OpenSesh extends React.Component {
   cancelAnimationFrame() {
     if (this.openSeshAnimationFrame) {
       this.playerAnim.soundTyping.pause();
+      if (this.microwaveSound) {this.microwaveSound.pause();}
       if (this.player.onFire) {this.player.fireOff();}
       window.cancelAnimationFrame(this.openSeshAnimationFrame);
       this.openSeshAnimationFrame = undefined;
     }
   }
+
+  buttons() {
+    if (this.leavingTime) {return this.leavingButtons();}
+    if (this.player.working())  {return this.workStationButtons();}
+    if (this.player.currentPos===9) {return this.kitchenButtons();}
+  }
+
+  leavingButtons() {
+    if (this.leavingTime === "early") {
+      return (
+        <div className="middle-buttons-area">
+          <button className="leave-button-big"
+            onClick={this.handleDontLeave}>
+            NO! DO NOT LEAVE YET!
+          </button>
+          <button className="leave-button-small"
+            onClick={this.handleLeave}>
+            YES I WANT TO LEAVE EARLY
+          </button>
+        </div>
+    );} else if (this.leavingTime === "normal") {
+      return (
+        <div className="middle-buttons-area">
+          <button className="leave-button-big"
+            onClick={this.handleLeave}>
+            YES, I WANT TO LEAVE
+          </button>
+          <button className="leave-button-small"
+            onClick={this.handleDontLeave}>
+            NO! DO NOT LEAVE YET!
+          </button>
+        </div>
+    );}
+  }
+
+  handleDontLeave() {
+    this.leavingTime = false;
+    this.player.clock.unpause();
+    this.openSeshAnimationFrame = window.requestAnimationFrame(this.main);
+  }
+
+  handleLeave() {
+    this.player.clock.pause();
+    this.leavingTime = false;
+    this.player.leaving = true;
+    this.cancelAnimationFrame();
+  }
+
+
 
   workStationButtons() {
     return (
@@ -167,73 +217,6 @@ class OpenSesh extends React.Component {
     );
   }
 
-  drinksCoffee() {
-    if (this.player.clock.diff(this.lastCoffee) < 30) {
-      this.player.tempMessage = "COFFEE BREWING...";
-    } else {
-      this.lastCoffee = this.player.clock.time();
-      this.player.focus+=35;
-      var coffee = new FoodAnim({canvas: this.canvas, ctx: this.ctx},
-        "coffee");
-      this.sprites.push(coffee);
-    }
-  }
-
-  eatsDonut() {
-
-  }
-
-  eatsLunch() {
-    if (!(this.player.ateLunch)) {
-      this.player.eatingLunch = true;
-      this.tempMessage = "TAKING LUNCH BREAK";
-      this.player.focus = 100;
-      this.player.happiness +=2;
-      var now = this.player.clock.time();
-      this.lunchTime = now;
-      this.lunchMinutes = 5 + Math.floor(Math.random()*30);
-      if (this.lunchMinutes > 10) {
-        this.player.tempMessage = "Stuck in the microwave line!!!";
-      }
-      this.player.clock = new Clock(now, this.player.defaultClockSpeed*3);
-    }
-
-  }
-
-  kitchenButtons() {
-    var eatButton = null;
-    if (this.player.eatingLunch) {return null;}
-    if ((!(this.player.ateLunch)) && this.player.clock.isBetween([12,1],[13,29])) {
-      eatButton =
-        <button className = "middle-button5"
-          onClick = {this.eatsLunch}>
-          🍲 LUNCH BREAK
-        </button>;
-      }
-    if (this.player.clock.isBetween([8,45],[8,59])) {
-      eatButton =
-        <button className = "middle-button5"
-          onClick = {this.eatsDonut}>
-          🍩 EAT DONUT
-        </button>;
-      }
-
-    return (
-      <div className="middle-buttons-area">
-        <button className="middle-button4"
-          onClick={this.drinksCoffee}>
-          ☕ DRINK COFFEE
-        </button>
-        {eatButton}
-      </div>
-    );
-  }
-
-  buttons() {
-    if (this.player.working())  {return this.workStationButtons();}
-    if (this.player.currentPos===9) {return this.kitchenButtons();}
-  }
-
   handleSave() {
     this.player.message = "🚧 This feature is currently underdevelopment 🚧";
   }
@@ -253,8 +236,105 @@ class OpenSesh extends React.Component {
   }
 
 
+
+
+  kitchenButtons() {
+    var eatButton = null;
+    if (this.player.eatingLunch) {return null;}
+    if ((!(this.player.ateLunch)) && this.player.clock.isBetween(["12","01","pm"],["1","26","pm"])) {
+      eatButton =
+        <button className = "middle-button5"
+          onClick = {this.eatsLunch}>
+          🍲 LUNCH BREAK
+        </button>;
+      }
+    if (this.player.clock.isBetween([8,45],[8,59]) && (!(this.player.ateDonut))) {
+      debugger;
+      eatButton =
+        <button className = "middle-button5"
+          onClick = {this.eatsDonut}>
+          🍩 EAT DONUT
+        </button>;
+      }
+
+    return (
+      <div className="middle-buttons-area">
+        <button className="middle-button4"
+          onClick={this.drinksCoffee}>
+          ☕ DRINK COFFEE
+        </button>
+        {eatButton}
+      </div>
+    );
+  }
+
+
+
+  drinksCoffee() {
+    if (this.player.clock.diff(this.player.lastCoffee) < 30) {
+      this.player.tempMessage = "COFFEE BREWING...";
+    } else {
+      this.player.lastCoffee = this.player.clock.time();
+      this.player.focus+=35;
+      var coffee = new FoodAnim({canvas: this.canvas, ctx: this.ctx},
+        "coffee");
+      this.sprites.push(coffee);
+    }
+  }
+
+  eatsDonut() {
+    this.player.ateDonut = true;
+    this.player.focus+=15;
+    this.player.sleepBank +=3;
+    this.player.score +=1000;
+    var donut = new FoodAnim({canvas: this.canvas, ctx: this.ctx},
+      "donut");
+    this.sprites.push(donut);
+
+
+  }
+
+  eatsLunch() {
+    if (!(this.player.ateLunch)) {
+      this.microwaveSound = new Audio("./app/assets/sounds/microwave_start.wav");
+      window.setTimeout(()=>this.microwaveSound.play(),100);
+      this.player.eatingLunch = true;
+      this.player.tempMessage = "TAKING LUNCH BREAK";
+      this.player.focus = 100;
+      this.player.happiness +=2;
+      var now = this.player.clock.time();
+      this.lunchTime = now;
+      this.lunchMinutes = 5 + Math.floor(Math.random()*30);
+      if (this.lunchMinutes > 15) {
+        this.player.tempMessage = "Stuck in the microwave line!!!";
+      }
+      this.player.clock = new Clock(now, this.player.defaultClockSpeed*3);
+      this.lastTickerCount = this.player.clock.tickCounter;
+    }
+
+  }
+
+  endLunch() {
+    this.microwaveSound.pause();
+    this.microwaveSound = undefined;
+    this.player.eatingLunch = false;
+    this.player.ateLunch = true;
+    this.player.tempMessage = "";
+    this.player.message = "Be sure you're seated at your workstation by 1:30pm for pair programming!";
+    var now = this.player.clock.time();
+    this.lunchTime = null;
+    this.player.clock = new Clock(now, this.player.defaultClockSpeed);
+    this.lastTickerCount = this.player.clock.tickCounter;
+    var lunch = new FoodAnim({canvas: this.canvas, ctx: this.ctx},
+      "lunch");
+      this.sprites.push(lunch);
+
+  }
+
+
+
   quadrants() {
-    if (this.player.eatingLunch){return null;}
+    if (this.player.eatingLunch || this.leavingTime){return null;}
     var candanessa = null;
     var kitchen = null;
     if (this.player.clock.isBetween([7,0],[17,0]) && this.player.currentPos !==10 ) {
@@ -288,6 +368,13 @@ class OpenSesh extends React.Component {
           onMouseOut={()=> {
             this.player.tempMessage="";
           }}/>
+        <div id="hover5"
+          onMouseOver={this.mouseOverExit}
+          onClick={this.clickExit}
+          onMouseOut={()=> {
+            this.player.tempMessage="";
+          }}/>
+
         {kitchen}
         {candanessa}
       </div>
@@ -347,6 +434,53 @@ class OpenSesh extends React.Component {
     this.player.tempMessage = "Talk to Candanessa";
   }
 
+  mouseOverExit() {
+    this.player.tempMessage = "Exit";
+  }
+
+  clickExit() {
+    var now = this.player.clock.time();
+    switch (true) {
+      case (this.player.clock.isBetween([6,0],[16,59])):
+          this.leavingEarly();
+        break;
+      default:
+          this.leaving();
+    }
+    this.player.clock.pause();
+  }
+
+  leavingEarly() {
+    var now = this.player.clock.time();
+    var strikes;
+    switch (true) {
+      case this.player.clock.isBetween([6,0],[8,59]):
+        strikes = 4;
+        break;
+      case this.player.clock.isBetween([9,0],[9,29]):
+        strikes = 3;
+        break;
+      case this.player.clock.isBetween([9,30],[13,29]):
+        strikes = 2;
+        break;
+      default:
+    }
+    this.player.tempMessage = `ARE YOU SURE YOU WANT TO LEAVE EARLY?  You will receive ${strikes} strikes for missing the rest of the day's sessions.`;
+    this.leavingTime = "early";
+  }
+
+  leaving() {
+    this.player.tempMessage = "Please confirm you want to leave.";
+    this.leavingTime = "normal";
+  }
+
+  handle1159() {
+    this.player.clock = new Clock ([24,1]);
+    this.lastTickerCount = this.player.clock.tickCounter;
+    this.player.clock.pause();
+    this.player.tempMessage = "It is 11:59pm.  This is your last chance to leave and be guaranteed you can get in on time in the morning.  Stay at your own risk!  Would you like to leave now?";
+    this.leavingTime = "normal";
+  }
   checkFocus() {
     if (this.player.focus>0) {return;}
     if (!(this.player.message === "You can't focus any longer.  Take a break.")) {

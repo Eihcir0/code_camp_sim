@@ -562,61 +562,96 @@ textarea {
 }
 
 
-
-#hover1 {
-  width: 129px;
-  height: 128px;
-  background: black;
-  opacity: 0;
-  position: absolute;
-  top: 427px;
-  left: 369px;
+#hover1, #hover2, #hover3, #hover4, #hover5 {
+	background: black;
+	position: absolute;
 	cursor: pointer;
+	opacity: 0;
 }
-#hover1:hover {
+
+#hover1:hover, #hover2:hover, #hover3:hover, #hover4:hover, #hover5:hover {
 	opacity: 0.4;
 }
+
+#hover1 {
+	width: 129px;
+	height: 128px;
+	top: 427px;
+	left: 369px;
+}
+
 
 #hover2 {
   width: 291px;
   height: 88px;
-  background: black;
-  opacity: 0;
-  position: absolute;
   top: 127px;
   left: 160px;
-  cursor: pointer;
 	}
-
-#hover2:hover {
-  opacity: .4;
-}
 
 #hover3 {
   width: 149px;
   height: 190px;
-  background: black;
-  opacity: 0;
-  position: absolute;
   top: 230px;
   left: 86px;
-	cursor: pointer;
-}
-
-#hover3:hover {
-  opacity: .4;
 }
 
 #hover4 {
 	width: 135px;
 	height: 109px;
-	background: black;
-	opacity: 0;
-	position: absolute;
 	top: 505px;
 	left: 106px;
-	cursor: pointer;
 }
-#hover4:hover {
-	opacity: .4;
+
+#hover5 {
+  width: 220px;
+  height: 40px;
+  top: 587px;
+  left: 269px;
 }
+
+
+img {
+	-webkit-user-drag: none;
+ -khtml-user-drag: none;
+ -moz-user-drag: none;
+ -o-user-drag: none;
+ 	user-drag: none;
+}
+
+span, .x, .eyes {
+	 pointer-events: none;
+	outline: none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+
+	user-select: none;
+
+}
+
+.leave-button-big {
+	background-color: blanchedalmond;
+	position: absolute;
+	top: 250px;
+	left: 300px;
+	width: 300px;
+	height: 150px;
+	font-size: 44px;
+	font-family: 'Exo 2', sans-serif;
+	border-radius: 12px;
+	box-shadow: 1px 1px 1px 1px;
+}
+
+.leave-button-small {
+		background-color: blanchedalmond;
+    position: absolute;
+    top: 423px;
+    left: 313px;
+    height: 30px;
+		width: 279px;
+		font-family: 'Exo 2', sans-serif;
+		border-radius: 12px;
+		box-shadow: 1px 1px 1px 1px;}

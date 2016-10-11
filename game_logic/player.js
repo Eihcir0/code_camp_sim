@@ -13,8 +13,8 @@ import FireAnim from
 class Player {
   constructor(name, obj) {
     this.name = name || "Richie";
-    this.defaultClockSpeed = obj ? obj.defaultClockSpeed : 3;
-    this.clock = obj ? obj.clock : new Clock([8,45],this.defaultClockSpeed);
+    this.defaultClockSpeed = obj ? obj.defaultClockSpeed : 1;
+    this.clock = obj ? obj.clock : new Clock([23,50],this.defaultClockSpeed);
     this.tempMessage =
       obj ? obj.tempMessage
       : "I'm the brains, you're the muscle!  Use your muscles to move the mouse!";
@@ -23,7 +23,7 @@ class Player {
 
     this.sleepBank = obj ? obj.sleepBank : 90;
     this.happiness = obj ? obj.happiness : 80;
-    this.focus = obj ? obj.focus : 100;
+    this.focus = obj ? obj.focus : this.sleepBank;
     this.score = obj ? obj.score : 0;
     this.chanceForFireOffset = 0; //delete me
 
@@ -33,6 +33,7 @@ class Player {
     this.lastIconTickerCount = obj ? obj.lastIconTickerCount : 0;
     this.onFire = obj ? obj.onFire : false;
     this.fire = undefined;
+    this.leaving = false;
 
     this.eatingLunch = false; //these should be in the day
     this.ateLunch = false;
@@ -46,21 +47,23 @@ class Player {
     // 3 = pairs/solo project
     // 4 = evening
     // 5 = night
-    this.day = obj ? obj.day : 1;
+    this.dayNum = obj ? obj.dayNum : 1;
     this.session = obj ? obj.session : 0;
-    this.week = Math.floor(this.day / 7) + 1;
+    this.weekNum = Math.floor(this.dayNum / 7) + 1;
     this.weekDay = this.day % 7;
     this.skills = obj ? obj.skill : {
-      Ruby: 0,
+      ruby: 0,
       Rails: 0,
       SQL: 0,
       JavaScript: 0,
       React: 0,
       Redux: 0
     };
-    this.currentSkill = Object.keys(this.skills)[this.week - 1];
+    this.currentSkill = Object.keys(this.skills)[this.weekNum - 1];
     this.fireOff = this.fireOff.bind(this);
     this.newOnFire = this.newOnFire.bind(this);
+    this.day = undefined;
+    this.week = undefined;
 
   } // end constructor
 

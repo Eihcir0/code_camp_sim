@@ -36,6 +36,30 @@ class FoodAnim extends StudyIcon {
         this.sizeMultiplier = 3;
         this.sound = new Audio("./app/assets/sounds/coffee.wav");
         break;
+      case "donut":
+        this.width = 256;
+        this.height = 256;
+        this.animSet = 0;
+        this.spriteYoffset = 0;
+        this.animFrame = 0;
+        this.animNumFrames = 1;
+        this.animDelay = 20;
+        this.animTimer = 0;
+        this.sizeMultiplier = 3;
+        this.sound = new Audio("./app/assets/sounds/donut.wav");
+        break;
+      case "lunch":
+        this.width = 256;
+        this.height = 256;
+        this.animSet = 0;
+        this.spriteYoffset = 0;
+        this.animFrame = 0;
+        this.animNumFrames = 1;
+        this.animDelay = 20;
+        this.animTimer = 0;
+        this.sizeMultiplier = 3;
+        this.sound = new Audio("./app/assets/sounds/microwave.wav");
+        break;
       default:
         break;
     }
@@ -45,6 +69,10 @@ class FoodAnim extends StudyIcon {
     switch (this.foodType) {
       case "coffee":
         return "./app/assets/images/coffee.png";
+      case "donut":
+        return "./app/assets/images/donut.png";
+      case "lunch":
+        return "./app/assets/images/lunch.png";
       default:
         return undefined;
 

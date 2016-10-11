@@ -56,7 +56,6 @@ class FaceAnim extends React.Component {
       }
     }
     if (this.player.newFace) {
-      console.log("newFace");
       this.face=this.getDiv(this.player.newFace.filename);
       this.player.newFace.duration--;
       if (this.player.newFace.duration<=0) {this.player.newFace=false;}

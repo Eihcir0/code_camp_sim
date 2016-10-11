@@ -10,9 +10,9 @@ class Week {
 
 
   materials() {
-    if (this.player.week === 1) {return "Ruby";}
+    if (this.player.week === 1) {return "ruby";}
   }
-  
+
   main () {
     while (this.currentWeekDay() < 6) {
       this.advanceDay();
@@ -21,14 +21,17 @@ class Week {
   }
 
   currentWeekDay() {
-    return (this.player.day % 7);
+    return (this.player.dayNum % 7);
   }
 
-  advanceDay() {
+  advanceDay() { //NOTE NEED TO HANDLE CHECK FOR WEEKEND IN GAME_MAIN
+
     // get alarm, calc new stats and arrival time within session(nighttime)
     console.log("advancing day");
-    this.player.day +=1;
+    this.player.dayNum +=1;
     this.player.session = 0;
+
+
   }
 
   weekEnd() {
@@ -36,7 +39,7 @@ class Week {
     //perform accordingly
     //only advance day until Sunday - will advance once more in Game.advanceWeek
     console.log("weekend!!");
-    this.player.day +=1;
+    this.player.dayNum +=1;
   }
 } //end class
 

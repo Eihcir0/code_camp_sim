@@ -26,7 +26,7 @@ class SkillAnim extends StudyIcon {
 
     animSettings() {
     switch (this.value) {
-      case "Ruby":
+      case "ruby":
         this.width = 959;
         this.height = 833;
         this.animSet = 0; // ??
@@ -43,7 +43,7 @@ class SkillAnim extends StudyIcon {
 
     getImage() {
     switch (this.value) {
-      case "Ruby":
+      case "ruby":
         return "./app/assets/images/ruby.png";
       default:
         return undefined;

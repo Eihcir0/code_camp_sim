@@ -18,7 +18,7 @@ App Academy was an intense, unique, "once in a lifetime" experience that involve
 
 ### Technologies & Technical Challenges
 
-This simulation will be written mostly in React.js with some vanilla JavaScript components leveraging HTML5 Canvas.  The backend will be written in Ruby on Rails with a SQLite database.  
+This simulation will be written mostly in React.js with some vanilla JavaScript components leveraging HTML5 Canvas.  The backend will be written in ruby on Rails with a SQLite database.  
 
 The primary technical challenges will be:
 

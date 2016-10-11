@@ -21512,7 +21512,7 @@
 	      currentPos: -1,
 	      message: "",
 	      clock: _this.player.clock.time(),
-	      ruby: _this.player.skills.Ruby,
+	      ruby: _this.player.skills.ruby,
 	      focus: _this.player.focus
 	    };
 	    _this.ticker = 0;
@@ -21537,7 +21537,7 @@
 	        currentPos: this.player.currentPos,
 	        message: this.player.message,
 	        clock: this.player.clock.time(),
-	        ruby: Math.floor(this.player.skills.Ruby / 10),
+	        ruby: Math.floor(this.player.skills.ruby / 10),
 	        focus: this.player.focus
 	      });
 	    }
@@ -21779,7 +21779,7 @@
 	  }, {
 	    key: 'advanceWeek',
 	    value: function advanceWeek() {
-	      this.player.day += 1;
+	      this.player.dayNum += 1;
 	    }
 	  }, {
 	    key: 'gameIsOver',
@@ -21843,7 +21843,7 @@
 	    this.week = Math.floor(this.day / 7) + 1;
 	    this.weekDay = this.day % 7;
 	    this.skills = obj ? obj.skill : {
-	      Ruby: 0,
+	      ruby: 0,
 	      Rails: 0,
 	      SQL: 0,
 	      JavaScript: 0,
@@ -21908,14 +21908,14 @@
 	  }, {
 	    key: "currentWeekDay",
 	    value: function currentWeekDay() {
-	      return this.player.day % 7;
+	      return this.player.dayNum % 7;
 	    }
 	  }, {
 	    key: "advanceDay",
 	    value: function advanceDay() {
 	      // get alarm, calc new stats and arrival time within session(nighttime)
 	      console.log("advancing day");
-	      this.player.day += 1;
+	      this.player.dayNum += 1;
 	      this.player.session = 0;
 	    }
 	  }, {
@@ -21925,7 +21925,7 @@
 	      //perform accordingly
 	      //only advance day until Sunday - will advance once more in Game.advanceWeek
 	      console.log("weekend!!");
-	      this.player.day += 1;
+	      this.player.dayNum += 1;
 	    }
 	  }]);
 	
@@ -21987,7 +21987,7 @@
 	    _classCallCheck(this, Day);
 	
 	    this.player = player;
-	    if (this.player.day === 1) this.firstDay();
+	    if (this.player.dayNum === 1) this.firstDay();
 	    this.main();
 	  }
 	
@@ -22123,7 +22123,7 @@
 	    value: function getInput() {
 	      console.log("" + this.player.name);
 	      console.log("session: " + this.player.session);
-	      console.log("day: w" + this.player.week + "d" + this.player.day / 7);
+	      console.log("day: w" + this.player.week + "d" + this.player.dayNum / 7);
 	    }
 	  }, {
 	    key: "handleInput",
@@ -23076,7 +23076,7 @@
 	        var d = new _study_icon_anim2.default({ canvas: this.canvas, ctx: this.ctx });
 	        this.sprites.push(d);
 	        this.props.player.lastIconTime = Date.now();
-	        this.props.player.skills.Ruby += 1;
+	        this.props.player.skills.ruby += 1;
 	      }
 	    }
 	  }, {
@@ -23558,7 +23558,7 @@
 	        if (parseInt(time[1]) < 30) {
 	          return ["But if you keep your eyes closed too long then you'll fall asleep.", "", "Losing consciousness gets you a strike.", "", "10 strikes and you're OUT!!!!"];
 	        } else {
-	          return ["OK, with that out of the way, we will begin learning Ruby!", "", " Take a look at this code:"];
+	          return ["OK, with that out of the way, we will begin learning ruby!", "", " Take a look at this code:"];
 	        }
 	      } else {
 	        return ["def my_each", "..i = 0", "..while i < self.length", "....yield self[i]", "....i += 1", "..end", "..self[0]", "end"];

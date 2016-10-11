@@ -21462,31 +21462,31 @@
 	
 	var _week2 = _interopRequireDefault(_week);
 	
-	var _player_anim = __webpack_require__(196);
+	var _player_anim = __webpack_require__(184);
 	
 	var _player_anim2 = _interopRequireDefault(_player_anim);
 	
-	var _open_sesh_screen = __webpack_require__(197);
+	var _open_sesh_screen = __webpack_require__(185);
 	
 	var _open_sesh_screen2 = _interopRequireDefault(_open_sesh_screen);
 	
-	var _lecture_sesh_screen = __webpack_require__(202);
+	var _lecture_sesh_screen = __webpack_require__(190);
 	
 	var _lecture_sesh_screen2 = _interopRequireDefault(_lecture_sesh_screen);
 	
-	var _pairs_sesh_screen = __webpack_require__(204);
+	var _pairs_sesh_screen = __webpack_require__(192);
 	
 	var _pairs_sesh_screen2 = _interopRequireDefault(_pairs_sesh_screen);
 	
-	var _strike_screen = __webpack_require__(210);
+	var _strike_screen = __webpack_require__(198);
 	
 	var _strike_screen2 = _interopRequireDefault(_strike_screen);
 	
-	var _congrats_screen = __webpack_require__(211);
+	var _congrats_screen = __webpack_require__(199);
 	
 	var _congrats_screen2 = _interopRequireDefault(_congrats_screen);
 	
-	var _face_anim = __webpack_require__(212);
+	var _face_anim = __webpack_require__(200);
 	
 	var _face_anim2 = _interopRequireDefault(_face_anim);
 	
@@ -21515,19 +21515,26 @@
 	
 	    _this.player = new _player2.default("Guest");
 	    _this.playerAnim = new _player_anim2.default({ player: _this.player });
-	    _this.week = new _week2.default(_this.player);
+	    if (_this.player.week === undefined) {
+	      _this.week = new _week2.default(_this.player);
+	      _this.player.week = _this.week;
+	      _this.player.day = _this.week.day;
+	    } else {
+	      _this.week = _this.player.week;
+	    }
 	
 	    _this.state = {
 	      currentPos: -1,
 	      message: _this.player.message,
 	      clock: _this.player.clock.time(),
-	      ruby: _this.player.skills.Ruby,
+	      ruby: _this.player.skills.ruby,
 	      focus: _this.player.focus
 	    };
 	    _this.attributeTicker = 0;
 	    _this.tick = _this.tick.bind(_this);
 	    _this.updateAttributes = _this.updateAttributes.bind(_this);
 	    _this.checkAteLunch = _this.checkAteLunch.bind(_this);
+	    _this.leaving = _this.leaving.bind(_this);
 	    _this.ticksPerSecond = 100; //<<=If changed then change Clock class
 	    _this.intervalTime = 1000 / _this.ticksPerSecond;
 	    _this.interval = window.setInterval(function () {
@@ -21553,15 +21560,33 @@
 	      }
 	      this.setState({
 	        message: this.updateMessage(),
-	        ruby: Math.floor(this.player.skills.Ruby / 10),
+	        ruby: Math.floor(this.player.skills.ruby / 10),
 	        focus: this.player.focus
 	      });
 	      //animationFramE ????
 	    }
 	  }, {
+	    key: 'leaving',
+	    value: function leaving() {
+	      //steps:
+	      // handle normal leave with default alarm set to 7am
+	      //     after setting the alarm, it will calc the wakeup time and pass to new day
+	      //    set new attributes and reset player
+	      //    be sure to set this.currentSesh to 0;
+	
+	      //add alarm
+	      //add option to go out
+	      //handle leaving early
+	      //handle slept in office
+	      //handle weekend
+	    }
+	  }, {
 	    key: 'updateSession',
 	    value: function updateSession() {
 	      //WARNINGS SHOULD GO FIRST
+	      if (this.player.leaving) {
+	        this.handleLeave();
+	      }
 	      if (this.player.session === 0 && this.player.currentPos !== 12) {
 	        if (this.player.clock.is(["9", "00", "am"])) {
 	          this.player.newStrike = { message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9, 1], newPos: this.player.currentPos, newClockSpeed: this.player.defaultClockSpeed };
@@ -21605,23 +21630,32 @@
 	    value: function updateAttributes(dt) {
 	      //REDO THIS SOON
 	      //use helper methods for each attribute
-	
 	      var maxEnergy = this.player.sleepBank * this.player.noLunchPenalty;
-	      console.log(maxEnergy);
-	      if (this.player.currentPos === 11 && this.player.session !== 3) {
+	      var realMax = Math.max(this.player.focus, maxEnergy);
+	      if (this.player.working()) {
 	        this.player.focus -= 0.5;
-	      } else if (this.player.currentPos !== 12 && this.player.session !== 3) {
-	        if (this.player.focus >= 30) {
-	          this.player.focus += 2.7;
+	      } else {
+	        if (this.player.focus < maxEnergy) {
+	          this.player.focus += this.player.focus < 30 ? 0.3 : 2.7; // first 30 charges super slow
 	        }
-	
-	        this.player.focus += 0.3;
-	      }
-	      if (this.player.focus > maxEnergy) {
-	        this.player.focus = maxEnergy;
 	      }
 	      if (this.player.focus < 0) {
 	        this.player.focus = 0;
+	      }
+	      if (this.player.focus > 100) {
+	        this.player.focus = 100;
+	      }
+	      if (this.player.sleepBank < 0) {
+	        this.player.sleepBank = 0;
+	      }
+	      if (this.player.sleepBank > 100) {
+	        this.player.sleepBank = 100;
+	      }
+	      if (this.player.happiness < 0) {
+	        this.player.happiness = 0;
+	      }
+	      if (this.player.happiness > 100) {
+	        this.player.happiness = 100;
 	      }
 	    }
 	  }, {
@@ -21677,7 +21711,7 @@
 	        _react2.default.createElement(
 	          'span',
 	          { className: 'game-title' },
-	          'CODE CAMP SIM (ver 0.7.2)'
+	          'CODE CAMP SIM (ver 0.7.5)'
 	        ),
 	        _react2.default.createElement(
 	          'div',
@@ -21807,7 +21841,7 @@
 	  }, {
 	    key: 'advanceWeek',
 	    value: function advanceWeek() {
-	      this.player.day += 1;
+	      this.player.dayNum += 1;
 	    }
 	  }, {
 	    key: 'gameIsOver',
@@ -21871,15 +21905,15 @@
 	    _classCallCheck(this, Player);
 	
 	    this.name = name || "Richie";
-	    this.defaultClockSpeed = obj ? obj.defaultClockSpeed : 3;
-	    this.clock = obj ? obj.clock : new _clock2.default([8, 45], this.defaultClockSpeed);
+	    this.defaultClockSpeed = obj ? obj.defaultClockSpeed : 1;
+	    this.clock = obj ? obj.clock : new _clock2.default([23, 50], this.defaultClockSpeed);
 	    this.tempMessage = obj ? obj.tempMessage : "I'm the brains, you're the muscle!  Use your muscles to move the mouse!";
 	    this.currentEmotion = obj ? obj.currentEmotion : "excited";
 	    this.info = obj ? obj.info : "";
 	
 	    this.sleepBank = obj ? obj.sleepBank : 90;
 	    this.happiness = obj ? obj.happiness : 80;
-	    this.focus = obj ? obj.focus : 100;
+	    this.focus = obj ? obj.focus : this.sleepBank;
 	    this.score = obj ? obj.score : 0;
 	    this.chanceForFireOffset = 0; //delete me
 	
@@ -21889,6 +21923,7 @@
 	    this.lastIconTickerCount = obj ? obj.lastIconTickerCount : 0;
 	    this.onFire = obj ? obj.onFire : false;
 	    this.fire = undefined;
+	    this.leaving = false;
 	
 	    this.eatingLunch = false; //these should be in the day
 	    this.ateLunch = false;
@@ -21902,21 +21937,23 @@
 	    // 3 = pairs/solo project
 	    // 4 = evening
 	    // 5 = night
-	    this.day = obj ? obj.day : 1;
+	    this.dayNum = obj ? obj.dayNum : 1;
 	    this.session = obj ? obj.session : 0;
-	    this.week = Math.floor(this.day / 7) + 1;
+	    this.weekNum = Math.floor(this.dayNum / 7) + 1;
 	    this.weekDay = this.day % 7;
 	    this.skills = obj ? obj.skill : {
-	      Ruby: 0,
+	      ruby: 0,
 	      Rails: 0,
 	      SQL: 0,
 	      JavaScript: 0,
 	      React: 0,
 	      Redux: 0
 	    };
-	    this.currentSkill = Object.keys(this.skills)[this.week - 1];
+	    this.currentSkill = Object.keys(this.skills)[this.weekNum - 1];
 	    this.fireOff = this.fireOff.bind(this);
 	    this.newOnFire = this.newOnFire.bind(this);
+	    this.day = undefined;
+	    this.week = undefined;
 	  } // end constructor
 	
 	  _createClass(Player, [{
@@ -22137,12 +22174,12 @@
 	      var currentTime = this.time();
 	
 	      if (newLastTime.length === 3) {
-	        if (newLastTime[2] === "pm") {
+	        if (newLastTime[2] === "pm" && newLastTime[0] !== 12) {
 	          newLastTime[0] = parseInt(newLastTime[0]) + 12;
 	        }
 	      }
 	
-	      if (currentTime[2] === "pm") {
+	      if (currentTime[2] === "pm" && currentTime[0] !== "12") {
 	        currentTime[0] = parseInt(currentTime[0]) + 12;
 	      }
 	      var hoursDiff = parseInt(currentTime[0]) - parseInt(newLastTime[0]);
@@ -22161,7 +22198,7 @@
 	  }, {
 	    key: "isBetween",
 	    value: function isBetween(startTime, endTime) {
-	      if (startTime.length < 3) {
+	      if (startTime.length === 3) {
 	        if (startTime[0] < 12) {
 	          startTime.push("am");
 	        } else {
@@ -22169,8 +22206,8 @@
 	          startTime[0] += startTime[0] == 12 ? 0 : 12;
 	        }
 	      }
-	      if (endTime.length < 3) {
-	        if (startTime[0] < 12) {
+	      if (endTime.length === 3) {
+	        if (endTime[0] < 12) {
 	          endTime.push("am");
 	        } else {
 	          endTime[0] += endTime[0] == 12 ? 0 : 12;
@@ -22182,7 +22219,7 @@
 	      var startMinute = startTime[1];
 	      var endMinute = endTime[1];
 	      var currentTime = this.time();
-	      var currentHour = parseInt(currentTime[0]) + (currentTime[2] == "pm" ? 12 : 0);
+	      var currentHour = parseInt(currentTime[0]) + (currentTime[2] == "pm" && currentTime[0] !== "12" ? 12 : 0);
 	      var currentMinute = parseInt(currentTime[1]);
 	      if (currentHour > startHour && currentHour < endHour) {
 	        return true;
@@ -22190,7 +22227,7 @@
 	      if (currentHour == startHour && currentMinute >= startMinute) {
 	        return true;
 	      }
-	      if (currentHour == endHour && currentMinute <= endMinute) {
+	      if (currentHour == endHour && currentMinute <= endMinute && currentMinute >= startMinute) {
 	        return true;
 	      }
 	      return false;
@@ -22577,7 +22614,7 @@
 	    key: 'animSettings',
 	    value: function animSettings() {
 	      switch (this.value) {
-	        case "Ruby":
+	        case "ruby":
 	          this.width = 959;
 	          this.height = 833;
 	          this.animSet = 0; // ??
@@ -22595,7 +22632,7 @@
 	    key: 'getImage',
 	    value: function getImage() {
 	      switch (this.value) {
-	        case "Ruby":
+	        case "ruby":
 	          return "./app/assets/images/ruby.png";
 	        default:
 	          return undefined;
@@ -22785,7 +22822,7 @@
 	    key: "materials",
 	    value: function materials() {
 	      if (this.player.week === 1) {
-	        return "Ruby";
+	        return "ruby";
 	      }
 	    }
 	  }, {
@@ -22799,14 +22836,16 @@
 	  }, {
 	    key: "currentWeekDay",
 	    value: function currentWeekDay() {
-	      return this.player.day % 7;
+	      return this.player.dayNum % 7;
 	    }
 	  }, {
 	    key: "advanceDay",
 	    value: function advanceDay() {
+	      //NOTE NEED TO HANDLE CHECK FOR WEEKEND IN GAME_MAIN
+	
 	      // get alarm, calc new stats and arrival time within session(nighttime)
 	      console.log("advancing day");
-	      this.player.day += 1;
+	      this.player.dayNum += 1;
 	      this.player.session = 0;
 	    }
 	  }, {
@@ -22816,7 +22855,7 @@
 	      //perform accordingly
 	      //only advance day until Sunday - will advance once more in Game.advanceWeek
 	      console.log("weekend!!");
-	      this.player.day += 1;
+	      this.player.dayNum += 1;
 	    }
 	  }]);
 	
@@ -22829,62 +22868,46 @@
 /* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); // import Morning from './sessions/open_sessions/morning.js';
+	// import Lecture from './sessions/mid_morning/lecture.js';
+	// import Assessment from './sessions/mid_morning/assessment.js';
+	// import Lunch from './sessions/open_sessions/lunch.js';
+	// import SoloProject from './sessions/afternoon/solo_project.js';
+	// import PairsProgramming from './sessions/afternoon/pairs_programming.js';
+	// import Evening from './sessions/open_sessions/evening.js';
+	// import NightTime from './sessions/night_time.js';
 	
-	var _morning = __webpack_require__(184);
 	
-	var _morning2 = _interopRequireDefault(_morning);
+	var _clock = __webpack_require__(175);
 	
-	var _lecture = __webpack_require__(186);
-	
-	var _lecture2 = _interopRequireDefault(_lecture);
-	
-	var _assessment = __webpack_require__(188);
-	
-	var _assessment2 = _interopRequireDefault(_assessment);
-	
-	var _lunch = __webpack_require__(189);
-	
-	var _lunch2 = _interopRequireDefault(_lunch);
-	
-	var _solo_project = __webpack_require__(191);
-	
-	var _solo_project2 = _interopRequireDefault(_solo_project);
-	
-	var _pairs_programming = __webpack_require__(193);
-	
-	var _pairs_programming2 = _interopRequireDefault(_pairs_programming);
-	
-	var _evening = __webpack_require__(194);
-	
-	var _evening2 = _interopRequireDefault(_evening);
-	
-	var _night_time = __webpack_require__(195);
-	
-	var _night_time2 = _interopRequireDefault(_night_time);
+	var _clock2 = _interopRequireDefault(_clock);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Day = function () {
-	  function Day(player) {
+	  function Day(player, arrivalTime) {
 	    _classCallCheck(this, Day);
 	
 	    this.player = player;
-	    if (this.player.day === 1) this.firstDay();
+	    if (this.player.dayNum === 1) {
+	      arrivalTime = ["08", "30", "am"];
+	    }
+	    this.player.clock = new _clock2.default(arrivalTime, this.player.defaultClockSpeed);
+	    this.player.currentPos = 0;
 	  }
 	
 	  _createClass(Day, [{
-	    key: 'secretaryMessage',
+	    key: "secretaryMessage",
 	    value: function secretaryMessage() {
-	      if (this.player.day === 1 && this.player.session === 0) {
+	      if (this.player.dayNum === 1 && this.player.session === 0) {
 	        return "Please go to the lecture area immediately!!";
 	      }
 	    }
@@ -22927,15 +22950,12 @@
 	    // }
 	
 	  }, {
-	    key: 'nightTime',
+	    key: "nightTime",
 	    value: function nightTime() {
 	      console.log("night time!");
 	      //this.session = new NightTime (which will
 	      // get alarm, calc new stats and arrival time within Session(night))
 	    }
-	  }, {
-	    key: 'firstDay',
-	    value: function firstDay() {}
 	  }]);
 	
 	  return Day;
@@ -22945,463 +22965,6 @@
 
 /***/ },
 /* 184 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _session = __webpack_require__(185);
-	
-	var _session2 = _interopRequireDefault(_session);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var Morning = function (_OpenSession) {
-	  _inherits(Morning, _OpenSession);
-	
-	  function Morning(player) {
-	    _classCallCheck(this, Morning);
-	
-	    return _possibleConstructorReturn(this, (Morning.__proto__ || Object.getPrototypeOf(Morning)).call(this, player));
-	  }
-	
-	  return Morning;
-	}(_session2.default); //end class
-	
-	exports.default = Morning;
-
-/***/ },
-/* 185 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var Session = function () {
-	  function Session(player) {
-	    _classCallCheck(this, Session);
-	
-	    this.player = player;
-	    this.over = false;
-	    //each session starts a clock
-	
-	    this.main(); // may get rid of this
-	  }
-	
-	  _createClass(Session, [{
-	    key: "main",
-	    value: function main() {
-	      while (!this.over) {
-	        this.getInput();
-	        this.handleInput();
-	      }
-	    }
-	  }, {
-	    key: "getInput",
-	    value: function getInput() {
-	      console.log("" + this.player.name);
-	      console.log("session: " + this.player.session);
-	      console.log("day: w" + this.player.week + "d" + this.player.day / 7);
-	    }
-	  }, {
-	    key: "handleInput",
-	    value: function handleInput() {
-	      this.advanceSession();
-	    }
-	  }, {
-	    key: "advanceSession",
-	    value: function advanceSession() {
-	      this.over = true;
-	      this.player.session += 1; //might have to pass the clock?
-	    }
-	  }]);
-	
-	  return Session;
-	}(); //end class
-	
-	
-	exports.default = Session;
-
-/***/ },
-/* 186 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _mid_morning = __webpack_require__(187);
-	
-	var _mid_morning2 = _interopRequireDefault(_mid_morning);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var Lecture = function (_MidMorning) {
-	  _inherits(Lecture, _MidMorning);
-	
-	  function Lecture(player) {
-	    _classCallCheck(this, Lecture);
-	
-	    return _possibleConstructorReturn(this, (Lecture.__proto__ || Object.getPrototypeOf(Lecture)).call(this, player));
-	  }
-	
-	  return Lecture;
-	}(_mid_morning2.default); //end class
-	
-	exports.default = Lecture;
-
-/***/ },
-/* 187 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _session = __webpack_require__(185);
-	
-	var _session2 = _interopRequireDefault(_session);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var MidMorning = function (_Session) {
-	  _inherits(MidMorning, _Session);
-	
-	  function MidMorning(player) {
-	    _classCallCheck(this, MidMorning);
-	
-	    return _possibleConstructorReturn(this, (MidMorning.__proto__ || Object.getPrototypeOf(MidMorning)).call(this, player));
-	  }
-	
-	  return MidMorning;
-	}(_session2.default); //end class
-	
-	exports.default = MidMorning;
-
-/***/ },
-/* 188 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _mid_morning = __webpack_require__(187);
-	
-	var _mid_morning2 = _interopRequireDefault(_mid_morning);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var Assessment = function (_MidMorning) {
-	  _inherits(Assessment, _MidMorning);
-	
-	  function Assessment(player) {
-	    _classCallCheck(this, Assessment);
-	
-	    return _possibleConstructorReturn(this, (Assessment.__proto__ || Object.getPrototypeOf(Assessment)).call(this, player));
-	  }
-	
-	  return Assessment;
-	}(_mid_morning2.default); //end class
-	
-	exports.default = Assessment;
-
-/***/ },
-/* 189 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _open_session = __webpack_require__(190);
-	
-	var _open_session2 = _interopRequireDefault(_open_session);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var Lunch = function (_OpenSession) {
-	  _inherits(Lunch, _OpenSession);
-	
-	  function Lunch(player) {
-	    _classCallCheck(this, Lunch);
-	
-	    return _possibleConstructorReturn(this, (Lunch.__proto__ || Object.getPrototypeOf(Lunch)).call(this, player));
-	  }
-	
-	  return Lunch;
-	}(_open_session2.default); //end class
-	
-	exports.default = Lunch;
-
-/***/ },
-/* 190 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _session = __webpack_require__(185);
-	
-	var _session2 = _interopRequireDefault(_session);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var OpenSession = function (_Session) {
-	  _inherits(OpenSession, _Session);
-	
-	  function OpenSession(player) {
-	    _classCallCheck(this, OpenSession);
-	
-	    return _possibleConstructorReturn(this, (OpenSession.__proto__ || Object.getPrototypeOf(OpenSession)).call(this, player));
-	    //initiate clock
-	    //setup canvas and draw
-	  }
-	
-	  return OpenSession;
-	}(_session2.default); //end class
-	
-	exports.default = OpenSession;
-
-/***/ },
-/* 191 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _afternoon = __webpack_require__(192);
-	
-	var _afternoon2 = _interopRequireDefault(_afternoon);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var SoloProject = function (_Afternoon) {
-	  _inherits(SoloProject, _Afternoon);
-	
-	  function SoloProject(player) {
-	    _classCallCheck(this, SoloProject);
-	
-	    return _possibleConstructorReturn(this, (SoloProject.__proto__ || Object.getPrototypeOf(SoloProject)).call(this, player));
-	  }
-	
-	  return SoloProject;
-	}(_afternoon2.default); //end class
-	
-	exports.default = SoloProject;
-
-/***/ },
-/* 192 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _session = __webpack_require__(185);
-	
-	var _session2 = _interopRequireDefault(_session);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var Afternoon = function (_Session) {
-	  _inherits(Afternoon, _Session);
-	
-	  function Afternoon(player) {
-	    _classCallCheck(this, Afternoon);
-	
-	    return _possibleConstructorReturn(this, (Afternoon.__proto__ || Object.getPrototypeOf(Afternoon)).call(this, player));
-	  }
-	
-	  return Afternoon;
-	}(_session2.default); //end class
-	
-	exports.default = Afternoon;
-
-/***/ },
-/* 193 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _afternoon = __webpack_require__(192);
-	
-	var _afternoon2 = _interopRequireDefault(_afternoon);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var PairsProgramming = function (_Afternoon) {
-	  _inherits(PairsProgramming, _Afternoon);
-	
-	  function PairsProgramming(player) {
-	    _classCallCheck(this, PairsProgramming);
-	
-	    return _possibleConstructorReturn(this, (PairsProgramming.__proto__ || Object.getPrototypeOf(PairsProgramming)).call(this, player));
-	  }
-	
-	  return PairsProgramming;
-	}(_afternoon2.default); //end class
-	
-	exports.default = PairsProgramming;
-
-/***/ },
-/* 194 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _open_session = __webpack_require__(190);
-	
-	var _open_session2 = _interopRequireDefault(_open_session);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var Evening = function (_OpenSession) {
-	  _inherits(Evening, _OpenSession);
-	
-	  function Evening(player) {
-	    _classCallCheck(this, Evening);
-	
-	    return _possibleConstructorReturn(this, (Evening.__proto__ || Object.getPrototypeOf(Evening)).call(this, player));
-	  }
-	
-	  return Evening;
-	}(_open_session2.default); //end class
-	
-	exports.default = Evening;
-
-/***/ },
-/* 195 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _session = __webpack_require__(185);
-	
-	var _session2 = _interopRequireDefault(_session);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var NightTime = function (_Session) {
-	  _inherits(NightTime, _Session);
-	
-	  function NightTime(player) {
-	    _classCallCheck(this, NightTime);
-	
-	    return _possibleConstructorReturn(this, (NightTime.__proto__ || Object.getPrototypeOf(NightTime)).call(this, player));
-	  }
-	
-	  return NightTime;
-	}(_session2.default); //end class
-	
-	exports.default = NightTime;
-
-/***/ },
-/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23751,7 +23314,7 @@
 	exports.default = PlayerAnim;
 
 /***/ },
-/* 197 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23766,11 +23329,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _secretary = __webpack_require__(198);
+	var _secretary = __webpack_require__(186);
 	
 	var _secretary2 = _interopRequireDefault(_secretary);
 	
-	var _desk = __webpack_require__(199);
+	var _desk = __webpack_require__(187);
 	
 	var _desk2 = _interopRequireDefault(_desk);
 	
@@ -23786,11 +23349,11 @@
 	
 	var _fire_anim2 = _interopRequireDefault(_fire_anim);
 	
-	var _food_anim = __webpack_require__(200);
+	var _food_anim = __webpack_require__(188);
 	
 	var _food_anim2 = _interopRequireDefault(_food_anim);
 	
-	var _student_anim = __webpack_require__(201);
+	var _student_anim = __webpack_require__(189);
 	
 	var _student_anim2 = _interopRequireDefault(_student_anim);
 	
@@ -23825,14 +23388,22 @@
 	    _this.mouseOverLecture = _this.mouseOverLecture.bind(_this);
 	    _this.mouseOverKitchen = _this.mouseOverKitchen.bind(_this);
 	    _this.mouseOverCandanessa = _this.mouseOverCandanessa.bind(_this);
+	    _this.mouseOverExit = _this.mouseOverExit.bind(_this);
 	    _this.clickWorkStation = _this.clickWorkStation.bind(_this);
 	    _this.clickLecture = _this.clickLecture.bind(_this);
 	    _this.clickKitchen = _this.clickKitchen.bind(_this);
 	    _this.clickCandanessa = _this.clickCandanessa.bind(_this);
+	    _this.clickCandanessa = _this.clickCandanessa.bind(_this);
+	    _this.clickExit = _this.clickExit.bind(_this);
 	    _this.drinksCoffee = _this.drinksCoffee.bind(_this);
 	    _this.eatsDonut = _this.eatsDonut.bind(_this);
 	    _this.eatsLunch = _this.eatsLunch.bind(_this);
-	
+	    _this.leavingEarly = _this.leavingEarly.bind(_this);
+	    _this.leaving = _this.leaving.bind(_this);
+	    _this.leavingButtons = _this.leavingButtons.bind(_this);
+	    _this.handleLeave = _this.handleLeave.bind(_this);
+	    _this.handleDontLeave = _this.handleDontLeave.bind(_this);
+	    _this.handle1159 = _this.handle1159.bind(_this);
 	    _this.handleSave = _this.handleSave.bind(_this);
 	    _this.initializeSprites = _this.initializeSprites.bind(_this);
 	    _this.buttons = _this.buttons.bind(_this);
@@ -23844,8 +23415,9 @@
 	    _this.sprites = [];
 	    _this.lastTickerCount = _this.player.clock.tickCounter;
 	    _this.updateCount = 0;
-	    _this.ateDonut = false;
-	    _this.lastCoffee = [4, 0, "am"];
+	    _this.player.ateDonut = false;
+	    _this.player.lastCoffee = [4, 0, "am"];
+	    _this.leavingTime = false;
 	
 	    // var funs = [ //bind functions
 	    //   this.main,
@@ -23899,24 +23471,24 @@
 	      };
 	    }
 	  }, {
-	    key: 'endLunch',
-	    value: function endLunch() {
-	      this.player.eatingLunch = false;
-	      this.player.ateLunch = true;
-	      this.tempMessage = "";
-	      var now = this.player.clock.time();
-	      this.lunchTime = null;
-	      this.player.clock = new _clock2.default(now, this.player.defaultClockSpeed);
-	    }
-	  }, {
 	    key: 'main',
 	    value: function main() {
+	      //refactor!
+	      if (this.player.clock.is(["12", "00", "am"])) {
+	        this.handle1159();
+	      }
+	      if (this.player.clock.is(["2", "00", "am"])) {
+	        this.handleLeave();
+	      }
 	      if (this.player.eatingLunch) {
 	        if (this.player.clock.diff(this.lunchTime) > this.lunchMinutes) {
 	          this.endLunch();
 	        }
 	      }
 	
+	      if (this.player.clock.paused) {
+	        return;
+	      }
 	      var dt = this.player.clock.tickCounter - this.lastTickerCount;
 	      this.lastTickerCount = this.player.clock.tickCounter;
 	      this.ctx.drawImage(this.background, -28, 0);
@@ -23938,12 +23510,82 @@
 	    value: function cancelAnimationFrame() {
 	      if (this.openSeshAnimationFrame) {
 	        this.playerAnim.soundTyping.pause();
+	        if (this.microwaveSound) {
+	          this.microwaveSound.pause();
+	        }
 	        if (this.player.onFire) {
 	          this.player.fireOff();
 	        }
 	        window.cancelAnimationFrame(this.openSeshAnimationFrame);
 	        this.openSeshAnimationFrame = undefined;
 	      }
+	    }
+	  }, {
+	    key: 'buttons',
+	    value: function buttons() {
+	      if (this.leavingTime) {
+	        return this.leavingButtons();
+	      }
+	      if (this.player.working()) {
+	        return this.workStationButtons();
+	      }
+	      if (this.player.currentPos === 9) {
+	        return this.kitchenButtons();
+	      }
+	    }
+	  }, {
+	    key: 'leavingButtons',
+	    value: function leavingButtons() {
+	      if (this.leavingTime === "early") {
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'middle-buttons-area' },
+	          _react2.default.createElement(
+	            'button',
+	            { className: 'leave-button-big',
+	              onClick: this.handleDontLeave },
+	            'NO! DO NOT LEAVE YET!'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { className: 'leave-button-small',
+	              onClick: this.handleLeave },
+	            'YES I WANT TO LEAVE EARLY'
+	          )
+	        );
+	      } else if (this.leavingTime === "normal") {
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'middle-buttons-area' },
+	          _react2.default.createElement(
+	            'button',
+	            { className: 'leave-button-big',
+	              onClick: this.handleLeave },
+	            'YES, I WANT TO LEAVE'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { className: 'leave-button-small',
+	              onClick: this.handleDontLeave },
+	            'NO! DO NOT LEAVE YET!'
+	          )
+	        );
+	      }
+	    }
+	  }, {
+	    key: 'handleDontLeave',
+	    value: function handleDontLeave() {
+	      this.leavingTime = false;
+	      this.player.clock.unpause();
+	      this.openSeshAnimationFrame = window.requestAnimationFrame(this.main);
+	    }
+	  }, {
+	    key: 'handleLeave',
+	    value: function handleLeave() {
+	      this.player.clock.pause();
+	      this.leavingTime = false;
+	      this.player.leaving = true;
+	      this.cancelAnimationFrame();
 	    }
 	  }, {
 	    key: 'workStationButtons',
@@ -23976,84 +23618,6 @@
 	      );
 	    }
 	  }, {
-	    key: 'drinksCoffee',
-	    value: function drinksCoffee() {
-	      if (this.player.clock.diff(this.lastCoffee) < 30) {
-	        this.player.tempMessage = "COFFEE BREWING...";
-	      } else {
-	        this.lastCoffee = this.player.clock.time();
-	        this.player.focus += 35;
-	        var coffee = new _food_anim2.default({ canvas: this.canvas, ctx: this.ctx }, "coffee");
-	        this.sprites.push(coffee);
-	      }
-	    }
-	  }, {
-	    key: 'eatsDonut',
-	    value: function eatsDonut() {}
-	  }, {
-	    key: 'eatsLunch',
-	    value: function eatsLunch() {
-	      if (!this.player.ateLunch) {
-	        this.player.eatingLunch = true;
-	        this.tempMessage = "TAKING LUNCH BREAK";
-	        this.player.focus = 100;
-	        this.player.happiness += 2;
-	        var now = this.player.clock.time();
-	        this.lunchTime = now;
-	        this.lunchMinutes = 5 + Math.floor(Math.random() * 30);
-	        if (this.lunchMinutes > 10) {
-	          this.player.tempMessage = "Stuck in the microwave line!!!";
-	        }
-	        this.player.clock = new _clock2.default(now, this.player.defaultClockSpeed * 3);
-	      }
-	    }
-	  }, {
-	    key: 'kitchenButtons',
-	    value: function kitchenButtons() {
-	      var eatButton = null;
-	      if (this.player.eatingLunch) {
-	        return null;
-	      }
-	      if (!this.player.ateLunch && this.player.clock.isBetween([12, 1], [13, 29])) {
-	        eatButton = _react2.default.createElement(
-	          'button',
-	          { className: 'middle-button5',
-	            onClick: this.eatsLunch },
-	          '🍲 LUNCH BREAK'
-	        );
-	      }
-	      if (this.player.clock.isBetween([8, 45], [8, 59])) {
-	        eatButton = _react2.default.createElement(
-	          'button',
-	          { className: 'middle-button5',
-	            onClick: this.eatsDonut },
-	          '🍩 EAT DONUT'
-	        );
-	      }
-	
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'middle-buttons-area' },
-	        _react2.default.createElement(
-	          'button',
-	          { className: 'middle-button4',
-	            onClick: this.drinksCoffee },
-	          '☕ DRINK COFFEE'
-	        ),
-	        eatButton
-	      );
-	    }
-	  }, {
-	    key: 'buttons',
-	    value: function buttons() {
-	      if (this.player.working()) {
-	        return this.workStationButtons();
-	      }
-	      if (this.player.currentPos === 9) {
-	        return this.kitchenButtons();
-	      }
-	    }
-	  }, {
 	    key: 'handleSave',
 	    value: function handleSave() {
 	      this.player.message = "🚧 This feature is currently underdevelopment 🚧";
@@ -24077,11 +23641,110 @@
 	      });
 	    }
 	  }, {
-	    key: 'quadrants',
-	    value: function quadrants() {
+	    key: 'kitchenButtons',
+	    value: function kitchenButtons() {
+	      var eatButton = null;
+	      if (this.player.eatingLunch) {
+	        return null;
+	      }
+	      if (!this.player.ateLunch && this.player.clock.isBetween(["12", "01", "pm"], ["1", "26", "pm"])) {
+	        eatButton = _react2.default.createElement(
+	          'button',
+	          { className: 'middle-button5',
+	            onClick: this.eatsLunch },
+	          '🍲 LUNCH BREAK'
+	        );
+	      }
+	      if (this.player.clock.isBetween([8, 45], [8, 59]) && !this.player.ateDonut) {
+	        debugger;
+	        eatButton = _react2.default.createElement(
+	          'button',
+	          { className: 'middle-button5',
+	            onClick: this.eatsDonut },
+	          '🍩 EAT DONUT'
+	        );
+	      }
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'middle-buttons-area' },
+	        _react2.default.createElement(
+	          'button',
+	          { className: 'middle-button4',
+	            onClick: this.drinksCoffee },
+	          '☕ DRINK COFFEE'
+	        ),
+	        eatButton
+	      );
+	    }
+	  }, {
+	    key: 'drinksCoffee',
+	    value: function drinksCoffee() {
+	      if (this.player.clock.diff(this.player.lastCoffee) < 30) {
+	        this.player.tempMessage = "COFFEE BREWING...";
+	      } else {
+	        this.player.lastCoffee = this.player.clock.time();
+	        this.player.focus += 35;
+	        var coffee = new _food_anim2.default({ canvas: this.canvas, ctx: this.ctx }, "coffee");
+	        this.sprites.push(coffee);
+	      }
+	    }
+	  }, {
+	    key: 'eatsDonut',
+	    value: function eatsDonut() {
+	      this.player.ateDonut = true;
+	      this.player.focus += 15;
+	      this.player.sleepBank += 3;
+	      this.player.score += 1000;
+	      var donut = new _food_anim2.default({ canvas: this.canvas, ctx: this.ctx }, "donut");
+	      this.sprites.push(donut);
+	    }
+	  }, {
+	    key: 'eatsLunch',
+	    value: function eatsLunch() {
 	      var _this4 = this;
 	
-	      if (this.player.eatingLunch) {
+	      if (!this.player.ateLunch) {
+	        this.microwaveSound = new Audio("./app/assets/sounds/microwave_start.wav");
+	        window.setTimeout(function () {
+	          return _this4.microwaveSound.play();
+	        }, 100);
+	        this.player.eatingLunch = true;
+	        this.player.tempMessage = "TAKING LUNCH BREAK";
+	        this.player.focus = 100;
+	        this.player.happiness += 2;
+	        var now = this.player.clock.time();
+	        this.lunchTime = now;
+	        this.lunchMinutes = 5 + Math.floor(Math.random() * 30);
+	        if (this.lunchMinutes > 15) {
+	          this.player.tempMessage = "Stuck in the microwave line!!!";
+	        }
+	        this.player.clock = new _clock2.default(now, this.player.defaultClockSpeed * 3);
+	        this.lastTickerCount = this.player.clock.tickCounter;
+	      }
+	    }
+	  }, {
+	    key: 'endLunch',
+	    value: function endLunch() {
+	      this.microwaveSound.pause();
+	      this.microwaveSound = undefined;
+	      this.player.eatingLunch = false;
+	      this.player.ateLunch = true;
+	      this.player.tempMessage = "";
+	      this.player.message = "Be sure you're seated at your workstation by 1:30pm for pair programming!";
+	      var now = this.player.clock.time();
+	      this.lunchTime = null;
+	      this.player.clock = new _clock2.default(now, this.player.defaultClockSpeed);
+	      this.lastTickerCount = this.player.clock.tickCounter;
+	      var lunch = new _food_anim2.default({ canvas: this.canvas, ctx: this.ctx }, "lunch");
+	      this.sprites.push(lunch);
+	    }
+	  }, {
+	    key: 'quadrants',
+	    value: function quadrants() {
+	      var _this5 = this;
+	
+	      if (this.player.eatingLunch || this.leavingTime) {
 	        return null;
 	      }
 	      var candanessa = null;
@@ -24091,7 +23754,7 @@
 	          onMouseOver: this.mouseOverCandanessa,
 	          onClick: this.clickCandanessa,
 	          onMouseOut: function onMouseOut() {
-	            _this4.player.tempMessage = "";
+	            _this5.player.tempMessage = "";
 	          } });
 	      }
 	      if (this.player.currentPos !== 9) {
@@ -24099,7 +23762,7 @@
 	          onMouseOver: this.mouseOverKitchen,
 	          onClick: this.clickKitchen,
 	          onMouseOut: function onMouseOut() {
-	            _this4.player.tempMessage = "";
+	            _this5.player.tempMessage = "";
 	          } });
 	      }
 	      if (!this.player.working()) {
@@ -24110,13 +23773,19 @@
 	            onMouseOver: this.mouseOverWorkStation,
 	            onClick: this.clickWorkStation,
 	            onMouseOut: function onMouseOut() {
-	              _this4.player.tempMessage = "";
+	              _this5.player.tempMessage = "";
 	            } }),
 	          _react2.default.createElement('div', { id: 'hover2',
 	            onMouseOver: this.mouseOverLecture,
 	            onClick: this.clickLecture,
 	            onMouseOut: function onMouseOut() {
-	              _this4.player.tempMessage = "";
+	              _this5.player.tempMessage = "";
+	            } }),
+	          _react2.default.createElement('div', { id: 'hover5',
+	            onMouseOver: this.mouseOverExit,
+	            onClick: this.clickExit,
+	            onMouseOut: function onMouseOut() {
+	              _this5.player.tempMessage = "";
 	            } }),
 	          kitchen,
 	          candanessa
@@ -24126,14 +23795,14 @@
 	  }, {
 	    key: 'clickLecture',
 	    value: function clickLecture() {
-	      var _this5 = this;
+	      var _this6 = this;
 	
 	      if (this.player.clock.isBetween([8, 30], [9, 30])) {
 	        this.player.message = "";
 	        this.player.defaultMessage = "";
 	        this.playerAnim.moveTo(12, function () {
-	          _this5.player.currentPos = 12;
-	          _this5.player.session = 1;
+	          _this6.player.currentPos = 12;
+	          _this6.player.session = 1;
 	        });
 	      } else {
 	        this.player.message = "The lecture hall doors are locked.";
@@ -24151,10 +23820,10 @@
 	  }, {
 	    key: 'clickWorkStation',
 	    value: function clickWorkStation() {
-	      var _this6 = this;
+	      var _this7 = this;
 	
 	      this.playerAnim.moveTo(11, function () {
-	        _this6.player.currentPos = 11;
+	        _this7.player.currentPos = 11;
 	      });
 	    }
 	  }, {
@@ -24165,13 +23834,13 @@
 	  }, {
 	    key: 'clickKitchen',
 	    value: function clickKitchen() {
-	      var _this7 = this;
+	      var _this8 = this;
 	
 	      if (this.player.clock.isBetween([8, 45], [8, 59])) {
 	        this.player.tempMessage = "Oh look!  Someone left donuts in the kitchen!";
 	      }
 	      this.playerAnim.moveTo(9, function () {
-	        _this7.player.currentPos = 9;
+	        _this8.player.currentPos = 9;
 	      });
 	    }
 	  }, {
@@ -24182,16 +23851,69 @@
 	  }, {
 	    key: 'clickCandanessa',
 	    value: function clickCandanessa() {
-	      var _this8 = this;
+	      var _this9 = this;
 	
 	      this.playerAnim.moveTo(10, function () {
-	        _this8.player.currentPos = 10;
+	        _this9.player.currentPos = 10;
 	      });
 	    }
 	  }, {
 	    key: 'mouseOverCandanessa',
 	    value: function mouseOverCandanessa() {
 	      this.player.tempMessage = "Talk to Candanessa";
+	    }
+	  }, {
+	    key: 'mouseOverExit',
+	    value: function mouseOverExit() {
+	      this.player.tempMessage = "Exit";
+	    }
+	  }, {
+	    key: 'clickExit',
+	    value: function clickExit() {
+	      var now = this.player.clock.time();
+	      switch (true) {
+	        case this.player.clock.isBetween([6, 0], [16, 59]):
+	          this.leavingEarly();
+	          break;
+	        default:
+	          this.leaving();
+	      }
+	      this.player.clock.pause();
+	    }
+	  }, {
+	    key: 'leavingEarly',
+	    value: function leavingEarly() {
+	      var now = this.player.clock.time();
+	      var strikes;
+	      switch (true) {
+	        case this.player.clock.isBetween([6, 0], [8, 59]):
+	          strikes = 4;
+	          break;
+	        case this.player.clock.isBetween([9, 0], [9, 29]):
+	          strikes = 3;
+	          break;
+	        case this.player.clock.isBetween([9, 30], [13, 29]):
+	          strikes = 2;
+	          break;
+	        default:
+	      }
+	      this.player.tempMessage = 'ARE YOU SURE YOU WANT TO LEAVE EARLY?  You will receive ' + strikes + ' strikes for missing the rest of the day\'s sessions.';
+	      this.leavingTime = "early";
+	    }
+	  }, {
+	    key: 'leaving',
+	    value: function leaving() {
+	      this.player.tempMessage = "Please confirm you want to leave.";
+	      this.leavingTime = "normal";
+	    }
+	  }, {
+	    key: 'handle1159',
+	    value: function handle1159() {
+	      this.player.clock = new _clock2.default([24, 1]);
+	      this.lastTickerCount = this.player.clock.tickCounter;
+	      this.player.clock.pause();
+	      this.player.tempMessage = "It is 11:59pm.  This is your last chance to leave and be guaranteed you can get in on time in the morning.  Stay at your own risk!  Would you like to leave now?";
+	      this.leavingTime = "normal";
 	    }
 	  }, {
 	    key: 'checkFocus',
@@ -24239,18 +23961,18 @@
 	  }, {
 	    key: 'renderSprites',
 	    value: function renderSprites() {
-	      var _this9 = this;
+	      var _this10 = this;
 	
 	      ////draw furniture first then fire, then study icons then hero
 	      this.sprites.forEach(function (sprite) {
 	        if (sprite.type !== "study icon" && sprite.type !== "student") {
-	          _this9.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
-	        } else if (sprite.type === "student" && !_this9.player.clock.isBetween([9, 1], [11, 59]) && !_this9.player.clock.isBetween([0, 0], [6, 0])) {
+	          _this10.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
+	        } else if (sprite.type === "student" && !_this10.player.clock.isBetween([9, 1], [11, 59]) && !_this10.player.clock.isBetween([0, 0], [6, 0])) {
 	          sprite.render();
 	        }
 	
-	        if (_this9.player.onFire) {
-	          _this9.player.fire.render();
+	        if (_this10.player.onFire) {
+	          _this10.player.fire.render();
 	        }
 	        if (sprite.type === "study icon") {
 	          sprite.render();
@@ -24354,7 +24076,7 @@
 	exports.default = OpenSesh;
 
 /***/ },
-/* 198 */
+/* 186 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -24392,7 +24114,7 @@
 	exports.default = Secretary;
 
 /***/ },
-/* 199 */
+/* 187 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -24438,7 +24160,7 @@
 	exports.default = Desk;
 
 /***/ },
-/* 200 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24511,6 +24233,30 @@
 	          this.sizeMultiplier = 3;
 	          this.sound = new Audio("./app/assets/sounds/coffee.wav");
 	          break;
+	        case "donut":
+	          this.width = 256;
+	          this.height = 256;
+	          this.animSet = 0;
+	          this.spriteYoffset = 0;
+	          this.animFrame = 0;
+	          this.animNumFrames = 1;
+	          this.animDelay = 20;
+	          this.animTimer = 0;
+	          this.sizeMultiplier = 3;
+	          this.sound = new Audio("./app/assets/sounds/donut.wav");
+	          break;
+	        case "lunch":
+	          this.width = 256;
+	          this.height = 256;
+	          this.animSet = 0;
+	          this.spriteYoffset = 0;
+	          this.animFrame = 0;
+	          this.animNumFrames = 1;
+	          this.animDelay = 20;
+	          this.animTimer = 0;
+	          this.sizeMultiplier = 3;
+	          this.sound = new Audio("./app/assets/sounds/microwave.wav");
+	          break;
 	        default:
 	          break;
 	      }
@@ -24521,6 +24267,10 @@
 	      switch (this.foodType) {
 	        case "coffee":
 	          return "./app/assets/images/coffee.png";
+	        case "donut":
+	          return "./app/assets/images/donut.png";
+	        case "lunch":
+	          return "./app/assets/images/lunch.png";
 	        default:
 	          return undefined;
 	
@@ -24554,7 +24304,7 @@
 	exports.default = FoodAnim;
 
 /***/ },
-/* 201 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24685,7 +24435,7 @@
 	exports.default = StudentAnim;
 
 /***/ },
-/* 202 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24700,7 +24450,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _sleep_minigame = __webpack_require__(203);
+	var _sleep_minigame = __webpack_require__(191);
 	
 	var _sleep_minigame2 = _interopRequireDefault(_sleep_minigame);
 	
@@ -24894,7 +24644,7 @@
 	        if (parseInt(time[1]) < 30) {
 	          return ["But if you keep your eyes closed too long then you'll fall asleep.", "", "Losing consciousness gets you a strike.", "", "10 strikes and you're OUT!!!!"];
 	        } else {
-	          return ["OK, with that out of the way, we will begin learning Ruby!", "", " Take a look at this code:"];
+	          return ["OK, with that out of the way, we will begin learning ruby!", "", " Take a look at this code:"];
 	        }
 	      } else {
 	        return ["def my_each", "..i = 0", "..while i < self.length", "....yield self[i]", "....i += 1", "..end", "..self[0]", "end"];
@@ -25057,7 +24807,7 @@
 	exports.default = LectureSeshScreen;
 
 /***/ },
-/* 203 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -25124,7 +24874,7 @@
 	exports.default = SleepMinigame;
 
 /***/ },
-/* 204 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25139,19 +24889,19 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _pairs_sesh_driving_screen = __webpack_require__(205);
+	var _pairs_sesh_driving_screen = __webpack_require__(193);
 	
 	var _pairs_sesh_driving_screen2 = _interopRequireDefault(_pairs_sesh_driving_screen);
 	
-	var _pairs_sesh_navigating_screen = __webpack_require__(207);
+	var _pairs_sesh_navigating_screen = __webpack_require__(195);
 	
 	var _pairs_sesh_navigating_screen2 = _interopRequireDefault(_pairs_sesh_navigating_screen);
 	
-	var _pairs_sesh_open_screen = __webpack_require__(208);
+	var _pairs_sesh_open_screen = __webpack_require__(196);
 	
 	var _pairs_sesh_open_screen2 = _interopRequireDefault(_pairs_sesh_open_screen);
 	
-	var _pairs_sesh_results = __webpack_require__(209);
+	var _pairs_sesh_results = __webpack_require__(197);
 	
 	var _pairs_sesh_results2 = _interopRequireDefault(_pairs_sesh_results);
 	
@@ -25310,7 +25060,7 @@
 	exports.default = PairsSeshScreen;
 
 /***/ },
-/* 205 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25329,7 +25079,7 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _pairs_line = __webpack_require__(206);
+	var _pairs_line = __webpack_require__(194);
 	
 	var _pairs_line2 = _interopRequireDefault(_pairs_line);
 	
@@ -25602,7 +25352,7 @@
 	exports.default = PairsSeshDrivingScreen;
 
 /***/ },
-/* 206 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25705,7 +25455,7 @@
 	exports.default = PairsLine;
 
 /***/ },
-/* 207 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25999,7 +25749,7 @@
 	exports.default = PairsSeshNavigatingScreen;
 
 /***/ },
-/* 208 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26068,7 +25818,7 @@
 	exports.default = PairsSeshOpenScreen;
 
 /***/ },
-/* 209 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26087,7 +25837,7 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _pairs_line = __webpack_require__(206);
+	var _pairs_line = __webpack_require__(194);
 	
 	var _pairs_line2 = _interopRequireDefault(_pairs_line);
 	
@@ -26337,7 +26087,7 @@
 	exports.default = PairsSeshResults;
 
 /***/ },
-/* 210 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26432,7 +26182,7 @@
 	exports.default = StrikeScreen;
 
 /***/ },
-/* 211 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26522,7 +26272,7 @@
 	exports.default = CongratsScreen;
 
 /***/ },
-/* 212 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26614,7 +26364,6 @@
 	          }
 	        }
 	        if (this.player.newFace) {
-	          console.log("newFace");
 	          this.face = this.getDiv(this.player.newFace.filename);
 	          this.player.newFace.duration--;
 	          if (this.player.newFace.duration <= 0) {

@@ -22,19 +22,26 @@ class GameMain extends React.Component {
     //HAVE TO DEAL WITH ATE LUNCH SHIT - reset each day, these should be tracked in day
     this.player = new Player("Guest");
     this.playerAnim = new playerAnim({player: this.player});
-    this.week = new Week(this.player);
+    if (this.player.week===undefined) {
+      this.week = new Week(this.player);
+      this.player.week = this.week;
+      this.player.day = this.week.day;
+    } else {
+      this.week = this.player.week;
+    }
 
     this.state = {
       currentPos: -1,
       message: this.player.message,
       clock: this.player.clock.time(),
-      ruby: this.player.skills.Ruby,
+      ruby: this.player.skills.ruby,
       focus: this.player.focus
     };
     this.attributeTicker = 0;
     this.tick = this.tick.bind(this);
     this.updateAttributes = this.updateAttributes.bind(this);
     this.checkAteLunch = this.checkAteLunch.bind(this);
+    this.leaving = this.leaving.bind(this);
     this.ticksPerSecond = 100; //<<=If changed then change Clock class
     this.intervalTime = 1000 / this.ticksPerSecond;
     this.interval = window.setInterval(()=>this.tick(),this.intervalTime);
@@ -57,14 +64,33 @@ class GameMain extends React.Component {
     }
     this.setState({
       message: this.updateMessage(),
-      ruby: Math.floor(this.player.skills.Ruby/10),
+      ruby: Math.floor(this.player.skills.ruby/10),
       focus: this.player.focus
     });
     //animationFramE ????
   }
 
+  leaving() {
+    //steps:
+    // handle normal leave with default alarm set to 7am
+    //     after setting the alarm, it will calc the wakeup time and pass to new day
+    //    set new attributes and reset player
+    //    be sure to set this.currentSesh to 0;
+
+    //add alarm
+    //add option to go out
+    //handle leaving early
+    //handle slept in office
+    //handle weekend
+  }
+
+
+
   updateSession() {
     //WARNINGS SHOULD GO FIRST
+    if (this.player.leaving) {
+      this.handleLeave();
+    }
     if (this.player.session === 0 && this.player.currentPos !==12) {
       if (this.player.clock.is(["9","00","am"])) {
        this.player.newStrike = {message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9,1], newPos: this.player.currentPos, newClockSpeed: this.player.defaultClockSpeed, };
@@ -107,23 +133,22 @@ class GameMain extends React.Component {
 
   updateAttributes(dt) { //REDO THIS SOON
     //use helper methods for each attribute
-
       var maxEnergy = this.player.sleepBank*this.player.noLunchPenalty;
-      console.log(maxEnergy);
-      if (this.player.currentPos === 11 && this.player.session !==3) {
+      var realMax = Math.max(this.player.focus, maxEnergy);
+      if (this.player.working()) {
         this.player.focus -=0.5;
-      }
-      else if (this.player.currentPos !==12 && this.player.session !==3) {
-        if (this.player.focus>=30) {
-          this.player.focus+=2.7;
+      } else {
+        if (this.player.focus < maxEnergy) {
+          this.player.focus += this.player.focus<30 ? 0.3 : 2.7; // first 30 charges super slow
         }
-
-        this.player.focus+=0.3;
       }
-      if (this.player.focus>maxEnergy) {this.player.focus = maxEnergy;}
       if (this.player.focus<0) {this.player.focus = 0;}
-
-  }
+      if (this.player.focus>100) {this.player.focus = 100;}
+      if (this.player.sleepBank<0) {this.player.sleepBank = 0;}
+      if (this.player.sleepBank>100) {this.player.sleepBank = 100;}
+      if (this.player.happiness<0) {this.player.happiness = 0;}
+      if (this.player.happiness>100) {this.player.happiness = 100;}
+    }
 
   sesh() { // change this to a switch
 
@@ -184,7 +209,7 @@ class GameMain extends React.Component {
     //{array} or <component className="" onClick={}
     return (
       <section>
-        <span className="game-title">CODE CAMP SIM (ver 0.7.2)</span>
+        <span className="game-title">CODE CAMP SIM (ver 0.7.5)</span>
 
         <div className="game-middle-container">
           {this.sesh()}

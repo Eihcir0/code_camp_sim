@@ -159,7 +159,7 @@ class LectureSeshScreen extends React.Component {
     } else if (time[0]==="10") {
       if (parseInt(time[1])<30) {
         return ["But if you keep your eyes closed too long then you'll fall asleep.","",  "Losing consciousness gets you a strike.","", "10 strikes and you're OUT!!!!"];
-      } else {return ["OK, with that out of the way, we will begin learning Ruby!",""," Take a look at this code:"];}
+      } else {return ["OK, with that out of the way, we will begin learning ruby!",""," Take a look at this code:"];}
     } else {
     return ["def my_each","..i = 0","..while i < self.length","....yield self[i]","....i += 1", "..end", "..self[0]","end"];
     }
