@@ -14,10 +14,18 @@ class Day {
   constructor (player, arrivalTime) {
     this.player = player;
     if (this.player.dayNum === 1) {
-      arrivalTime = ["08","30","am"];
+      arrivalTime = ["08","30","pm"];
     }
     this.player.clock = new Clock(arrivalTime, this.player.defaultClockSpeed);
     this.player.currentPos = 0;
+    this.player.ateDonut = false;
+    this.player.lastCoffee = [4,0];
+    this.player.ateLunch = false;
+    this.beginningScore = this.player.score;
+    this.beginningSkillPoints =
+    this.player.skills[this.player.currentSkill] ? this.player.skills[this.player.currentSkill] : 0;
+    this.beginningHappiness = this.player.happiness;
+
 
   }
 

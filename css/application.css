@@ -96,11 +96,16 @@ table {
 	-ms-user-select: none;
 	-o-user-select: none;
 	user-select: none;
+	left: 877px;
+  top: 107px;
+  position: absolute;
   height: 480px;
-  width: 150px;
+  width: 184px;
   background-color: lightgrey;
   margin: 20px;
   padding: 10px;
+	border-radius: 6px;
+	border: 1px solid black;
 }
 
 .game-messages {
@@ -123,6 +128,9 @@ table {
 	margin-left: 120px;
 	margin-top: 20px;
 	border: 1px solid blanchedalmond;
+	position: absolute;
+top: 616px;
+height: 83px;
 
 }
 
@@ -137,24 +145,25 @@ table {
   display: inline-block;
   width: 10%;
   padding: 8px;
+	vertical-align: middle;
 }
 
 .score {
   font-size: 36px;
   display: inline-block;
-  padding-top: 20px;
+  padding-top: 13px;
 }
 .player-title {
   display: inline-block;
   text-align: center;
-  margin-left: 25px
+  margin-left: 5px
 }
 
 .player-pic {
 	width: 169px;
 	position: absolute;
-	top: 496px;
-	left: 912px;
+	top: 356px;
+	left: 16px;
 	clip: rect(10px,170px,125px,0px);
 }}
 
@@ -376,7 +385,7 @@ textarea {
     width: 200px;
 }
 
-.pairs-results {
+.pairs-results, .day-results {
 	width: 752px;
 	margin-left: 100px;
 	background: black;
@@ -655,3 +664,6 @@ span, .x, .eyes {
 		font-family: 'Exo 2', sans-serif;
 		border-radius: 12px;
 		box-shadow: 1px 1px 1px 1px;}
+meter {
+	vertical-align: middle;
+}

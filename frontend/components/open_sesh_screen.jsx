@@ -59,7 +59,7 @@ class OpenSesh extends React.Component {
     this.lastTickerCount = this.player.clock.tickCounter;
     this.updateCount = 0;
     this.player.ateDonut = false;
-    this.player.lastCoffee = [4,0,"am"];
+    this.player.lastCoffee = ["4","0","am"];
     this.leavingTime = false;
 
 
@@ -186,10 +186,10 @@ class OpenSesh extends React.Component {
   }
 
   handleLeave() {
-    this.player.clock.pause();
+    this.player.clock.unpause();
+    this.cancelAnimationFrame();
     this.leavingTime = false;
     this.player.leaving = true;
-    this.cancelAnimationFrame();
   }
 
 
@@ -206,24 +206,21 @@ class OpenSesh extends React.Component {
           LEAVE WORKSTATION
         </button>
 
-        <form target="_blank" action=
-            "https://gist.github.com/Eihcir0/865d67dc23378110ec761986ccca4370">
-            <button className="middle-button3"
-              type="submit" value="GO TO GIST">
-              GO TO GIST
-            </button>
-        </form>
+        <button className="middle-button3"
+              onClick={this.handleSave}>
+              MESSAGE BOARDS
+        </button>
       </div>
     );
   }
 
   handleSave() {
-    this.player.message = "🚧 This feature is currently underdevelopment 🚧";
+    this.player.tempMessage = "🚧 This feature is currently in development 🚧";
   }
 
 
   handleBoards() {
-    this.player.message = "🚧 This feature is currently underdevelopment 🚧";
+    this.player.tempMessage = "🚧 This feature is currently in development 🚧";
 
   }
 
@@ -447,29 +444,35 @@ class OpenSesh extends React.Component {
       default:
           this.leaving();
     }
-    this.player.clock.pause();
+
   }
 
   leavingEarly() {
-    var now = this.player.clock.time();
-    var strikes;
-    switch (true) {
-      case this.player.clock.isBetween([6,0],[8,59]):
-        strikes = 4;
-        break;
-      case this.player.clock.isBetween([9,0],[9,29]):
-        strikes = 3;
-        break;
-      case this.player.clock.isBetween([9,30],[13,29]):
-        strikes = 2;
-        break;
-      default:
-    }
-    this.player.tempMessage = `ARE YOU SURE YOU WANT TO LEAVE EARLY?  You will receive ${strikes} strikes for missing the rest of the day's sessions.`;
-    this.leavingTime = "early";
+    this.player.tempMessage = "🚧 Leave school early feature is in development 🚧";
+
+
+
+    // var now = this.player.clock.time();
+    // this.player.clock.pause();
+    // var strikes;
+    // switch (true) {
+    //   case this.player.clock.isBetween([6,0],[8,59]):
+    //     strikes = 4;
+    //     break;
+    //   case this.player.clock.isBetween([9,0],[9,29]):
+    //     strikes = 3;
+    //     break;
+    //   case this.player.clock.isBetween([9,30],[13,29]):
+    //     strikes = 2;
+    //     break;
+    //   default:
+    // }
+    // this.player.tempMessage = `ARE YOU SURE YOU WANT TO LEAVE EARLY?  You will receive ${strikes} strikes for missing the rest of the day's sessions.`;
+    // this.leavingTime = "early";
   }
 
   leaving() {
+    this.player.clock.pause();
     this.player.tempMessage = "Please confirm you want to leave.";
     this.leavingTime = "normal";
   }

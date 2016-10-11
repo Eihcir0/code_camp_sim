@@ -29,8 +29,15 @@ class Week {
     // get alarm, calc new stats and arrival time within session(nighttime)
     console.log("advancing day");
     this.player.dayNum +=1;
+    if (!(this.currentWeekDay())) {this.weekend();}
+    var now = this.player.clock.time();
+    var diff = this.player.clock.diff(now)/60;
+    this.player.sleepBank -= diff*5;
+    if (this.player.sleepBank<20) {this.player.sleepBank=20;}
+    this.player.focus = this.player.sleepBank;
+    var day = new Day(this.player, [8,30]);
     this.player.session = 0;
-
+    this.player.leaving=false;
 
   }
 

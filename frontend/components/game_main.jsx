@@ -8,6 +8,7 @@ import Week from './../../game_logic/week.js';
 import playerAnim from './../../game_logic/animation_logic/player_anim.js';
 import OpenSeshScreen from './open_sesh_screen.jsx';
 import LectureSeshScreen from './lecture_sesh_screen.jsx';
+import NightSeshScreen from './night_sesh_screen.jsx';
 import PairsSeshScreen from './pairs_sesh_screen.jsx';
 import StrikeScreen from './strike_screen.jsx';
 import CongratsScreen from './congrats_screen.jsx';
@@ -41,7 +42,7 @@ class GameMain extends React.Component {
     this.tick = this.tick.bind(this);
     this.updateAttributes = this.updateAttributes.bind(this);
     this.checkAteLunch = this.checkAteLunch.bind(this);
-    this.leaving = this.leaving.bind(this);
+    this.handleLeaving = this.handleLeaving.bind(this);
     this.ticksPerSecond = 100; //<<=If changed then change Clock class
     this.intervalTime = 1000 / this.ticksPerSecond;
     this.interval = window.setInterval(()=>this.tick(),this.intervalTime);
@@ -70,7 +71,12 @@ class GameMain extends React.Component {
     //animationFramE ????
   }
 
-  leaving() {
+  handleLeaving() {
+    this.player.tempMessage = `Your current rank is ${this.player.scoreTitle()}.  Here are the results of the day.`;
+    //handle strikes for leaving early
+    //handle slept in office
+    //handle weekend
+    this.player.session = 5;
     //steps:
     // handle normal leave with default alarm set to 7am
     //     after setting the alarm, it will calc the wakeup time and pass to new day
@@ -79,9 +85,6 @@ class GameMain extends React.Component {
 
     //add alarm
     //add option to go out
-    //handle leaving early
-    //handle slept in office
-    //handle weekend
   }
 
 
@@ -89,7 +92,7 @@ class GameMain extends React.Component {
   updateSession() {
     //WARNINGS SHOULD GO FIRST
     if (this.player.leaving) {
-      this.handleLeave();
+      this.handleLeaving();
     }
     if (this.player.session === 0 && this.player.currentPos !==12) {
       if (this.player.clock.is(["9","00","am"])) {
@@ -164,7 +167,10 @@ class GameMain extends React.Component {
         <CongratsScreen player={this.player}/>
       );
     }
-    else if (this.player.session == 3) {
+    else if (this.player.session === 5) {
+      return (<NightSeshScreen  player={this.player}/>);
+    }
+    else if (this.player.session === 3) {
       return (<PairsSeshScreen  player={this.player}/>);
     }
 
@@ -215,15 +221,15 @@ class GameMain extends React.Component {
           {this.sesh()}
           <div className="game-right-side">
             <div>
-              w1d2    {this.state.clock[0]}:{this.state.clock[1]}{this.state.clock[2]}</div>
+              w{this.player.weekNum}d{this.player.dayNum}    {this.state.clock[0]}:{this.state.clock[1]}{this.state.clock[2]}</div>
             <div className="stats-bar">
               <meter value={this.player.sleepBank} min="0" max="100" low="30" high="70" optimum="100"/>
               <img className="icon" src="./app/assets/images/bed.png" />
               <meter value={this.player.happiness} min="0" max="100" low="30" high="70" optimum="100"/>
               <img className="icon" src="./app/assets/images/happy.png" />
               <meter value={this.player.focus} min="0" max="100" low="30" high="70" optimum="100"/>
-              <img className="icon" src="./app/assets/images/star.png" />
-              <span className="score">{this.player.score}</span>
+              <img className="icon" src="./app/assets/images/star.png" /><br/>
+              <span className="score">{this.player.score}</span><br/>
               <span className="player-title">
                 <br/>LEVEL: {this.player.scoreTitle()}
               </span>

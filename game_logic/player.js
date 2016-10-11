@@ -13,8 +13,8 @@ import FireAnim from
 class Player {
   constructor(name, obj) {
     this.name = name || "Richie";
-    this.defaultClockSpeed = obj ? obj.defaultClockSpeed : 1;
-    this.clock = obj ? obj.clock : new Clock([23,50],this.defaultClockSpeed);
+    this.defaultClockSpeed = obj ? obj.defaultClockSpeed : 2;
+    this.clock = obj ? obj.clock : null;
     this.tempMessage =
       obj ? obj.tempMessage
       : "I'm the brains, you're the muscle!  Use your muscles to move the mouse!";
@@ -77,6 +77,18 @@ class Player {
     if (this.score < 50000) {return "n00b";}
     if (this.score < 100000) {return "rookie";} //need better names
     if (this.score < 150000) {return "beginner";}
+    if (this.score < 200000) {return "student";}
+    if (this.score < 250000) {return "good student";}
+    if (this.score < 300000) {return "hobbyist";}
+    if (this.score < 400000) {return "intermediate";}
+    if (this.score < 500000) {return "hot shot";}
+    if (this.score < 600000) {return "guru-in-training";}
+    if (this.score < 700000) {return "coding ace";}
+    if (this.score < 800000) {return "7x programmer";}
+    if (this.score < 900000) {return "8x programmer";}
+    if (this.score < 1000000) {return "9x programmer";}
+    if (this.score < 2000000) {return "10x programmer";}
+    return "cheater";
   }
 
   workstationGo(playerAnim) {

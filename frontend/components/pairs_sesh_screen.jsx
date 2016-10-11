@@ -8,7 +8,6 @@ import Clock from './../../game_logic/clock.js';
 class PairsSeshScreen extends React.Component {
   constructor (props) {
     super(props);
-    // this.currentSesh = this.currentSesh.bind(this);
     this.props.player.clock = new Clock([13,31],8);
     this.handleClick = this.handleClick.bind(this);
     this.handleOpenClick = this.handleOpenClick.bind(this);

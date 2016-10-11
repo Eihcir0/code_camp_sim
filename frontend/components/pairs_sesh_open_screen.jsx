@@ -15,16 +15,16 @@ class PairsSeshOpenScreen extends React.Component {
   }
 
   render() {
-    return (
-      <div className="pairs-open">
-        It's time for PAIR PROGRAMMING!
-        The real point of pair programming in Code Camp is to learn how to
-        be a good, collaborative pair programmer. You shouldn't worry as much about
-        the code as you should try to switch with your partner every 30 minutes.
+      return (
+        <div className="pairs-open">
+          PAIR PROGRAMMING TIME!
+          Be a good, collaborative pair programmer!
+          Switch with your partner every 30 minutes!!
+          That is much more important than getting the code right...
 
-        <button className="lets-pair" onClick={this.handleClick}>LET'S PAIR!</button>
+          <button className="lets-pair" onClick={this.handleClick}>LET'S PAIR!</button>
 
-      </div>
+        </div>
 
 
     );

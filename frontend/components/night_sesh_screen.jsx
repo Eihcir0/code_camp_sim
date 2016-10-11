@@ -1,0 +1,137 @@
+import React from 'react';
+import Clock from './../../game_logic/clock.js';
+import Week from './../../game_logic/week.js';
+
+class NightSeshScreen extends React.Component {
+    constructor (props) {
+      super(props);
+      this.player = this.props.player;
+      this.week = this.player.week;
+      this.day = this.player.day;
+      this.handleClick = this.handleClick.bind(this);
+      this.startTime = Date.now();
+      this.ticker = 0;
+      new Audio("./app/assets/sounds/typing.wav").play();
+      this.redStyle={color: "red"};
+      this.greenStyle={color: "geen"};
+      this.done=false;
+      this.interval = window.setInterval(()=>this.ticker++,100);
+      }
+
+
+    scoreChange() {
+      var change = this.player.score - this.player.day.beginningScore;
+      var changeText = `+ ${change}`;
+      if (this.ticker===20) {
+        new Audio("./app/assets/sounds/explosion.wav").play();
+      }
+      if (this.ticker<20) {
+        return (
+
+          <div>DAY {this.player.dayNum} RESULTS<br/><br/><br/>
+            <br/>SCORE </div>
+        );
+      } else {
+        return (
+          <div>DAY {this.player.dayNum} RESULTS<br/><br/><br/>
+            <br/>SCORE
+              <span className="pair-result-number" style={change<0 ? this.greenStyle :   this.redStyle}>
+                {changeText}
+              </span>
+          </div>
+        );
+      }
+
+    }
+
+    skillChange() {
+      var change = this.player.skills[this.player.currentSkill] - this.day.beginningSkillPoints;
+      var changeText = `+ ${change}`;
+      if (this.ticker===40) {
+        new Audio("./app/assets/sounds/explosion.wav").play();
+      }
+      if (this.ticker<40) {
+        return (
+
+          <div><br/>SCORE </div>
+        );
+      } else {
+        return (
+
+          <div>
+            <br/>SCORE
+              <span className="pair-result-number" style={change<0 ? this.greenStyle :   this.redStyle}>
+                {changeText}
+              </span>
+          </div>
+        );
+      }
+
+    }
+
+    happinessChange() {
+      var change = this.player.happiness - this.day.beginningHappiness;
+      var changeText = change < 0 ? `- ${change}` : `+ ${change}`;
+      if (this.ticker===60) {
+        new Audio("./app/assets/sounds/explosion.wav").play();
+      }
+      if (this.ticker<60) {
+        return (
+
+          <div><br/>HAPPINESS </div>
+        );
+      } else {
+        this.done = true;
+        return (
+
+          <div>
+            <br/>HAPPINESS
+              <span className="pair-result-number" style={change<0 ? this.greenStyle :   this.redStyle}>
+                {changeText}
+              </span>
+          </div>
+        );
+      }
+
+    }
+
+    handleClick() {
+      clearInterval(this.interval);
+      var newClockSpeed;
+      //cancel interval
+      if (this.done===false) {return;}
+
+      this.player.week.advanceDay();
+      this.player.session = 0;
+
+
+    }
+
+    render() {
+      return (
+        <div className="day-results" onClick={this.handleClick}>
+          <br/>
+          {this.scoreChange()}
+          {this.skillChange()}
+          {this.happinessChange()}
+        </div>
+      );
+    }
+
+    // render () {   OLD ONE
+    //   return (
+    //     <div className="pairs-results" onClick={this.handleClick}>
+    //       driving lines:{this.props.drivingLines[0]} out of {this.props.drivingLines[1]} <br/>
+    // navigating lines:{this.props.navigatingLines[0]} out of {this.props.navigatingLines[1]} <br/>
+    //     good switches: {this.props.goodSwitches} <br/>
+    //   bad Switches: {this.props.badSwitches} <br/>
+    //     </div>
+    //   );
+    // }
+
+  }//end component
+
+
+
+
+export default NightSeshScreen;

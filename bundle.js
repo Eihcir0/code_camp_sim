@@ -21474,6 +21474,10 @@
 	
 	var _lecture_sesh_screen2 = _interopRequireDefault(_lecture_sesh_screen);
 	
+	var _night_sesh_screen = __webpack_require__(201);
+	
+	var _night_sesh_screen2 = _interopRequireDefault(_night_sesh_screen);
+	
 	var _pairs_sesh_screen = __webpack_require__(192);
 	
 	var _pairs_sesh_screen2 = _interopRequireDefault(_pairs_sesh_screen);
@@ -21534,7 +21538,7 @@
 	    _this.tick = _this.tick.bind(_this);
 	    _this.updateAttributes = _this.updateAttributes.bind(_this);
 	    _this.checkAteLunch = _this.checkAteLunch.bind(_this);
-	    _this.leaving = _this.leaving.bind(_this);
+	    _this.handleLeaving = _this.handleLeaving.bind(_this);
 	    _this.ticksPerSecond = 100; //<<=If changed then change Clock class
 	    _this.intervalTime = 1000 / _this.ticksPerSecond;
 	    _this.interval = window.setInterval(function () {
@@ -21566,8 +21570,13 @@
 	      //animationFramE ????
 	    }
 	  }, {
-	    key: 'leaving',
-	    value: function leaving() {
+	    key: 'handleLeaving',
+	    value: function handleLeaving() {
+	      this.player.tempMessage = 'Your current rank is ' + this.player.scoreTitle() + '.  Here are the results of the day.';
+	      //handle strikes for leaving early
+	      //handle slept in office
+	      //handle weekend
+	      this.player.session = 5;
 	      //steps:
 	      // handle normal leave with default alarm set to 7am
 	      //     after setting the alarm, it will calc the wakeup time and pass to new day
@@ -21576,16 +21585,13 @@
 	
 	      //add alarm
 	      //add option to go out
-	      //handle leaving early
-	      //handle slept in office
-	      //handle weekend
 	    }
 	  }, {
 	    key: 'updateSession',
 	    value: function updateSession() {
 	      //WARNINGS SHOULD GO FIRST
 	      if (this.player.leaving) {
-	        this.handleLeave();
+	        this.handleLeaving();
 	      }
 	      if (this.player.session === 0 && this.player.currentPos !== 12) {
 	        if (this.player.clock.is(["9", "00", "am"])) {
@@ -21669,7 +21675,9 @@
 	      } else if (this.player.newCongrats) {
 	        this.player.clock.pause();
 	        return _react2.default.createElement(_congrats_screen2.default, { player: this.player });
-	      } else if (this.player.session == 3) {
+	      } else if (this.player.session === 5) {
+	        return _react2.default.createElement(_night_sesh_screen2.default, { player: this.player });
+	      } else if (this.player.session === 3) {
 	        return _react2.default.createElement(_pairs_sesh_screen2.default, { player: this.player });
 	      } else if (this.player.currentPos === 12) {
 	        return _react2.default.createElement(_lecture_sesh_screen2.default, { className: 'lecture-sesh',
@@ -21723,7 +21731,11 @@
 	            _react2.default.createElement(
 	              'div',
 	              null,
-	              'w1d2    ',
+	              'w',
+	              this.player.weekNum,
+	              'd',
+	              this.player.dayNum,
+	              '    ',
 	              this.state.clock[0],
 	              ':',
 	              this.state.clock[1],
@@ -21738,11 +21750,13 @@
 	              _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/happy.png' }),
 	              _react2.default.createElement('meter', { value: this.player.focus, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
 	              _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/star.png' }),
+	              _react2.default.createElement('br', null),
 	              _react2.default.createElement(
 	                'span',
 	                { className: 'score' },
 	                this.player.score
 	              ),
+	              _react2.default.createElement('br', null),
 	              _react2.default.createElement(
 	                'span',
 	                { className: 'player-title' },
@@ -21905,8 +21919,8 @@
 	    _classCallCheck(this, Player);
 	
 	    this.name = name || "Richie";
-	    this.defaultClockSpeed = obj ? obj.defaultClockSpeed : 1;
-	    this.clock = obj ? obj.clock : new _clock2.default([23, 50], this.defaultClockSpeed);
+	    this.defaultClockSpeed = obj ? obj.defaultClockSpeed : 2;
+	    this.clock = obj ? obj.clock : null;
 	    this.tempMessage = obj ? obj.tempMessage : "I'm the brains, you're the muscle!  Use your muscles to move the mouse!";
 	    this.currentEmotion = obj ? obj.currentEmotion : "excited";
 	    this.info = obj ? obj.info : "";
@@ -21975,6 +21989,40 @@
 	      if (this.score < 150000) {
 	        return "beginner";
 	      }
+	      if (this.score < 200000) {
+	        return "student";
+	      }
+	      if (this.score < 250000) {
+	        return "good student";
+	      }
+	      if (this.score < 300000) {
+	        return "hobbyist";
+	      }
+	      if (this.score < 400000) {
+	        return "intermediate";
+	      }
+	      if (this.score < 500000) {
+	        return "hot shot";
+	      }
+	      if (this.score < 600000) {
+	        return "guru-in-training";
+	      }
+	      if (this.score < 700000) {
+	        return "coding ace";
+	      }
+	      if (this.score < 800000) {
+	        return "7x programmer";
+	      }
+	      if (this.score < 900000) {
+	        return "8x programmer";
+	      }
+	      if (this.score < 1000000) {
+	        return "9x programmer";
+	      }
+	      if (this.score < 2000000) {
+	        return "10x programmer";
+	      }
+	      return "cheater";
 	    }
 	  }, {
 	    key: 'workstationGo',
@@ -22846,7 +22894,19 @@
 	      // get alarm, calc new stats and arrival time within session(nighttime)
 	      console.log("advancing day");
 	      this.player.dayNum += 1;
+	      if (!this.currentWeekDay()) {
+	        this.weekend();
+	      }
+	      var now = this.player.clock.time();
+	      var diff = this.player.clock.diff(now) / 60;
+	      this.player.sleepBank -= diff * 5;
+	      if (this.player.sleepBank < 20) {
+	        this.player.sleepBank = 20;
+	      }
+	      this.player.focus = this.player.sleepBank;
+	      var day = new _day2.default(this.player, [8, 30]);
 	      this.player.session = 0;
+	      this.player.leaving = false;
 	    }
 	  }, {
 	    key: "weekEnd",
@@ -22898,10 +22958,16 @@
 	
 	    this.player = player;
 	    if (this.player.dayNum === 1) {
-	      arrivalTime = ["08", "30", "am"];
+	      arrivalTime = ["08", "30", "pm"];
 	    }
 	    this.player.clock = new _clock2.default(arrivalTime, this.player.defaultClockSpeed);
 	    this.player.currentPos = 0;
+	    this.player.ateDonut = false;
+	    this.player.lastCoffee = [4, 0];
+	    this.player.ateLunch = false;
+	    this.beginningScore = this.player.score;
+	    this.beginningSkillPoints = this.player.skills[this.player.currentSkill] ? this.player.skills[this.player.currentSkill] : 0;
+	    this.beginningHappiness = this.player.happiness;
 	  }
 	
 	  _createClass(Day, [{
@@ -23416,7 +23482,7 @@
 	    _this.lastTickerCount = _this.player.clock.tickCounter;
 	    _this.updateCount = 0;
 	    _this.player.ateDonut = false;
-	    _this.player.lastCoffee = [4, 0, "am"];
+	    _this.player.lastCoffee = ["4", "0", "am"];
 	    _this.leavingTime = false;
 	
 	    // var funs = [ //bind functions
@@ -23582,10 +23648,10 @@
 	  }, {
 	    key: 'handleLeave',
 	    value: function handleLeave() {
-	      this.player.clock.pause();
+	      this.player.clock.unpause();
+	      this.cancelAnimationFrame();
 	      this.leavingTime = false;
 	      this.player.leaving = true;
-	      this.cancelAnimationFrame();
 	    }
 	  }, {
 	    key: 'workStationButtons',
@@ -23606,26 +23672,22 @@
 	          'LEAVE WORKSTATION'
 	        ),
 	        _react2.default.createElement(
-	          'form',
-	          { target: '_blank', action: 'https://gist.github.com/Eihcir0/865d67dc23378110ec761986ccca4370' },
-	          _react2.default.createElement(
-	            'button',
-	            { className: 'middle-button3',
-	              type: 'submit', value: 'GO TO GIST' },
-	            'GO TO GIST'
-	          )
+	          'button',
+	          { className: 'middle-button3',
+	            onClick: this.handleSave },
+	          'MESSAGE BOARDS'
 	        )
 	      );
 	    }
 	  }, {
 	    key: 'handleSave',
 	    value: function handleSave() {
-	      this.player.message = "🚧 This feature is currently underdevelopment 🚧";
+	      this.player.tempMessage = "🚧 This feature is currently in development 🚧";
 	    }
 	  }, {
 	    key: 'handleBoards',
 	    value: function handleBoards() {
-	      this.player.message = "🚧 This feature is currently underdevelopment 🚧";
+	      this.player.tempMessage = "🚧 This feature is currently in development 🚧";
 	    }
 	  }, {
 	    key: 'handleGetOffComputer',
@@ -23878,31 +23940,34 @@
 	        default:
 	          this.leaving();
 	      }
-	      this.player.clock.pause();
 	    }
 	  }, {
 	    key: 'leavingEarly',
 	    value: function leavingEarly() {
-	      var now = this.player.clock.time();
-	      var strikes;
-	      switch (true) {
-	        case this.player.clock.isBetween([6, 0], [8, 59]):
-	          strikes = 4;
-	          break;
-	        case this.player.clock.isBetween([9, 0], [9, 29]):
-	          strikes = 3;
-	          break;
-	        case this.player.clock.isBetween([9, 30], [13, 29]):
-	          strikes = 2;
-	          break;
-	        default:
-	      }
-	      this.player.tempMessage = 'ARE YOU SURE YOU WANT TO LEAVE EARLY?  You will receive ' + strikes + ' strikes for missing the rest of the day\'s sessions.';
-	      this.leavingTime = "early";
+	      this.player.tempMessage = "🚧 Leave school early feature is in development 🚧";
+	
+	      // var now = this.player.clock.time();
+	      // this.player.clock.pause();
+	      // var strikes;
+	      // switch (true) {
+	      //   case this.player.clock.isBetween([6,0],[8,59]):
+	      //     strikes = 4;
+	      //     break;
+	      //   case this.player.clock.isBetween([9,0],[9,29]):
+	      //     strikes = 3;
+	      //     break;
+	      //   case this.player.clock.isBetween([9,30],[13,29]):
+	      //     strikes = 2;
+	      //     break;
+	      //   default:
+	      // }
+	      // this.player.tempMessage = `ARE YOU SURE YOU WANT TO LEAVE EARLY?  You will receive ${strikes} strikes for missing the rest of the day's sessions.`;
+	      // this.leavingTime = "early";
 	    }
 	  }, {
 	    key: 'leaving',
 	    value: function leaving() {
+	      this.player.clock.pause();
 	      this.player.tempMessage = "Please confirm you want to leave.";
 	      this.leavingTime = "normal";
 	    }
@@ -24923,7 +24988,6 @@
 	  function PairsSeshScreen(props) {
 	    _classCallCheck(this, PairsSeshScreen);
 	
-	    // this.currentSesh = this.currentSesh.bind(this);
 	    var _this = _possibleConstructorReturn(this, (PairsSeshScreen.__proto__ || Object.getPrototypeOf(PairsSeshScreen)).call(this, props));
 	
 	    _this.props.player.clock = new _clock2.default([13, 31], 8);
@@ -25801,7 +25865,7 @@
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'pairs-open' },
-	        'It\'s time for PAIR PROGRAMMING! The real point of pair programming in Code Camp is to learn how to be a good, collaborative pair programmer. You shouldn\'t worry as much about the code as you should try to switch with your partner every 30 minutes.',
+	        'PAIR PROGRAMMING TIME! Be a good, collaborative pair programmer! Switch with your partner every 30 minutes!! That is much more important than getting the code right...',
 	        _react2.default.createElement(
 	          'button',
 	          { className: 'lets-pair', onClick: this.handleClick },
@@ -26472,6 +26536,207 @@
 	}(_react2.default.Component); //end class
 	
 	exports.default = FaceAnim;
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _clock = __webpack_require__(175);
+	
+	var _clock2 = _interopRequireDefault(_clock);
+	
+	var _week = __webpack_require__(182);
+	
+	var _week2 = _interopRequireDefault(_week);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var NightSeshScreen = function (_React$Component) {
+	  _inherits(NightSeshScreen, _React$Component);
+	
+	  function NightSeshScreen(props) {
+	    _classCallCheck(this, NightSeshScreen);
+	
+	    var _this = _possibleConstructorReturn(this, (NightSeshScreen.__proto__ || Object.getPrototypeOf(NightSeshScreen)).call(this, props));
+	
+	    _this.player = _this.props.player;
+	    _this.week = _this.player.week;
+	    _this.day = _this.player.day;
+	    _this.handleClick = _this.handleClick.bind(_this);
+	    _this.startTime = Date.now();
+	    _this.ticker = 0;
+	    new Audio("./app/assets/sounds/typing.wav").play();
+	    _this.redStyle = { color: "red" };
+	    _this.greenStyle = { color: "geen" };
+	    _this.done = false;
+	    _this.interval = window.setInterval(function () {
+	      return _this.ticker++;
+	    }, 100);
+	    return _this;
+	  }
+	
+	  _createClass(NightSeshScreen, [{
+	    key: 'scoreChange',
+	    value: function scoreChange() {
+	      var change = this.player.score - this.player.day.beginningScore;
+	      var changeText = '+ ' + change;
+	      if (this.ticker === 20) {
+	        new Audio("./app/assets/sounds/explosion.wav").play();
+	      }
+	      if (this.ticker < 20) {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          'DAY ',
+	          this.player.dayNum,
+	          ' RESULTS',
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          'SCORE '
+	        );
+	      } else {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          'DAY ',
+	          this.player.dayNum,
+	          ' RESULTS',
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          'SCORE',
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'pair-result-number', style: change < 0 ? this.greenStyle : this.redStyle },
+	            changeText
+	          )
+	        );
+	      }
+	    }
+	  }, {
+	    key: 'skillChange',
+	    value: function skillChange() {
+	      var change = this.player.skills[this.player.currentSkill] - this.day.beginningSkillPoints;
+	      var changeText = '+ ' + change;
+	      if (this.ticker === 40) {
+	        new Audio("./app/assets/sounds/explosion.wav").play();
+	      }
+	      if (this.ticker < 40) {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          'SCORE '
+	        );
+	      } else {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          'SCORE',
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'pair-result-number', style: change < 0 ? this.greenStyle : this.redStyle },
+	            changeText
+	          )
+	        );
+	      }
+	    }
+	  }, {
+	    key: 'happinessChange',
+	    value: function happinessChange() {
+	      var change = this.player.happiness - this.day.beginningHappiness;
+	      var changeText = change < 0 ? '- ' + change : '+ ' + change;
+	      if (this.ticker === 60) {
+	        new Audio("./app/assets/sounds/explosion.wav").play();
+	      }
+	      if (this.ticker < 60) {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          'HAPPINESS '
+	        );
+	      } else {
+	        this.done = true;
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          'HAPPINESS',
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'pair-result-number', style: change < 0 ? this.greenStyle : this.redStyle },
+	            changeText
+	          )
+	        );
+	      }
+	    }
+	  }, {
+	    key: 'handleClick',
+	    value: function handleClick() {
+	      clearInterval(this.interval);
+	      var newClockSpeed;
+	      //cancel interval
+	      if (this.done === false) {
+	        return;
+	      }
+	
+	      this.player.week.advanceDay();
+	      this.player.session = 0;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'day-results', onClick: this.handleClick },
+	        _react2.default.createElement('br', null),
+	        this.scoreChange(),
+	        this.skillChange(),
+	        this.happinessChange()
+	      );
+	    }
+	
+	    // render () {   OLD ONE
+	    //   return (
+	    //     <div className="pairs-results" onClick={this.handleClick}>
+	    //       driving lines:{this.props.drivingLines[0]} out of {this.props.drivingLines[1]} <br/>
+	    // navigating lines:{this.props.navigatingLines[0]} out of {this.props.navigatingLines[1]} <br/>
+	    //     good switches: {this.props.goodSwitches} <br/>
+	    //   bad Switches: {this.props.badSwitches} <br/>
+	    //     </div>
+	    //   );
+	    // }
+	
+	  }]);
+	
+	  return NightSeshScreen;
+	}(_react2.default.Component); //end component
+	
+	
+	exports.default = NightSeshScreen;
 
 /***/ }
 /******/ ]);
