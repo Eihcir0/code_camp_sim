@@ -21629,8 +21629,12 @@
 	      if (!this.player.ateLunch) {
 	        //ADD A WARNING SCREEN
 	        this.player.message = "BECAUSE YOU DIDN'T TAKE A LUNCH BREAK YOU ARE LIMITED TO HALF ENERGY FOR THE DAY";
-	        console.log("BECAUSE YOU DIDN'T TAKE A LUNCH BREAK YOU ARE LIMITED TO HALF ENERGY FOR THE DAY");
+	
 	        this.player.noLunchPenalty = 0.5;
+	        var maxEnergy = this.player.sleepBank * this.player.noLunchPenalty;
+	        if (this.player.focus > maxEnergy) {
+	          this.player.focus = maxEnergy;
+	        }
 	      }
 	    }
 	  }, {
@@ -22111,7 +22115,6 @@
 	    value: function newPoints() {
 	      var rand = Math.floor(Math.random() * 10 + 1) * 10 + this.score / 50000;
 	      var points;
-	      console.log(rand);
 	      if (rand > 95) {
 	        points = 1000;
 	      } else {
@@ -22248,39 +22251,32 @@
 	  }, {
 	    key: "isBetween",
 	    value: function isBetween(startTime, endTime) {
-	      if (startTime.length === 3) {
+	      if (startTime.length === 2) {
 	        if (startTime[0] < 12) {
 	          startTime.push("am");
 	        } else {
 	          startTime.push("pm");
-	          startTime[0] += startTime[0] == 12 ? 0 : 12;
 	        }
 	      }
-	      if (endTime.length === 3) {
+	      if (endTime.length === 2) {
 	        if (endTime[0] < 12) {
 	          endTime.push("am");
 	        } else {
-	          endTime[0] += endTime[0] == 12 ? 0 : 12;
 	          endTime.push("pm");
 	        }
 	      }
-	      var startHour = startTime[0] + (startTime[2] == "pm" ? 12 : 0);
-	      var endHour = endTime[0] + (endTime[2] == "pm" ? 12 : 0);
-	      var startMinute = startTime[1];
-	      var endMinute = endTime[1];
+	
+	      var startHour = parseInt(startTime[0]) + (startTime[2] == "pm" && startTime[0] != 12 ? 12 : 0);
+	      var endHour = parseInt(endTime[0]) + (endTime[2] == "pm" && endTime[0] != 12 ? 12 : 0);
+	      var startMinute = parseInt(startTime[1]);
+	      var endMinute = parseInt(endTime[1]);
 	      var currentTime = this.time();
 	      var currentHour = parseInt(currentTime[0]) + (currentTime[2] == "pm" && currentTime[0] !== "12" ? 12 : 0);
 	      var currentMinute = parseInt(currentTime[1]);
-	      if (currentHour > startHour && currentHour < endHour) {
-	        return true;
-	      }
-	      if (currentHour == startHour && currentMinute >= startMinute) {
-	        return true;
-	      }
-	      if (currentHour == endHour && currentMinute <= endMinute && currentMinute >= startMinute) {
-	        return true;
-	      }
-	      return false;
+	      var startTotal = startHour * 60 + startMinute;
+	      var endTotal = endHour * 60 + endMinute;
+	      var currentTotal = currentHour * 60 + currentMinute;
+	      return currentTotal <= endTotal && currentTotal >= startTotal;
 	    }
 	  }, {
 	    key: "pause",
@@ -22960,7 +22956,7 @@
 	
 	    this.player = player;
 	    if (this.player.dayNum === 1) {
-	      arrivalTime = ["08", "30", "am"];
+	      arrivalTime = ["8", "45", "am"];
 	    }
 	    this.player.clock = new _clock2.default(arrivalTime, this.player.defaultClockSpeed);
 	    this.player.currentPos = 0;
@@ -23716,7 +23712,9 @@
 	          'button',
 	          { className: 'middle-button5',
 	            onClick: this.eatsLunch },
-	          '🍲 LUNCH BREAK'
+	          '🍲 ',
+	          _react2.default.createElement('br', null),
+	          'LUNCH BREAK'
 	        );
 	      }
 	      if (this.player.clock.isBetween([8, 45], [8, 59]) && !this.player.ateDonut) {
@@ -23724,7 +23722,9 @@
 	          'button',
 	          { className: 'middle-button5',
 	            onClick: this.eatsDonut },
-	          '🍩 EAT DONUT'
+	          '🍩 ',
+	          _react2.default.createElement('br', null),
+	          'EAT DONUT'
 	        );
 	      }
 	
@@ -23735,7 +23735,9 @@
 	          'button',
 	          { className: 'middle-button4',
 	            onClick: this.drinksCoffee },
-	          '☕ DRINK COFFEE'
+	          '☕',
+	          _react2.default.createElement('br', null),
+	          'DRINK COFFEE'
 	        ),
 	        eatButton
 	      );
@@ -23778,7 +23780,7 @@
 	        this.player.happiness += 2;
 	        var now = this.player.clock.time();
 	        this.lunchTime = now;
-	        this.lunchMinutes = 5 + Math.floor(Math.random() * 30);
+	        this.lunchMinutes = 15 + Math.floor(Math.random() * 15);
 	        if (this.lunchMinutes > 15) {
 	          this.player.tempMessage = "Stuck in the microwave line!!!";
 	        }
@@ -23794,7 +23796,7 @@
 	      this.player.eatingLunch = false;
 	      this.player.ateLunch = true;
 	      this.player.tempMessage = "";
-	      this.player.message = "Be sure you're seated at your workstation by 1:30pm for pair programming!";
+	      this.player.message = "Be sure you're seated at your workstation at 1:30pm for pair programming!";
 	      var now = this.player.clock.time();
 	      this.lunchTime = null;
 	      this.player.clock = new _clock2.default(now, this.player.defaultClockSpeed);
@@ -24591,7 +24593,6 @@
 	    value: function tick() {
 	      var time = this.player.clock.time();
 	      if (this.player.clock.is(["11", "00", "am"])) {
-	        console.log("here");
 	        this.player.clock = new _clock2.default([11, 1], this.player.defaultClockSpeed * 3);
 	        this.player.clock.lastClockTickCounter = this.player.clock.tickCounter;
 	      }
@@ -24684,7 +24685,7 @@
 	        }
 	
 	        if (this.player.focus < 50 && !this.state.eyesClosed) {
-	          this.player.message = "OH NO!  You're losing focus!  You might pass out soon...........  (PRESS AND HOLD THE BUTTON TO CLOSE EYES AND REGAIN FOCUS)";
+	          this.player.message = "You're losing focus!  You'll faint soon!";
 	        } else {
 	          this.player.message = "";
 	        }
@@ -24709,13 +24710,13 @@
 	        if (parseInt(time[1]) < 30) {
 	          return ["One of the hardest parts of an intensive bootcamp like this is getting enough sleep...", "", "...and staying awake during lectures! "];
 	        } else {
-	          return ["Stare at the lecture too long, you lose focus and you'll eventually lose consciousness...", "", "To regain focus, you need to close your eyes."];
+	          return ["Stare at the lecture too long, you lose focus and you'll eventually lose consciousness..."];
 	        }
 	      } else if (time[0] === "10") {
 	        if (parseInt(time[1]) < 30) {
-	          return ["But if you keep your eyes closed too long then you'll fall asleep.", "", "Losing consciousness gets you a strike.", "", "10 strikes and you're OUT!!!!"];
+	          return ["To regain focus, you need to close your eyes.", "", "But if you keep your eyes closed too long you'll fall asleep.", ""];
 	        } else {
-	          return ["OK, with that out of the way, we will begin learning ruby!", "", " Take a look at this code:"];
+	          return ["Fainting during lecture gets you a strike.", "Falling asleep gets you a strike,", "10 strikes and you're out!", "", "OK, with that out of the way,", "let's learn Ruby!!!", "", " Take a look at this code:"];
 	        }
 	      } else {
 	        return ["def my_each", "..i = 0", "..while i < self.length", "....yield self[i]", "....i += 1", "..end", "..self[0]", "end"];
@@ -24995,7 +24996,7 @@
 	
 	    var _this = _possibleConstructorReturn(this, (PairsSeshScreen.__proto__ || Object.getPrototypeOf(PairsSeshScreen)).call(this, props));
 	
-	    _this.props.player.clock = new _clock2.default([13, 31], 8);
+	    _this.props.player.clock = new _clock2.default([13, 31], _this.props.player.defaultClockSpeed * 3);
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.handleOpenClick = _this.handleOpenClick.bind(_this);
 	    _this.sesh = _this.sesh.bind(_this);
@@ -25010,6 +25011,7 @@
 	    _this.goodSwitches = 0;
 	    _this.badSwitches = 0;
 	    _this.lastSwitch = ["1", "30", "pm"];
+	    _this.props.player.day.pairsDone = false;
 	
 	    return _this;
 	  }
@@ -25060,23 +25062,17 @@
 	    value: function sesh() {
 	      if (this.current === 0) {
 	        this.props.player.clock.pause();
-	        return _react2.default.createElement(
-	          'div',
-	          { className: 'pairs-open' },
-	          'Its time for PAIR PROGRAMMING! The real point of pair programming in Code Camp is to learn how to be a good, collaborative pair programmer. You shouldnt worry as much about the code as you should try to switch with your partner every 30 minutes.',
-	          _react2.default.createElement(
-	            'button',
-	            { className: 'lets-pair', onClick: this.handleOpenClick },
-	            'LETS PAIR!'
-	          )
-	        );
+	        return _react2.default.createElement(_pairs_sesh_open_screen2.default, { cb: this.handleOpenClick, player: this.props.player });
 	      }
 	      if (this.props.player.clock.is(["5", "00", "pm"])) {
-	
-	        this.props.player.clock.pause();
+	        this.props.player.day.pairsDone = true;
 	        this.stopDriving = true;
 	        this.stopNav = true;
 	        this.props.player.message = "Today's pair programming results are in!";
+	        var a = _react2.default.createElement(_pairs_sesh_driving_screen2.default, { done: false });
+	        var b = _react2.default.createElement(_pairs_sesh_navigating_screen2.default, { done: false });
+	
+	        this.props.player.clock.pause();
 	        this.current === 3;
 	        return _react2.default.createElement(_pairs_sesh_results2.default, {
 	          drivingLines: this.drivingLines,
@@ -25171,7 +25167,7 @@
 	    // this.main = this.main.bind(this);
 	    var _this = _possibleConstructorReturn(this, (PairsSeshDrivingScreen.__proto__ || Object.getPrototypeOf(PairsSeshDrivingScreen)).call(this, props));
 	
-	    _this.sentenceTexts = ["test", "def my_each(&prc)", "self.length.times do |i|", "prc.call(self[i])", "end", "self", "end", "def my_select(&prc)", "selects = []", "self.my_each do |item|", "if prc.call(item)", "selects << item", "end", "end", "selects", "end"];
+	    _this.sentenceTexts = ["test", "def my_each", "(&prc)", "self.length.times do |i|", "prc.call", "(self[i])", "end", "self", "end", "def my_select", "(&prc)", "selects = []", "self.my_each do |item|", "if prc.call(item)", "selects << item", "end", "end", "selects", "end"];
 	    _this.explosions = [];
 	    _this.shotSound = new Audio("./app/assets/sounds/shot.wav");
 	    _this.state = {
@@ -25212,6 +25208,7 @@
 	      this.drivingInterval = setInterval(function () {
 	        return _this2.tick();
 	      }, 50);
+	      document.getElementById("pairs-input").focus();
 	    }
 	  }, {
 	    key: 'initializeSentences',
@@ -25225,13 +25222,15 @@
 	  }, {
 	    key: 'tick',
 	    value: function tick() {
-	      if (!this.props.stopped) {
-	        if (this.props.player.clock.isBetween([17, 0], [18, 0])) {
-	          this.clearInt();
-	        } else {
-	          this.updateSentences();
-	          this.updateExplosions();
-	          document.getElementById("pairs-input").focus();
+	      if (this.props.player.day.pairsDone) {
+	        this.clearInt();
+	        return;
+	      }
+	      if (!this.props.stopped && !this.props.done) {
+	        this.updateSentences();
+	        this.updateExplosions();
+	        if (this.el) {
+	          this.el.focus();
 	        }
 	      }
 	    }
@@ -25604,6 +25603,7 @@
 	      this.canvas.width = 800;
 	      this.ctx = this.canvas.getContext("2d");
 	      this.setState({ currentInput: this.sentences[0].error });
+	      this.el = document.getElementById("pairs-input");
 	      this.navigatingInterval = setInterval(function () {
 	        return _this2.tick();
 	      }, 50);
@@ -25620,15 +25620,14 @@
 	  }, {
 	    key: 'tick',
 	    value: function tick() {
-	      if (!this.props.stopped) {
-	        if (this.props.player.clock.isBetween([17, 0], [19, 0])) {
-	          console.log("HERE BUDDY");
-	          this.clearInt();
-	        } else {
-	          this.updateSentences();
-	          this.updateExplosions();
-	          document.getElementById("pairs-input").focus();
-	        }
+	      if (this.props.player.day.pairsDone) {
+	        this.clearInt();
+	        return;
+	      }
+	      if (!this.props.stopped && !this.props.done) {
+	        this.updateSentences();
+	        this.updateExplosions();
+	        this.el.focus();
 	      }
 	    }
 	  }, {
@@ -25848,11 +25847,12 @@
 	var PairsSeshOpenScreen = function (_React$Component) {
 	  _inherits(PairsSeshOpenScreen, _React$Component);
 	
-	  function PairsSeshOpenScreen() {
+	  function PairsSeshOpenScreen(props) {
 	    _classCallCheck(this, PairsSeshOpenScreen);
 	
-	    var _this = _possibleConstructorReturn(this, (PairsSeshOpenScreen.__proto__ || Object.getPrototypeOf(PairsSeshOpenScreen)).call(this));
+	    var _this = _possibleConstructorReturn(this, (PairsSeshOpenScreen.__proto__ || Object.getPrototypeOf(PairsSeshOpenScreen)).call(this, props));
 	
+	    _this.props.player.tempMessage = "";
 	    _this.handleClick = _this.handleClick.bind(_this);
 	
 	    return _this;
@@ -25861,8 +25861,7 @@
 	  _createClass(PairsSeshOpenScreen, [{
 	    key: 'handleClick',
 	    value: function handleClick() {
-	      this.props.player.clock.unpause();
-	      this.props.current = 1;
+	      this.props.cb();
 	    }
 	  }, {
 	    key: 'render',
@@ -25870,7 +25869,16 @@
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'pairs-open' },
-	        'PAIR PROGRAMMING TIME! Be a good, collaborative pair programmer! Switch with your partner every 30 minutes!! That is much more important than getting the code right...',
+	        'PAIR PROGRAMMING TIME!',
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        'TIP: Switch with your partner every 30 minutes!!',
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        'That is more important than getting the code right...',
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
 	        _react2.default.createElement(
 	          'button',
 	          { className: 'lets-pair', onClick: this.handleClick },
@@ -26117,9 +26125,9 @@
 	        return;
 	      }
 	      this.props.player.message = "You're done for the day!  Keep working or leave whenever you want!";
+	      this.props.player.clock = new _clock2.default([18, 1], this.props.player.defaultClockSpeed);
 	      this.props.player.currentPos = 0;
 	      this.props.player.session = 4;
-	      this.props.player.clock = new _clock2.default([18, 1], this.player.player.defaultClockSpeed);
 	    }
 	  }, {
 	    key: 'render',

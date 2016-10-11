@@ -128,8 +128,10 @@ class GameMain extends React.Component {
     if (!(this.player.ateLunch)) {
       //ADD A WARNING SCREEN
       this.player.message = "BECAUSE YOU DIDN'T TAKE A LUNCH BREAK YOU ARE LIMITED TO HALF ENERGY FOR THE DAY";
-      console.log("BECAUSE YOU DIDN'T TAKE A LUNCH BREAK YOU ARE LIMITED TO HALF ENERGY FOR THE DAY");
+      
       this.player.noLunchPenalty = 0.5;
+      var maxEnergy = this.player.sleepBank*this.player.noLunchPenalty;
+      if (this.player.focus>maxEnergy) {this.player.focus=maxEnergy;}
 
     }
   }

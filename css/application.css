@@ -470,11 +470,11 @@ textarea {
     outline: none;
     position: absolute;
     top: 262px;
-    left: 229px;
-    height: 70px;
-    width: 120px;
+    left: 249px;
+    height: 90px;
+    width: 90px;
     font-size: 14px;
-    padding: 10px;
+    padding: 5px;
     border-radius: 8px;
     background-color: blanchedalmond;
 }
@@ -490,11 +490,11 @@ textarea {
     outline: none;
     position: absolute;
     top: 362px;
-    left: 229px;
-    height: 70px;
-    width: 120px;
+    left: 249px;
+    height: 90px;
+    width: 90px;
     font-size: 14px;
-    padding: 10px;
+    padding: 5px;
     border-radius: 8px;
     background-color: blanchedalmond;
 }
@@ -533,12 +533,18 @@ textarea {
 }
 
 .pairs-open {
-    color: black;
-    background-color: blanchedalmond;
-    font-size: 41px;
-    width: 752px;
-    padding: 50px;
-		padding-bottom: 65px;
+
+  color: black;
+  background-color: blanchedalmond;
+  font-size: 41px;
+  width: 706px;
+  padding: 50px;
+  position: absolute;
+  height: 382px;
+  padding-bottom: 65px;
+  top: 130px;
+  left: 67px;
+  border-radius: 20px;
 }
 
 .lets-pair {
@@ -558,7 +564,8 @@ textarea {
 	-o-user-select: none;
 
 	user-select: none;
-
+	position: absolute;
+	top: 350px;
 }
 
 .grade {

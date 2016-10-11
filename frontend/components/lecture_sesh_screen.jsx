@@ -51,7 +51,6 @@ class LectureSeshScreen extends React.Component {
   tick() {
     var time = this.player.clock.time();
     if (this.player.clock.is(["11","00","am"])) {
-      console.log("here");
       this.player.clock = new Clock([11,1],this.player.defaultClockSpeed*3);
       this.player.clock.lastClockTickCounter = this.player.clock.tickCounter;
     }
@@ -139,7 +138,7 @@ class LectureSeshScreen extends React.Component {
 
       if (this.player.focus<50 && (!(this.state.eyesClosed))) {
         this.player.message =
-         "OH NO!  You're losing focus!  You might pass out soon...........  (PRESS AND HOLD THE BUTTON TO CLOSE EYES AND REGAIN FOCUS)";
+         "You're losing focus!  You'll faint soon!";
       } else {this.player.message = "";}
     }
     else { //if eyes ARE closed:
@@ -160,11 +159,11 @@ class LectureSeshScreen extends React.Component {
           "One of the hardest parts of an intensive bootcamp like this is getting enough sleep...","",
           "...and staying awake during lectures! "
       ];
-    } else {return ["Stare at the lecture too long, you lose focus and you'll eventually lose consciousness...","","To regain focus, you need to close your eyes."];}
+    } else {return ["Stare at the lecture too long, you lose focus and you'll eventually lose consciousness...",];}
     } else if (time[0]==="10") {
       if (parseInt(time[1])<30) {
-        return ["But if you keep your eyes closed too long then you'll fall asleep.","",  "Losing consciousness gets you a strike.","", "10 strikes and you're OUT!!!!"];
-      } else {return ["OK, with that out of the way, we will begin learning ruby!",""," Take a look at this code:"];}
+        return ["To regain focus, you need to close your eyes.","","But if you keep your eyes closed too long you'll fall asleep.",""];
+      } else {return ["Fainting during lecture gets you a strike.","Falling asleep gets you a strike,","10 strikes and you're out!","","OK, with that out of the way,","let's learn Ruby!!!",""," Take a look at this code:"];}
     } else {
     return ["def my_each","..i = 0","..while i < self.length","....yield self[i]","....i += 1", "..end", "..self[0]","end"];
     }

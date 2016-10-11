@@ -6,7 +6,7 @@ class PairsSeshDrivingScreen extends React.Component {
   constructor (props) {
     super(props);
     // this.main = this.main.bind(this);
-    this.sentenceTexts = ["test","def my_each(&prc)","self.length.times do |i|", "prc.call(self[i])", "end", "self", "end", "def my_select(&prc)", "selects = []", "self.my_each do |item|", "if prc.call(item)", "selects << item", "end", "end", "selects", "end"];
+    this.sentenceTexts = ["test","def my_each","(&prc)","self.length.times do |i|", "prc.call","(self[i])", "end", "self", "end", "def my_select","(&prc)", "selects = []", "self.my_each do |item|", "if prc.call(item)", "selects << item", "end", "end", "selects", "end"];
     this.explosions = [];
     this.shotSound = new Audio ("./app/assets/sounds/shot.wav");
     this.state= {
@@ -38,6 +38,7 @@ class PairsSeshDrivingScreen extends React.Component {
     this.canvas.width = 800;
     this.ctx = this.canvas.getContext("2d");
     this.drivingInterval = setInterval(()=>this.tick(),50);
+    document.getElementById("pairs-input").focus();
 
   }
 
@@ -51,16 +52,17 @@ class PairsSeshDrivingScreen extends React.Component {
   }
 
   tick() {
-    if (!(this.props.stopped)) {
-      if (this.props.player.clock.isBetween([17,0],[18,0])) {
-        this.clearInt();
-      } else {
+    if (this.props.player.day.pairsDone) {
+      this.clearInt();
+      return;
+    }
+    if (!(this.props.stopped) && !(this.props.done)) {
         this.updateSentences();
         this.updateExplosions();
-        document.getElementById("pairs-input").focus();
-      }
+        if (this.el) {this.el.focus();}
     }
   }
+
 
 
   clearInt() {

@@ -8,7 +8,7 @@ import Clock from './../../game_logic/clock.js';
 class PairsSeshScreen extends React.Component {
   constructor (props) {
     super(props);
-    this.props.player.clock = new Clock([13,31],8);
+    this.props.player.clock = new Clock([13,31],this.props.player.defaultClockSpeed*3);
     this.handleClick = this.handleClick.bind(this);
     this.handleOpenClick = this.handleOpenClick.bind(this);
     this.sesh = this.sesh.bind(this);
@@ -23,6 +23,7 @@ class PairsSeshScreen extends React.Component {
     this.goodSwitches = 0;
     this.badSwitches = 0;
     this.lastSwitch = ["1","30","pm"];
+    this.props.player.day.pairsDone = false;
 
   }
   //
@@ -70,21 +71,18 @@ class PairsSeshScreen extends React.Component {
     if (this.current === 0) {
       this.props.player.clock.pause();
       return (
-        <div className="pairs-open">
-          Its time for PAIR PROGRAMMING!
-          The real point of pair programming in Code Camp is to learn how to
-          be a good, collaborative pair programmer. You shouldnt worry as much about
-          the code as you should try to switch with your partner every 30 minutes.
-          <button className="lets-pair" onClick={this.handleOpenClick}>LETS PAIR!</button>
-        </div>
+        <PairsSeshOpenScreen cb={this.handleOpenClick} player={this.props.player}/>
       );
     }
     if (this.props.player.clock.is(["5","00","pm"])) {
-
-      this.props.player.clock.pause();
+      this.props.player.day.pairsDone = true;
       this.stopDriving = true;
       this.stopNav = true;
       this.props.player.message = "Today's pair programming results are in!";
+      var a = <PairsSeshDrivingScreen done={false}/>;
+      var b = <PairsSeshNavigatingScreen done={false}/>;
+
+      this.props.player.clock.pause();
       this.current ===3;
       return (
         <PairsSeshResults

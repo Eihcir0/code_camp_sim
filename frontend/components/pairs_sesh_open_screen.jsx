@@ -2,25 +2,26 @@ import React from 'react';
 import Clock from './../../game_logic/clock.js';
 
 class PairsSeshOpenScreen extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    this.props.player.tempMessage="";
     this.handleClick=this.handleClick.bind(this);
 
 
   }
 
   handleClick() {
-    this.props.player.clock.unpause();
-    this.props.current = 1;
+    this.props.cb();
   }
 
   render() {
       return (
         <div className="pairs-open">
-          PAIR PROGRAMMING TIME!
-          Be a good, collaborative pair programmer!
-          Switch with your partner every 30 minutes!!
-          That is much more important than getting the code right...
+          PAIR PROGRAMMING TIME!<br/>
+        <br/><br/>
+      TIP: Switch with your partner every 30 minutes!!<br/><br/>
+    That is more important than getting the code right...<br/>
+  <br/>
 
           <button className="lets-pair" onClick={this.handleClick}>LET'S PAIR!</button>
 

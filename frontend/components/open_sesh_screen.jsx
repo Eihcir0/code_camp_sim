@@ -242,14 +242,14 @@ class OpenSesh extends React.Component {
       eatButton =
         <button className = "middle-button5"
           onClick = {this.eatsLunch}>
-          🍲 LUNCH BREAK
+          🍲 <br/>LUNCH BREAK
         </button>;
       }
     if (this.player.clock.isBetween([8,45],[8,59]) && (!(this.player.ateDonut))) {
       eatButton =
         <button className = "middle-button5"
           onClick = {this.eatsDonut}>
-          🍩 EAT DONUT
+          🍩 <br/>EAT DONUT
         </button>;
       }
 
@@ -257,7 +257,7 @@ class OpenSesh extends React.Component {
       <div className="middle-buttons-area">
         <button className="middle-button4"
           onClick={this.drinksCoffee}>
-          ☕ DRINK COFFEE
+          ☕<br/>DRINK COFFEE
         </button>
         {eatButton}
       </div>
@@ -300,7 +300,7 @@ class OpenSesh extends React.Component {
       this.player.happiness +=2;
       var now = this.player.clock.time();
       this.lunchTime = now;
-      this.lunchMinutes = 5 + Math.floor(Math.random()*30);
+      this.lunchMinutes = 15 + Math.floor(Math.random()*15);
       if (this.lunchMinutes > 15) {
         this.player.tempMessage = "Stuck in the microwave line!!!";
       }
@@ -316,7 +316,7 @@ class OpenSesh extends React.Component {
     this.player.eatingLunch = false;
     this.player.ateLunch = true;
     this.player.tempMessage = "";
-    this.player.message = "Be sure you're seated at your workstation by 1:30pm for pair programming!";
+    this.player.message = "Be sure you're seated at your workstation at 1:30pm for pair programming!";
     var now = this.player.clock.time();
     this.lunchTime = null;
     this.player.clock = new Clock(now, this.player.defaultClockSpeed);

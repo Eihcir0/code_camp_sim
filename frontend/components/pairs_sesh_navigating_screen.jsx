@@ -40,6 +40,7 @@ class PairsSeshNavigatingScreen extends React.Component {
     this.canvas.width = 800;
     this.ctx = this.canvas.getContext("2d");
     this.setState({currentInput: this.sentences[0].error});
+    this.el = document.getElementById("pairs-input");
     this.navigatingInterval = setInterval(()=>this.tick(),50);
 
   }
@@ -54,17 +55,15 @@ class PairsSeshNavigatingScreen extends React.Component {
   }
 
   tick() {
-    if (!(this.props.stopped)) {
-      if (this.props.player.clock.isBetween([17,0],[19,0])) {
-        console.log("HERE BUDDY");
-        this.clearInt();
-      } else {
+    if (this.props.player.day.pairsDone) {
+      this.clearInt();
+      return;
+    }
+    if (!(this.props.stopped) && !(this.props.done)) {
         this.updateSentences();
         this.updateExplosions();
-        document.getElementById("pairs-input").focus();
-      }
+        this.el.focus();
     }
-
   }
 
   clearInt() {

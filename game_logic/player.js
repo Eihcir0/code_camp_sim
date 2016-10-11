@@ -169,7 +169,6 @@ class Player {
   newPoints() {
     var rand = Math.floor(((Math.random()*10)+1))*10+(this.score/50000);
     var points;
-    console.log(rand);
     if (rand>95) {points = 1000;}
     else {
       points = Math.max(Math.floor((rand-20)/10)*100,100);

@@ -73,35 +73,34 @@ class Clock {
 
 //this is kinda backwards, i change to am/pm then back
   isBetween(startTime,endTime) {
-    if (startTime.length === 3) {
-      if (startTime[0] <12) {startTime.push("am");}
-      else {
-        startTime.push("pm");
-        startTime[0]+= startTime[0]==12 ? 0 : 12;}
+    if (startTime.length === 2) {
+      if (startTime[0] <12) {
+        startTime.push("am");
+      } else {
+          startTime.push("pm");
+      }
     }
-    if (endTime.length === 3) {
-      if (endTime[0] <12) {endTime.push("am");}
-      else {
-        endTime[0] += endTime[0]==12 ? 0 : 12;
-        endTime.push("pm");}
+    if (endTime.length === 2) {
+      if (endTime[0] <12) {
+        endTime.push("am");
+      } else {
+        endTime.push("pm");
+      }
     }
-    var startHour = startTime[0] + (startTime[2] == "pm" ? 12 : 0);
-    var endHour = endTime[0] + (endTime[2] == "pm" ? 12 : 0);
-    var startMinute = startTime[1];
-    var endMinute = endTime[1];
+
+
+    var startHour = parseInt(startTime[0]) + (startTime[2] == "pm" && startTime[0] != 12 ? 12 : 0);
+    var endHour = parseInt(endTime[0]) + (endTime[2] == "pm" && endTime[0] !=12 ? 12 : 0);
+    var startMinute = parseInt(startTime[1]);
+    var endMinute = parseInt(endTime[1]);
     var currentTime = this.time();
     var currentHour = parseInt(currentTime[0])+ ((currentTime[2] == "pm" && currentTime[0] !=="12") ? 12 : 0);
     var currentMinute = parseInt(currentTime[1]);
-    if (currentHour > startHour && currentHour < endHour) {
-        return true;
-      }
-    if (currentHour == startHour && currentMinute>=startMinute) {
-      return true;
-    }
-    if (currentHour == endHour && currentMinute<=endMinute && currentMinute>=startMinute) {
-      return true;
-    }
-    return false;
+    var startTotal = startHour*60 + startMinute;
+    var endTotal = endHour*60 + endMinute;
+    var currentTotal = currentHour*60 + currentMinute;
+    return (currentTotal<=endTotal && currentTotal>=startTotal);
+
   }
 
   pause() {

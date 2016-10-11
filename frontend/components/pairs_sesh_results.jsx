@@ -163,9 +163,9 @@ class PairsSeshResults extends React.Component {
       //cancel interval
       if (this.graded===false) {return;}
       this.props.player.message = "You're done for the day!  Keep working or leave whenever you want!";
+      this.props.player.clock = new Clock ([18,1],this.props.player.defaultClockSpeed);
       this.props.player.currentPos = 0;
       this.props.player.session = 4;
-      this.props.player.clock = new Clock ([18,1],this.player.player.defaultClockSpeed);
 
     }
 
