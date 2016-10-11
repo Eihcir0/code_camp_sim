@@ -9,9 +9,8 @@ class SleepMinigame extends React.Component {
 
 
   sheepStyle() {
-    var righty = `${(this.props.goesToSleepMeter*3)+600}px`;
-    console.log(righty);
-    return {right: righty};
+    var lefty = `${400-(this.props.goesToSleepMeter*3)}px`;
+    return {left: lefty};
   }
 
 //old meter: <meter className="faint-meter-bar" value={this.props.goesToSleepMeter} low={this.props.player.sleepBank -0.5} max={this.props.player.sleepBank} />

@@ -32,7 +32,6 @@ class FaceAnim extends React.Component {
 
   setLookLeft() {
     if (Math.random()>0 && this.player.sleepBank>40) { //>0?? a little much
-      console.log("here");
       this.player.newFace = (this.player.happiness>70) ?
       {filename:"rested_happy_look_left", duration: Math.floor(Math.random()*30+1)} :
       {filename:"rested_unhappy_look_left", duration: Math.floor(Math.random()*30+1)};

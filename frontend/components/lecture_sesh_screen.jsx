@@ -14,7 +14,7 @@ class LectureSeshScreen extends React.Component {
     } else {
       startTime = this.player.clock.time();
     }
-    this.player.clock = new Clock(startTime,9);
+    this.player.clock = new Clock(startTime, this.player.defaultClockSpeed*2);
     this.startingFocus = this.player.focus;
     this.eyesClosedTimer = 0;
     this.startTime = this.player.clock.tickCounter;
@@ -50,7 +50,12 @@ class LectureSeshScreen extends React.Component {
 
   tick() {
     var time = this.player.clock.time();
-    if ((time[0]==="10" && parseInt(time[1])>45) || time[0]==="11") {
+    if (this.player.clock.is(["11","00","am"])) {
+      console.log("here");
+      this.player.clock = new Clock([11,1],this.player.defaultClockSpeed*3);
+      this.player.clock.lastClockTickCounter = this.player.clock.tickCounter;
+    }
+    if (this.player.clock.isBetween([10,55],[12,0])) {
         this.updateFocus();
         this.updateFaintMeter();
         if (this.state.eyesClosed) {this.updateGoesToSleepMeter();}

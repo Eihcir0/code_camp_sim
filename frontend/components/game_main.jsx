@@ -61,7 +61,7 @@ class GameMain extends React.Component {
       });
       this.updateSession();
 
-      this.updateAttributes(dt);
+      if ([0,2,4].includes(this.player.session)) {this.updateAttributes(dt);}
     }
     this.setState({
       message: this.updateMessage(),

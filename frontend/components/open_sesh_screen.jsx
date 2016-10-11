@@ -246,7 +246,6 @@ class OpenSesh extends React.Component {
         </button>;
       }
     if (this.player.clock.isBetween([8,45],[8,59]) && (!(this.player.ateDonut))) {
-      debugger;
       eatButton =
         <button className = "middle-button5"
           onClick = {this.eatsDonut}>

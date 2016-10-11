@@ -21560,7 +21560,9 @@
 	        });
 	        this.updateSession();
 	
-	        this.updateAttributes(dt);
+	        if ([0, 2, 4].includes(this.player.session)) {
+	          this.updateAttributes(dt);
+	        }
 	      }
 	      this.setState({
 	        message: this.updateMessage(),
@@ -21925,8 +21927,8 @@
 	    this.currentEmotion = obj ? obj.currentEmotion : "excited";
 	    this.info = obj ? obj.info : "";
 	
-	    this.sleepBank = obj ? obj.sleepBank : 90;
-	    this.happiness = obj ? obj.happiness : 80;
+	    this.sleepBank = obj ? obj.sleepBank : 100;
+	    this.happiness = obj ? obj.happiness : 100;
 	    this.focus = obj ? obj.focus : this.sleepBank;
 	    this.score = obj ? obj.score : 0;
 	    this.chanceForFireOffset = 0; //delete me
@@ -23718,7 +23720,6 @@
 	        );
 	      }
 	      if (this.player.clock.isBetween([8, 45], [8, 59]) && !this.player.ateDonut) {
-	        debugger;
 	        eatButton = _react2.default.createElement(
 	          'button',
 	          { className: 'middle-button5',
@@ -24548,7 +24549,7 @@
 	    } else {
 	      startTime = _this.player.clock.time();
 	    }
-	    _this.player.clock = new _clock2.default(startTime, 9);
+	    _this.player.clock = new _clock2.default(startTime, _this.player.defaultClockSpeed * 2);
 	    _this.startingFocus = _this.player.focus;
 	    _this.eyesClosedTimer = 0;
 	    _this.startTime = _this.player.clock.tickCounter;
@@ -24589,7 +24590,12 @@
 	    key: 'tick',
 	    value: function tick() {
 	      var time = this.player.clock.time();
-	      if (time[0] === "10" && parseInt(time[1]) > 45 || time[0] === "11") {
+	      if (this.player.clock.is(["11", "00", "am"])) {
+	        console.log("here");
+	        this.player.clock = new _clock2.default([11, 1], this.player.defaultClockSpeed * 3);
+	        this.player.clock.lastClockTickCounter = this.player.clock.tickCounter;
+	      }
+	      if (this.player.clock.isBetween([10, 55], [12, 0])) {
 	        this.updateFocus();
 	        this.updateFaintMeter();
 	        if (this.state.eyesClosed) {
@@ -24910,9 +24916,8 @@
 	  _createClass(SleepMinigame, [{
 	    key: "sheepStyle",
 	    value: function sheepStyle() {
-	      var righty = this.props.goesToSleepMeter * 3 + 600 + "px";
-	      console.log(righty);
-	      return { right: righty };
+	      var lefty = 400 - this.props.goesToSleepMeter * 3 + "px";
+	      return { left: lefty };
 	    }
 	
 	    //old meter: <meter className="faint-meter-bar" value={this.props.goesToSleepMeter} low={this.props.player.sleepBank -0.5} max={this.props.player.sleepBank} />
@@ -26205,7 +26210,7 @@
 	    key: 'handleClick',
 	    value: function handleClick() {
 	      var newClockSpeed;
-	      if (Date.now() - this.startTime < 2000) {
+	      if (Date.now() - this.startTime < 1000) {
 	        return;
 	      } else {
 	        if (this.strike.newClockSpeed) {
@@ -26300,7 +26305,7 @@
 	    key: 'handleClick',
 	    value: function handleClick() {
 	      var newClockSpeed;
-	      if (Date.now() - this.startTime < 2000) {
+	      if (Date.now() - this.startTime < 1000) {
 	        return;
 	      } else {
 	        if (this.congrats.newClockSpeed) {
@@ -26405,7 +26410,6 @@
 	    value: function setLookLeft() {
 	      if (Math.random() > 0 && this.player.sleepBank > 40) {
 	        //>0?? a little much
-	        console.log("here");
 	        this.player.newFace = this.player.happiness > 70 ? { filename: "rested_happy_look_left", duration: Math.floor(Math.random() * 30 + 1) } : { filename: "rested_unhappy_look_left", duration: Math.floor(Math.random() * 30 + 1) };
 	      }
 	    }

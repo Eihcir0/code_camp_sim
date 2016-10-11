@@ -21,8 +21,8 @@ class Player {
     this.currentEmotion = obj ? obj.currentEmotion : "excited";
     this.info = obj ? obj.info : "";
 
-    this.sleepBank = obj ? obj.sleepBank : 90;
-    this.happiness = obj ? obj.happiness : 80;
+    this.sleepBank = obj ? obj.sleepBank : 100;
+    this.happiness = obj ? obj.happiness : 100;
     this.focus = obj ? obj.focus : this.sleepBank;
     this.score = obj ? obj.score : 0;
     this.chanceForFireOffset = 0; //delete me

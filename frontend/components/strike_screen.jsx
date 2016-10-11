@@ -21,7 +21,7 @@ class StrikeScreen extends React.Component {
 
   handleClick() {
     var newClockSpeed;
-    if (Date.now() - this.startTime < 2000) {return;}
+    if (Date.now() - this.startTime < 1000) {return;}
     else {
       if (this.strike.newClockSpeed) {
         newClockSpeed = this.strike.newClockSpeed;
