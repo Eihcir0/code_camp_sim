@@ -21474,23 +21474,23 @@
 	
 	var _lecture_sesh_screen2 = _interopRequireDefault(_lecture_sesh_screen);
 	
-	var _night_sesh_screen = __webpack_require__(201);
+	var _night_sesh_screen = __webpack_require__(192);
 	
 	var _night_sesh_screen2 = _interopRequireDefault(_night_sesh_screen);
 	
-	var _pairs_sesh_screen = __webpack_require__(192);
+	var _pairs_sesh_screen = __webpack_require__(193);
 	
 	var _pairs_sesh_screen2 = _interopRequireDefault(_pairs_sesh_screen);
 	
-	var _strike_screen = __webpack_require__(198);
+	var _strike_screen = __webpack_require__(199);
 	
 	var _strike_screen2 = _interopRequireDefault(_strike_screen);
 	
-	var _congrats_screen = __webpack_require__(199);
+	var _congrats_screen = __webpack_require__(200);
 	
 	var _congrats_screen2 = _interopRequireDefault(_congrats_screen);
 	
-	var _face_anim = __webpack_require__(200);
+	var _face_anim = __webpack_require__(201);
 	
 	var _face_anim2 = _interopRequireDefault(_face_anim);
 	
@@ -22972,7 +22972,7 @@
 	
 	    this.player = player;
 	    if (this.player.dayNum === 1) {
-	      arrivalTime = ["1", "30", "pm"];
+	      arrivalTime = ["8", "30", "am"];
 	    }
 	    this.player.clock = new _clock2.default(arrivalTime, this.player.defaultClockSpeed);
 	    this.player.currentPos = 0;
@@ -24959,19 +24959,223 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _pairs_sesh_driving_screen = __webpack_require__(193);
+	var _clock = __webpack_require__(175);
+	
+	var _clock2 = _interopRequireDefault(_clock);
+	
+	var _week = __webpack_require__(182);
+	
+	var _week2 = _interopRequireDefault(_week);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var NightSeshScreen = function (_React$Component) {
+	  _inherits(NightSeshScreen, _React$Component);
+	
+	  function NightSeshScreen(props) {
+	    _classCallCheck(this, NightSeshScreen);
+	
+	    var _this = _possibleConstructorReturn(this, (NightSeshScreen.__proto__ || Object.getPrototypeOf(NightSeshScreen)).call(this, props));
+	
+	    _this.player = _this.props.player;
+	    _this.week = _this.player.week;
+	    _this.day = _this.week.day;
+	    debugger;
+	    _this.handleClick = _this.handleClick.bind(_this);
+	    _this.startTime = Date.now();
+	    _this.ticker = 0;
+	    new Audio("./app/assets/sounds/typing.wav").play();
+	    _this.redStyle = { color: "red" };
+	    _this.greenStyle = { color: "geen" };
+	    _this.done = false;
+	    _this.interval = window.setInterval(function () {
+	      return _this.ticker++;
+	    }, 100);
+	    return _this;
+	  }
+	
+	  _createClass(NightSeshScreen, [{
+	    key: 'scoreChange',
+	    value: function scoreChange() {
+	      var change = this.player.score - this.day.beginningScore;
+	      debugger;
+	      var changeText = '+ ' + change;
+	      if (this.ticker === 20) {
+	        new Audio("./app/assets/sounds/explosion.wav").play();
+	      }
+	      if (this.ticker < 20) {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          'DAY ',
+	          this.player.dayNum,
+	          ' RESULTS',
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          'SCORE '
+	        );
+	      } else {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          'DAY ',
+	          this.player.dayNum,
+	          ' RESULTS',
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          'SCORE',
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'pair-result-number', style: change > 0 ? this.greenStyle : this.redStyle },
+	            changeText
+	          )
+	        );
+	      }
+	    }
+	  }, {
+	    key: 'skillChange',
+	    value: function skillChange() {
+	      var change = (this.player.skills[this.player.currentSkill] - this.day.beginningSkillPoints) / 10;
+	      var changeText = '+ %' + change;
+	      if (this.ticker === 40) {
+	        new Audio("./app/assets/sounds/explosion.wav").play();
+	      }
+	      if (this.ticker < 40) {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          this.player.currentSKill,
+	          ' '
+	        );
+	      } else {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          this.player.currentSKill,
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'pair-result-number', style: change > 0 ? this.greenStyle : this.redStyle },
+	            changeText
+	          )
+	        );
+	      }
+	    }
+	  }, {
+	    key: 'happinessChange',
+	    value: function happinessChange() {
+	      var change = this.player.happiness - this.day.beginningHappiness;
+	      var changeText = change < 0 ? '' + change : '+ ' + change;
+	      if (this.ticker === 60) {
+	        new Audio("./app/assets/sounds/explosion.wav").play();
+	      }
+	      if (this.ticker < 60) {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          'HAPPINESS '
+	        );
+	      } else {
+	        this.done = true;
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement('br', null),
+	          'HAPPINESS',
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'pair-result-number', style: change < 0 ? this.redStyle : this.greenStyle },
+	            changeText
+	          )
+	        );
+	      }
+	    }
+	  }, {
+	    key: 'handleClick',
+	    value: function handleClick() {
+	      clearInterval(this.interval);
+	      var newClockSpeed;
+	      //cancel interval
+	      if (this.done === false) {
+	        return;
+	      }
+	
+	      this.player.week.advanceDay();
+	      this.player.session = 0;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'day-results', onClick: this.handleClick },
+	        _react2.default.createElement('br', null),
+	        this.scoreChange(),
+	        this.skillChange(),
+	        this.happinessChange()
+	      );
+	    }
+	
+	    // render () {   OLD ONE
+	    //   return (
+	    //     <div className="pairs-results" onClick={this.handleClick}>
+	    //       driving lines:{this.props.drivingLines[0]} out of {this.props.drivingLines[1]} <br/>
+	    // navigating lines:{this.props.navigatingLines[0]} out of {this.props.navigatingLines[1]} <br/>
+	    //     good switches: {this.props.goodSwitches} <br/>
+	    //   bad Switches: {this.props.badSwitches} <br/>
+	    //     </div>
+	    //   );
+	    // }
+	
+	  }]);
+	
+	  return NightSeshScreen;
+	}(_react2.default.Component); //end component
+	
+	
+	exports.default = NightSeshScreen;
+
+/***/ },
+/* 193 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _pairs_sesh_driving_screen = __webpack_require__(194);
 	
 	var _pairs_sesh_driving_screen2 = _interopRequireDefault(_pairs_sesh_driving_screen);
 	
-	var _pairs_sesh_navigating_screen = __webpack_require__(195);
+	var _pairs_sesh_navigating_screen = __webpack_require__(196);
 	
 	var _pairs_sesh_navigating_screen2 = _interopRequireDefault(_pairs_sesh_navigating_screen);
 	
-	var _pairs_sesh_open_screen = __webpack_require__(196);
+	var _pairs_sesh_open_screen = __webpack_require__(197);
 	
 	var _pairs_sesh_open_screen2 = _interopRequireDefault(_pairs_sesh_open_screen);
 	
-	var _pairs_sesh_results = __webpack_require__(197);
+	var _pairs_sesh_results = __webpack_require__(198);
 	
 	var _pairs_sesh_results2 = _interopRequireDefault(_pairs_sesh_results);
 	
@@ -25126,7 +25330,7 @@
 	exports.default = PairsSeshScreen;
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25145,7 +25349,7 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _pairs_line = __webpack_require__(194);
+	var _pairs_line = __webpack_require__(195);
 	
 	var _pairs_line2 = _interopRequireDefault(_pairs_line);
 	
@@ -25421,7 +25625,7 @@
 	exports.default = PairsSeshDrivingScreen;
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25524,7 +25728,7 @@
 	exports.default = PairsLine;
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25818,7 +26022,7 @@
 	exports.default = PairsSeshNavigatingScreen;
 
 /***/ },
-/* 196 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25896,7 +26100,7 @@
 	exports.default = PairsSeshOpenScreen;
 
 /***/ },
-/* 197 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25915,7 +26119,7 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _pairs_line = __webpack_require__(194);
+	var _pairs_line = __webpack_require__(195);
 	
 	var _pairs_line2 = _interopRequireDefault(_pairs_line);
 	
@@ -26165,7 +26369,7 @@
 	exports.default = PairsSeshResults;
 
 /***/ },
-/* 198 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26261,7 +26465,7 @@
 	exports.default = StrikeScreen;
 
 /***/ },
-/* 199 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26351,7 +26555,7 @@
 	exports.default = CongratsScreen;
 
 /***/ },
-/* 200 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26550,210 +26754,6 @@
 	}(_react2.default.Component); //end class
 	
 	exports.default = FaceAnim;
-
-/***/ },
-/* 201 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _clock = __webpack_require__(175);
-	
-	var _clock2 = _interopRequireDefault(_clock);
-	
-	var _week = __webpack_require__(182);
-	
-	var _week2 = _interopRequireDefault(_week);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var NightSeshScreen = function (_React$Component) {
-	  _inherits(NightSeshScreen, _React$Component);
-	
-	  function NightSeshScreen(props) {
-	    _classCallCheck(this, NightSeshScreen);
-	
-	    var _this = _possibleConstructorReturn(this, (NightSeshScreen.__proto__ || Object.getPrototypeOf(NightSeshScreen)).call(this, props));
-	
-	    _this.player = _this.props.player;
-	    _this.week = _this.player.week;
-	    _this.day = _this.week.day;
-	    debugger;
-	    _this.handleClick = _this.handleClick.bind(_this);
-	    _this.startTime = Date.now();
-	    _this.ticker = 0;
-	    new Audio("./app/assets/sounds/typing.wav").play();
-	    _this.redStyle = { color: "red" };
-	    _this.greenStyle = { color: "geen" };
-	    _this.done = false;
-	    _this.interval = window.setInterval(function () {
-	      return _this.ticker++;
-	    }, 100);
-	    return _this;
-	  }
-	
-	  _createClass(NightSeshScreen, [{
-	    key: 'scoreChange',
-	    value: function scoreChange() {
-	      var change = this.player.score - this.day.beginningScore;
-	      debugger;
-	      var changeText = '+ ' + change;
-	      if (this.ticker === 20) {
-	        new Audio("./app/assets/sounds/explosion.wav").play();
-	      }
-	      if (this.ticker < 20) {
-	        return _react2.default.createElement(
-	          'div',
-	          null,
-	          'DAY ',
-	          this.player.dayNum,
-	          ' RESULTS',
-	          _react2.default.createElement('br', null),
-	          _react2.default.createElement('br', null),
-	          _react2.default.createElement('br', null),
-	          _react2.default.createElement('br', null),
-	          'SCORE '
-	        );
-	      } else {
-	        return _react2.default.createElement(
-	          'div',
-	          null,
-	          'DAY ',
-	          this.player.dayNum,
-	          ' RESULTS',
-	          _react2.default.createElement('br', null),
-	          _react2.default.createElement('br', null),
-	          _react2.default.createElement('br', null),
-	          _react2.default.createElement('br', null),
-	          'SCORE',
-	          _react2.default.createElement(
-	            'span',
-	            { className: 'pair-result-number', style: change > 0 ? this.greenStyle : this.redStyle },
-	            changeText
-	          )
-	        );
-	      }
-	    }
-	  }, {
-	    key: 'skillChange',
-	    value: function skillChange() {
-	      var change = (this.player.skills[this.player.currentSkill] - this.day.beginningSkillPoints) / 10;
-	      var changeText = '+ %' + change;
-	      if (this.ticker === 40) {
-	        new Audio("./app/assets/sounds/explosion.wav").play();
-	      }
-	      if (this.ticker < 40) {
-	        return _react2.default.createElement(
-	          'div',
-	          null,
-	          _react2.default.createElement('br', null),
-	          this.player.currentSKill,
-	          ' '
-	        );
-	      } else {
-	        return _react2.default.createElement(
-	          'div',
-	          null,
-	          _react2.default.createElement('br', null),
-	          this.player.currentSKill,
-	          _react2.default.createElement(
-	            'span',
-	            { className: 'pair-result-number', style: change > 0 ? this.greenStyle : this.redStyle },
-	            changeText
-	          )
-	        );
-	      }
-	    }
-	  }, {
-	    key: 'happinessChange',
-	    value: function happinessChange() {
-	      var change = this.player.happiness - this.day.beginningHappiness;
-	      var changeText = change < 0 ? '' + change : '+ ' + change;
-	      if (this.ticker === 60) {
-	        new Audio("./app/assets/sounds/explosion.wav").play();
-	      }
-	      if (this.ticker < 60) {
-	        return _react2.default.createElement(
-	          'div',
-	          null,
-	          _react2.default.createElement('br', null),
-	          'HAPPINESS '
-	        );
-	      } else {
-	        this.done = true;
-	        return _react2.default.createElement(
-	          'div',
-	          null,
-	          _react2.default.createElement('br', null),
-	          'HAPPINESS',
-	          _react2.default.createElement(
-	            'span',
-	            { className: 'pair-result-number', style: change < 0 ? this.redStyle : this.greenStyle },
-	            changeText
-	          )
-	        );
-	      }
-	    }
-	  }, {
-	    key: 'handleClick',
-	    value: function handleClick() {
-	      clearInterval(this.interval);
-	      var newClockSpeed;
-	      //cancel interval
-	      if (this.done === false) {
-	        return;
-	      }
-	
-	      this.player.week.advanceDay();
-	      this.player.session = 0;
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'day-results', onClick: this.handleClick },
-	        _react2.default.createElement('br', null),
-	        this.scoreChange(),
-	        this.skillChange(),
-	        this.happinessChange()
-	      );
-	    }
-	
-	    // render () {   OLD ONE
-	    //   return (
-	    //     <div className="pairs-results" onClick={this.handleClick}>
-	    //       driving lines:{this.props.drivingLines[0]} out of {this.props.drivingLines[1]} <br/>
-	    // navigating lines:{this.props.navigatingLines[0]} out of {this.props.navigatingLines[1]} <br/>
-	    //     good switches: {this.props.goodSwitches} <br/>
-	    //   bad Switches: {this.props.badSwitches} <br/>
-	    //     </div>
-	    //   );
-	    // }
-	
-	  }]);
-	
-	  return NightSeshScreen;
-	}(_react2.default.Component); //end component
-	
-	
-	exports.default = NightSeshScreen;
 
 /***/ }
 /******/ ]);
