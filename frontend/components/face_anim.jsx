@@ -138,7 +138,7 @@ class FaceAnim extends React.Component {
           } else {return "tired_miserable";}
         default:
         //exhausted then exhausted angry
-          return "exhausted_angry.jpg";
+          return "exhausted_angry";
       }
     }
   }

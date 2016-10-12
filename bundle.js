@@ -21446,55 +21446,55 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactPreload = __webpack_require__(202);
+	var _reactPreload = __webpack_require__(173);
 	
 	var _reactPreload2 = _interopRequireDefault(_reactPreload);
 	
-	var _game = __webpack_require__(173);
+	var _game = __webpack_require__(177);
 	
 	var _game2 = _interopRequireDefault(_game);
 	
-	var _player = __webpack_require__(174);
+	var _player = __webpack_require__(178);
 	
 	var _player2 = _interopRequireDefault(_player);
 	
-	var _clock = __webpack_require__(175);
+	var _clock = __webpack_require__(179);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _week = __webpack_require__(182);
+	var _week = __webpack_require__(186);
 	
 	var _week2 = _interopRequireDefault(_week);
 	
-	var _player_anim = __webpack_require__(184);
+	var _player_anim = __webpack_require__(188);
 	
 	var _player_anim2 = _interopRequireDefault(_player_anim);
 	
-	var _open_sesh_screen = __webpack_require__(185);
+	var _open_sesh_screen = __webpack_require__(189);
 	
 	var _open_sesh_screen2 = _interopRequireDefault(_open_sesh_screen);
 	
-	var _lecture_sesh_screen = __webpack_require__(190);
+	var _lecture_sesh_screen = __webpack_require__(194);
 	
 	var _lecture_sesh_screen2 = _interopRequireDefault(_lecture_sesh_screen);
 	
-	var _night_sesh_screen = __webpack_require__(192);
+	var _night_sesh_screen = __webpack_require__(196);
 	
 	var _night_sesh_screen2 = _interopRequireDefault(_night_sesh_screen);
 	
-	var _pairs_sesh_screen = __webpack_require__(193);
+	var _pairs_sesh_screen = __webpack_require__(197);
 	
 	var _pairs_sesh_screen2 = _interopRequireDefault(_pairs_sesh_screen);
 	
-	var _strike_screen = __webpack_require__(199);
+	var _strike_screen = __webpack_require__(203);
 	
 	var _strike_screen2 = _interopRequireDefault(_strike_screen);
 	
-	var _congrats_screen = __webpack_require__(200);
+	var _congrats_screen = __webpack_require__(204);
 	
 	var _congrats_screen2 = _interopRequireDefault(_congrats_screen);
 	
-	var _face_anim = __webpack_require__(201);
+	var _face_anim = __webpack_require__(205);
 	
 	var _face_anim2 = _interopRequireDefault(_face_anim);
 	
@@ -21720,7 +21720,7 @@
 	  }, {
 	    key: 'images',
 	    value: function images() {
-	      return ["./app/assets/images/bed.png", "./app/assets/images/happy.png", "./app/assets/images/star.png", "./app/assets/images/ruby.png", "./app/assets/images/floor.png", "./app/assets/images/face_icons/on_fire.jpg", "./app/assets/images/face_icons/on_fire1.jpg", "./app/assets/images/face_icons/on_fire2.jpg", "./app/assets/images/face_icons/on_fire3.jpg", "./app/assets/images/face_icons/on_fire4.jpg", "./app/assets/images/face_icons/on_fire5.jpg", "./app/assets/images/face_icons/on_fire6.jpg", "./app/assets/images/face_icons/on_fire7.jpg", "./app/assets/images/face_icons/rested_happy.jpg", "./app/assets/images/face_icons/tired_happy.jpg", "./app/assets/images/face_icons/tired_happy2.jpg", "./app/assets/images/face_icons/exhausted_sad.jpg", "./app/assets/images/face_icons/rested_sad.jpg", "./app/assets/images/face_icons/tired_indifferent.jpg", "./app/assets/images/face_icons/exhausted_sad.jpg", "./app/assets/images/face_icons/rested_angry.jpg", "./app/assets/images/face_icons/tired_angry.jpg", "./app/assets/images/face_icons/tired_miserable.jpg", "./app/assets/images/face_icons/exhausted_angry.jpg", "./app/assets/images/ned3-blur.png", "./app/assets/images/ned3.png", "./app/assets/images/rays.jpeg", "./app/assets/images/exhausted_angry.jpg", "./app/assets/images/eyes_open.png", "./app/assets/images/eyes_closed.png", "./app/assets/images/newfloor.png", "./app/assets/images/line_explosion.jpg", "./app/assets/images/computer_screen2.png", "./app/assets/images/frontface2.png", "./app/assets/images/moon.png", "./app/assets/images/bug.png", "./app/assets/images/sheep2.png", "./app/assets/images/desks.png", "./app/assets/images/desks2.png", "./app/assets/images/desks2.png", "./app/assets/images/fire.png", "./app/assets/images/coffee.png", "./app/assets/images/donut.png", "./app/assets/images/lunch.png", "./app/assets/images/hero_spritesheet.png", "./app/assets/images/hero_seated_spritesheet.png", "./app/assets/images/secretary.png", "./app/assets/images/ruby.png", "./app/assets/images/student1.png", "./app/assets/images/student2.png", "./app/assets/images/student3.png", "./app/assets/images/student4.png", "./app/assets/images/student5.png", "./app/assets/images/student6.png", "./app/assets/images/student7.png", "./app/assets/sounds/trippy.wav", "./app/assets/sounds/Rock-a-bye Baby.mp3", "./app/assets/sounds/missed.wav", "./app/assets/sounds/shot.wav", "./app/assets/sounds/beep.wav", "./app/assets/sounds/congrats-ding.wav", "./app/assets/sounds/typing.wav", "./app/assets/sounds/explosion.wav", "./app/assets/sounds/microwave_start.wav", "./app/assets/sounds/shot.wav", "./app/assets/sounds/missed.wav", "./app/assets/sounds/beep.wav", "./app/assets/sounds/buzzer.mp3", "./app/assets/sounds/bug_sound.wav", "./app/assets/sounds/hes_on_fire.wav", "./app/assets/sounds/fire.wav", "./app/assets/sounds/coffee.wav", "./app/assets/sounds/donut.wav", "./app/assets/sounds/microwave.wav", "./app/assets/sounds/woohoo.wav", "./app/assets/sounds/icon.wav"];
+	      return ["./app/assets/images/bed.png", "./app/assets/images/happy.png", "./app/assets/images/star.png", "./app/assets/images/ruby.png", "./app/assets/images/floors.png", "./app/assets/images/face_icons/on_fire.jpg", "./app/assets/images/face_icons/on_fire1.jpg", "./app/assets/images/face_icons/on_fire2.jpg", "./app/assets/images/face_icons/on_fire3.jpg", "./app/assets/images/face_icons/on_fire4.jpg", "./app/assets/images/face_icons/on_fire5.jpg", "./app/assets/images/face_icons/on_fire6.jpg", "./app/assets/images/face_icons/on_fire7.jpg", "./app/assets/images/face_icons/rested_happy.jpg", "./app/assets/images/face_icons/tired_happy.jpg", "./app/assets/images/face_icons/tired_happy2.jpg", "./app/assets/images/face_icons/exhausted_sad.jpg", "./app/assets/images/face_icons/rested_sad.jpg", "./app/assets/images/face_icons/tired_indifferent.jpg", "./app/assets/images/face_icons/exhausted_sad.jpg", "./app/assets/images/face_icons/rested_angry.jpg", "./app/assets/images/face_icons/tired_angry.jpg", "./app/assets/images/face_icons/tired_miserable.jpg", "./app/assets/images/face_icons/exhausted_angry.jpg", "./app/assets/images/ned3-blur.png", "./app/assets/images/ned3.png", "./app/assets/images/rays.jpeg", "./app/assets/images/eyes_open.png", "./app/assets/images/eyes_closed.png", "./app/assets/images/newfloor.png", "./app/assets/images/line_explosion.jpg", "./app/assets/images/computer_screen2.png", "./app/assets/images/frontface2.png", "./app/assets/images/moon.png", "./app/assets/images/bug.png", "./app/assets/images/sheep2.png", "./app/assets/images/desks.png", "./app/assets/images/desks2.png", "./app/assets/images/desks2.png", "./app/assets/images/fire.png", "./app/assets/images/coffee.png", "./app/assets/images/donut.png", "./app/assets/images/lunch.png", "./app/assets/images/hero_spritesheet.png", "./app/assets/images/hero_seated_spritesheet.png", "./app/assets/images/secretary.png", "./app/assets/images/ruby.png", "./app/assets/images/student1.png", "./app/assets/images/student2.png", "./app/assets/images/student3.png", "./app/assets/images/student4.png", "./app/assets/images/student5.png", "./app/assets/images/student6.png", "./app/assets/sounds/trippy.wav", "./app/assets/sounds/Rock-a-bye Baby.mp3", "./app/assets/sounds/missed.wav", "./app/assets/sounds/shot.wav", "./app/assets/sounds/beep.wav", "./app/assets/sounds/congrats-ding.wav", "./app/assets/sounds/typing.wav", "./app/assets/sounds/explosion.wav", "./app/assets/sounds/microwave_start.wav", "./app/assets/sounds/shot.wav", "./app/assets/sounds/missed.wav", "./app/assets/sounds/beep.wav", "./app/assets/sounds/buzzer.mp3", "./app/assets/sounds/bug_sound.wav", "./app/assets/sounds/hes_on_fire.wav", "./app/assets/sounds/fire.wav", "./app/assets/sounds/coffee.wav", "./app/assets/sounds/donut.wav", "./app/assets/sounds/microwave.wav", "./app/assets/sounds/woohoo.wav", "./app/assets/sounds/icon.wav"];
 	    }
 	  }, {
 	    key: 'render',
@@ -21854,14 +21854,314 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.Preload = exports.ImageHelper = exports.ImageCache = undefined;
+	
+	var _ImageCache = __webpack_require__(174);
+	
+	Object.defineProperty(exports, 'ImageCache', {
+	  enumerable: true,
+	  get: function get() {
+	    return _interopRequireDefault(_ImageCache).default;
+	  }
+	});
+	
+	var _ImageHelper = __webpack_require__(175);
+	
+	Object.defineProperty(exports, 'ImageHelper', {
+	  enumerable: true,
+	  get: function get() {
+	    return _interopRequireDefault(_ImageHelper).default;
+	  }
+	});
+	
+	var _Preload2 = __webpack_require__(176);
+	
+	var _Preload3 = _interopRequireDefault(_Preload2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Preload = exports.Preload = _Preload3.default;
+	
+	exports.default = Preload;
+
+/***/ },
+/* 174 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var hash = {};
+	var cache = [];
+	
+	var add = function add(url) {
+	    if (!hash[url]) {
+	        hash[url] = new Image();
+	        hash[url].crossorigin = 'anonymous';
+	        hash[url].crossOrigin = 'anonymous';
+	        hash[url].src = url;
+	
+	        cache.push(hash[url]);
+	    }
+	    return hash[url];
+	};
+	
+	var get = function get(url) {
+	    return add(url);
+	};
+	
+	var stuff = function stuff(urls) {
+	    if (urls.length > 0) {
+	        urls.map(add);
+	    }
+	};
+	
+	var ImageCache = {
+	    add: add,
+	    stuff: stuff,
+	    get: get,
+	    hash: hash,
+	    cache: cache
+	};
+	
+	exports.default = ImageCache;
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _ImageCache = __webpack_require__(174);
+	
+	var _ImageCache2 = _interopRequireDefault(_ImageCache);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ImageHelper = {
+	    loadImage: function loadImage(url) {
+	        var image = _ImageCache2.default.get(url);
+	
+	        return new Promise(function (resolve, reject) {
+	            var handleSuccess = function handleSuccess() {
+	                resolve(image);
+	            };
+	            var handleError = function handleError() {
+	                reject(image);
+	            };
+	
+	            if (image.complete) {
+	                // image is loaded, go ahead and change the state
+	
+	                if (image.naturalWidth && image.naturalHeight) {
+	                    // successful load
+	                    handleSuccess();
+	                } else {
+	                    handleError();
+	                }
+	            } else {
+	                image.addEventListener('load', handleSuccess, false);
+	                image.addEventListener('error', handleError, false);
+	            }
+	        });
+	    },
+	    loadImages: function loadImages(urls) {
+	        var promises = urls.map(this.loadImage.bind(this));
+	        return Promise.all(promises);
+	    },
+	
+	
+	    // preload without caring about the result
+	    stuffImages: function stuffImages(urls) {
+	        _ImageCache2.default.stuff(urls);
+	    }
+	};
+	
+	exports.default = ImageHelper;
+
+/***/ },
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _player = __webpack_require__(174);
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _ImageHelper = __webpack_require__(175);
+	
+	var _ImageHelper2 = _interopRequireDefault(_ImageHelper);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var propTypes = {
+	    // Rendered on success
+	    children: _react.PropTypes.element.isRequired,
+	
+	    // Rendered during load
+	    loadingIndicator: _react.PropTypes.node.isRequired,
+	
+	    // Array of image urls to be preloaded
+	    images: _react.PropTypes.array,
+	
+	    // If set, the preloader will automatically show
+	    // the children content after this amount of time
+	    autoResolveDelay: _react.PropTypes.number,
+	
+	    // Error callback. Is passed the error
+	    onError: _react.PropTypes.func,
+	
+	    // Success callback
+	    onSuccess: _react.PropTypes.func,
+	
+	    // Whether or not we should still show the content
+	    // even if there is a preloading error
+	    resolveOnError: _react.PropTypes.bool,
+	
+	    // Whether or not we should mount the child content after
+	    // images have finished loading (or after autoResolveDelay)
+	    mountChildren: _react.PropTypes.bool
+	};
+	
+	var defaultProps = {
+	    images: [],
+	    resolveOnError: true,
+	    mountChildren: true,
+	    loadingIndicator: null
+	};
+	
+	var Preload = function (_Component) {
+	    _inherits(Preload, _Component);
+	
+	    function Preload(props) {
+	        _classCallCheck(this, Preload);
+	
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Preload).call(this, props));
+	
+	        _this.state = {
+	            ready: false
+	        };
+	
+	        _this._handleSuccess = _this._handleSuccess.bind(_this);
+	        _this._handleError = _this._handleError.bind(_this);
+	        _this._mounted = false;
+	        return _this;
+	    }
+	
+	    _createClass(Preload, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            if (!this.props.images || this.props.images.length === 0) {
+	                this._handleSuccess();
+	            }
+	        }
+	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this._mounted = true;
+	            if (!this.state.ready) {
+	                _ImageHelper2.default.loadImages(this.props.images).then(this._handleSuccess, this._handleError);
+	
+	                if (this.props.autoResolveDelay && this.props.autoResolveDelay > 0) {
+	                    this.autoResolveTimeout = setTimeout(this._handleSuccess, this.props.autoResolveDelay);
+	                }
+	            }
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            this._mounted = false;
+	            if (this.autoResolveTimeout) {
+	                clearTimeout(this.autoResolveTimeout);
+	            }
+	        }
+	    }, {
+	        key: '_handleSuccess',
+	        value: function _handleSuccess() {
+	            if (this.autoResolveTimeout) {
+	                clearTimeout(this.autoResolveTimeout);
+	                console.warn('images failed to preload, auto resolving');
+	            }
+	
+	            if (this.state.ready || !this._mounted) {
+	                return;
+	            }
+	
+	            this.setState({
+	                ready: true
+	            });
+	
+	            if (this.props.onSuccess) {
+	                this.props.onSuccess();
+	            }
+	        }
+	    }, {
+	        key: '_handleError',
+	        value: function _handleError(err) {
+	
+	            if (!this._mounted) {
+	                return;
+	            }
+	
+	            if (this.props.resolveOnError) {
+	                this._handleSuccess();
+	            }
+	
+	            if (this.props.onError) {
+	                this.props.onError(err);
+	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return this.state.ready && this.props.mountChildren ? this.props.children : this.props.loadingIndicator;
+	        }
+	    }]);
+	
+	    return Preload;
+	}(_react.Component);
+	
+	Preload.propTypes = propTypes;
+	Preload.defaultProps = defaultProps;
+	
+	exports.default = Preload;
+
+/***/ },
+/* 177 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _player = __webpack_require__(178);
 	
 	var _player2 = _interopRequireDefault(_player);
 	
-	var _week = __webpack_require__(182);
+	var _week = __webpack_require__(186);
 	
 	var _week2 = _interopRequireDefault(_week);
 	
@@ -21909,7 +22209,7 @@
 	exports.default = Game;
 
 /***/ },
-/* 174 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21920,27 +22220,27 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _clock = __webpack_require__(175);
+	var _clock = __webpack_require__(179);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _fire_anim = __webpack_require__(176);
+	var _fire_anim = __webpack_require__(180);
 	
 	var _fire_anim2 = _interopRequireDefault(_fire_anim);
 	
-	var _study_icon_anim = __webpack_require__(178);
+	var _study_icon_anim = __webpack_require__(182);
 	
 	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
 	
-	var _bug_anim = __webpack_require__(179);
+	var _bug_anim = __webpack_require__(183);
 	
 	var _bug_anim2 = _interopRequireDefault(_bug_anim);
 	
-	var _skill_anim = __webpack_require__(180);
+	var _skill_anim = __webpack_require__(184);
 	
 	var _skill_anim2 = _interopRequireDefault(_skill_anim);
 	
-	var _points_anim = __webpack_require__(181);
+	var _points_anim = __webpack_require__(185);
 	
 	var _points_anim2 = _interopRequireDefault(_points_anim);
 	
@@ -22172,7 +22472,7 @@
 	exports.default = Player;
 
 /***/ },
-/* 175 */
+/* 179 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22333,7 +22633,7 @@
 	exports.default = Clock;
 
 /***/ },
-/* 176 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22344,7 +22644,7 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _moveable = __webpack_require__(177);
+	var _moveable = __webpack_require__(181);
 	
 	var _moveable2 = _interopRequireDefault(_moveable);
 	
@@ -22424,7 +22724,7 @@
 	exports.default = FireAnim;
 
 /***/ },
-/* 177 */
+/* 181 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22486,7 +22786,7 @@
 	exports.default = Moveable;
 
 /***/ },
-/* 178 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22495,7 +22795,7 @@
 	  value: true
 	});
 	
-	var _moveable = __webpack_require__(177);
+	var _moveable = __webpack_require__(181);
 	
 	var _moveable2 = _interopRequireDefault(_moveable);
 	
@@ -22527,7 +22827,7 @@
 	exports.default = StudyIcon;
 
 /***/ },
-/* 179 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22538,11 +22838,11 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _moveable = __webpack_require__(177);
+	var _moveable = __webpack_require__(181);
 	
 	var _moveable2 = _interopRequireDefault(_moveable);
 	
-	var _study_icon_anim = __webpack_require__(178);
+	var _study_icon_anim = __webpack_require__(182);
 	
 	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
 	
@@ -22636,7 +22936,7 @@
 	exports.default = BugAnim;
 
 /***/ },
-/* 180 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22647,11 +22947,11 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _moveable = __webpack_require__(177);
+	var _moveable = __webpack_require__(181);
 	
 	var _moveable2 = _interopRequireDefault(_moveable);
 	
-	var _study_icon_anim = __webpack_require__(178);
+	var _study_icon_anim = __webpack_require__(182);
 	
 	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
 	
@@ -22763,7 +23063,7 @@
 	exports.default = SkillAnim;
 
 /***/ },
-/* 181 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22774,11 +23074,11 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _moveable = __webpack_require__(177);
+	var _moveable = __webpack_require__(181);
 	
 	var _moveable2 = _interopRequireDefault(_moveable);
 	
-	var _study_icon_anim = __webpack_require__(178);
+	var _study_icon_anim = __webpack_require__(182);
 	
 	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
 	
@@ -22873,7 +23173,7 @@
 	exports.default = PointsAnim;
 
 /***/ },
-/* 182 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22884,7 +23184,7 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _day = __webpack_require__(183);
+	var _day = __webpack_require__(187);
 	
 	var _day2 = _interopRequireDefault(_day);
 	
@@ -22968,7 +23268,7 @@
 	exports.default = Week;
 
 /***/ },
-/* 183 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22987,7 +23287,7 @@
 	// import NightTime from './sessions/night_time.js';
 	
 	
-	var _clock = __webpack_require__(175);
+	var _clock = __webpack_require__(179);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
@@ -23074,7 +23374,7 @@
 	exports.default = Day;
 
 /***/ },
-/* 184 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23085,7 +23385,7 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _moveable = __webpack_require__(177);
+	var _moveable = __webpack_require__(181);
 	
 	var _moveable2 = _interopRequireDefault(_moveable);
 	
@@ -23424,7 +23724,7 @@
 	exports.default = PlayerAnim;
 
 /***/ },
-/* 185 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23439,31 +23739,31 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _secretary = __webpack_require__(186);
+	var _secretary = __webpack_require__(190);
 	
 	var _secretary2 = _interopRequireDefault(_secretary);
 	
-	var _desk = __webpack_require__(187);
+	var _desk = __webpack_require__(191);
 	
 	var _desk2 = _interopRequireDefault(_desk);
 	
-	var _clock = __webpack_require__(175);
+	var _clock = __webpack_require__(179);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _study_icon_anim = __webpack_require__(178);
+	var _study_icon_anim = __webpack_require__(182);
 	
 	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
 	
-	var _fire_anim = __webpack_require__(176);
+	var _fire_anim = __webpack_require__(180);
 	
 	var _fire_anim2 = _interopRequireDefault(_fire_anim);
 	
-	var _food_anim = __webpack_require__(188);
+	var _food_anim = __webpack_require__(192);
 	
 	var _food_anim2 = _interopRequireDefault(_food_anim);
 	
-	var _student_anim = __webpack_require__(189);
+	var _student_anim = __webpack_require__(193);
 	
 	var _student_anim2 = _interopRequireDefault(_student_anim);
 	
@@ -24153,7 +24453,7 @@
 	exports.default = OpenSesh;
 
 /***/ },
-/* 186 */
+/* 190 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -24191,7 +24491,7 @@
 	exports.default = Secretary;
 
 /***/ },
-/* 187 */
+/* 191 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -24237,7 +24537,7 @@
 	exports.default = Desk;
 
 /***/ },
-/* 188 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24248,11 +24548,11 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _moveable = __webpack_require__(177);
+	var _moveable = __webpack_require__(181);
 	
 	var _moveable2 = _interopRequireDefault(_moveable);
 	
-	var _study_icon_anim = __webpack_require__(178);
+	var _study_icon_anim = __webpack_require__(182);
 	
 	var _study_icon_anim2 = _interopRequireDefault(_study_icon_anim);
 	
@@ -24381,7 +24681,7 @@
 	exports.default = FoodAnim;
 
 /***/ },
-/* 189 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24392,7 +24692,7 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _moveable = __webpack_require__(177);
+	var _moveable = __webpack_require__(181);
 	
 	var _moveable2 = _interopRequireDefault(_moveable);
 	
@@ -24512,7 +24812,7 @@
 	exports.default = StudentAnim;
 
 /***/ },
-/* 190 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24527,11 +24827,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _sleep_minigame = __webpack_require__(191);
+	var _sleep_minigame = __webpack_require__(195);
 	
 	var _sleep_minigame2 = _interopRequireDefault(_sleep_minigame);
 	
-	var _clock = __webpack_require__(175);
+	var _clock = __webpack_require__(179);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
@@ -24905,7 +25205,7 @@
 	exports.default = LectureSeshScreen;
 
 /***/ },
-/* 191 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24972,7 +25272,7 @@
 	exports.default = SleepMinigame;
 
 /***/ },
-/* 192 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24987,11 +25287,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _clock = __webpack_require__(175);
+	var _clock = __webpack_require__(179);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _week = __webpack_require__(182);
+	var _week = __webpack_require__(186);
 	
 	var _week2 = _interopRequireDefault(_week);
 	
@@ -25175,7 +25475,7 @@
 	exports.default = NightSeshScreen;
 
 /***/ },
-/* 193 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25190,23 +25490,23 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _pairs_sesh_driving_screen = __webpack_require__(194);
+	var _pairs_sesh_driving_screen = __webpack_require__(198);
 	
 	var _pairs_sesh_driving_screen2 = _interopRequireDefault(_pairs_sesh_driving_screen);
 	
-	var _pairs_sesh_navigating_screen = __webpack_require__(196);
+	var _pairs_sesh_navigating_screen = __webpack_require__(200);
 	
 	var _pairs_sesh_navigating_screen2 = _interopRequireDefault(_pairs_sesh_navigating_screen);
 	
-	var _pairs_sesh_open_screen = __webpack_require__(197);
+	var _pairs_sesh_open_screen = __webpack_require__(201);
 	
 	var _pairs_sesh_open_screen2 = _interopRequireDefault(_pairs_sesh_open_screen);
 	
-	var _pairs_sesh_results = __webpack_require__(198);
+	var _pairs_sesh_results = __webpack_require__(202);
 	
 	var _pairs_sesh_results2 = _interopRequireDefault(_pairs_sesh_results);
 	
-	var _clock = __webpack_require__(175);
+	var _clock = __webpack_require__(179);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
@@ -25357,7 +25657,7 @@
 	exports.default = PairsSeshScreen;
 
 /***/ },
-/* 194 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25372,11 +25672,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _clock = __webpack_require__(175);
+	var _clock = __webpack_require__(179);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _pairs_line = __webpack_require__(195);
+	var _pairs_line = __webpack_require__(199);
 	
 	var _pairs_line2 = _interopRequireDefault(_pairs_line);
 	
@@ -25652,7 +25952,7 @@
 	exports.default = PairsSeshDrivingScreen;
 
 /***/ },
-/* 195 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25667,7 +25967,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _clock = __webpack_require__(175);
+	var _clock = __webpack_require__(179);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
@@ -25755,7 +26055,7 @@
 	exports.default = PairsLine;
 
 /***/ },
-/* 196 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25770,7 +26070,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _clock = __webpack_require__(175);
+	var _clock = __webpack_require__(179);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
@@ -26049,7 +26349,7 @@
 	exports.default = PairsSeshNavigatingScreen;
 
 /***/ },
-/* 197 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26064,7 +26364,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _clock = __webpack_require__(175);
+	var _clock = __webpack_require__(179);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
@@ -26127,7 +26427,7 @@
 	exports.default = PairsSeshOpenScreen;
 
 /***/ },
-/* 198 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26142,11 +26442,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _clock = __webpack_require__(175);
+	var _clock = __webpack_require__(179);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _pairs_line = __webpack_require__(195);
+	var _pairs_line = __webpack_require__(199);
 	
 	var _pairs_line2 = _interopRequireDefault(_pairs_line);
 	
@@ -26396,7 +26696,7 @@
 	exports.default = PairsSeshResults;
 
 /***/ },
-/* 199 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26411,7 +26711,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _clock = __webpack_require__(175);
+	var _clock = __webpack_require__(179);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
@@ -26492,7 +26792,7 @@
 	exports.default = StrikeScreen;
 
 /***/ },
-/* 200 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26507,7 +26807,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _clock = __webpack_require__(175);
+	var _clock = __webpack_require__(179);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
@@ -26582,7 +26882,7 @@
 	exports.default = CongratsScreen;
 
 /***/ },
-/* 201 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26767,7 +27067,7 @@
 	              }
 	            default:
 	              //exhausted then exhausted angry
-	              return "exhausted_angry.jpg";
+	              return "exhausted_angry";
 	          }
 	      }
 	    }
@@ -26782,306 +27082,6 @@
 	}(_react2.default.Component); //end class
 	
 	exports.default = FaceAnim;
-
-/***/ },
-/* 202 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.Preload = exports.ImageHelper = exports.ImageCache = undefined;
-	
-	var _ImageCache = __webpack_require__(203);
-	
-	Object.defineProperty(exports, 'ImageCache', {
-	  enumerable: true,
-	  get: function get() {
-	    return _interopRequireDefault(_ImageCache).default;
-	  }
-	});
-	
-	var _ImageHelper = __webpack_require__(204);
-	
-	Object.defineProperty(exports, 'ImageHelper', {
-	  enumerable: true,
-	  get: function get() {
-	    return _interopRequireDefault(_ImageHelper).default;
-	  }
-	});
-	
-	var _Preload2 = __webpack_require__(205);
-	
-	var _Preload3 = _interopRequireDefault(_Preload2);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var Preload = exports.Preload = _Preload3.default;
-	
-	exports.default = Preload;
-
-/***/ },
-/* 203 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var hash = {};
-	var cache = [];
-	
-	var add = function add(url) {
-	    if (!hash[url]) {
-	        hash[url] = new Image();
-	        hash[url].crossorigin = 'anonymous';
-	        hash[url].crossOrigin = 'anonymous';
-	        hash[url].src = url;
-	
-	        cache.push(hash[url]);
-	    }
-	    return hash[url];
-	};
-	
-	var get = function get(url) {
-	    return add(url);
-	};
-	
-	var stuff = function stuff(urls) {
-	    if (urls.length > 0) {
-	        urls.map(add);
-	    }
-	};
-	
-	var ImageCache = {
-	    add: add,
-	    stuff: stuff,
-	    get: get,
-	    hash: hash,
-	    cache: cache
-	};
-	
-	exports.default = ImageCache;
-
-/***/ },
-/* 204 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _ImageCache = __webpack_require__(203);
-	
-	var _ImageCache2 = _interopRequireDefault(_ImageCache);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var ImageHelper = {
-	    loadImage: function loadImage(url) {
-	        var image = _ImageCache2.default.get(url);
-	
-	        return new Promise(function (resolve, reject) {
-	            var handleSuccess = function handleSuccess() {
-	                resolve(image);
-	            };
-	            var handleError = function handleError() {
-	                reject(image);
-	            };
-	
-	            if (image.complete) {
-	                // image is loaded, go ahead and change the state
-	
-	                if (image.naturalWidth && image.naturalHeight) {
-	                    // successful load
-	                    handleSuccess();
-	                } else {
-	                    handleError();
-	                }
-	            } else {
-	                image.addEventListener('load', handleSuccess, false);
-	                image.addEventListener('error', handleError, false);
-	            }
-	        });
-	    },
-	    loadImages: function loadImages(urls) {
-	        var promises = urls.map(this.loadImage.bind(this));
-	        return Promise.all(promises);
-	    },
-	
-	
-	    // preload without caring about the result
-	    stuffImages: function stuffImages(urls) {
-	        _ImageCache2.default.stuff(urls);
-	    }
-	};
-	
-	exports.default = ImageHelper;
-
-/***/ },
-/* 205 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _ImageHelper = __webpack_require__(204);
-	
-	var _ImageHelper2 = _interopRequireDefault(_ImageHelper);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var propTypes = {
-	    // Rendered on success
-	    children: _react.PropTypes.element.isRequired,
-	
-	    // Rendered during load
-	    loadingIndicator: _react.PropTypes.node.isRequired,
-	
-	    // Array of image urls to be preloaded
-	    images: _react.PropTypes.array,
-	
-	    // If set, the preloader will automatically show
-	    // the children content after this amount of time
-	    autoResolveDelay: _react.PropTypes.number,
-	
-	    // Error callback. Is passed the error
-	    onError: _react.PropTypes.func,
-	
-	    // Success callback
-	    onSuccess: _react.PropTypes.func,
-	
-	    // Whether or not we should still show the content
-	    // even if there is a preloading error
-	    resolveOnError: _react.PropTypes.bool,
-	
-	    // Whether or not we should mount the child content after
-	    // images have finished loading (or after autoResolveDelay)
-	    mountChildren: _react.PropTypes.bool
-	};
-	
-	var defaultProps = {
-	    images: [],
-	    resolveOnError: true,
-	    mountChildren: true,
-	    loadingIndicator: null
-	};
-	
-	var Preload = function (_Component) {
-	    _inherits(Preload, _Component);
-	
-	    function Preload(props) {
-	        _classCallCheck(this, Preload);
-	
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Preload).call(this, props));
-	
-	        _this.state = {
-	            ready: false
-	        };
-	
-	        _this._handleSuccess = _this._handleSuccess.bind(_this);
-	        _this._handleError = _this._handleError.bind(_this);
-	        _this._mounted = false;
-	        return _this;
-	    }
-	
-	    _createClass(Preload, [{
-	        key: 'componentWillMount',
-	        value: function componentWillMount() {
-	            if (!this.props.images || this.props.images.length === 0) {
-	                this._handleSuccess();
-	            }
-	        }
-	    }, {
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            this._mounted = true;
-	            if (!this.state.ready) {
-	                _ImageHelper2.default.loadImages(this.props.images).then(this._handleSuccess, this._handleError);
-	
-	                if (this.props.autoResolveDelay && this.props.autoResolveDelay > 0) {
-	                    this.autoResolveTimeout = setTimeout(this._handleSuccess, this.props.autoResolveDelay);
-	                }
-	            }
-	        }
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {
-	            this._mounted = false;
-	            if (this.autoResolveTimeout) {
-	                clearTimeout(this.autoResolveTimeout);
-	            }
-	        }
-	    }, {
-	        key: '_handleSuccess',
-	        value: function _handleSuccess() {
-	            if (this.autoResolveTimeout) {
-	                clearTimeout(this.autoResolveTimeout);
-	                console.warn('images failed to preload, auto resolving');
-	            }
-	
-	            if (this.state.ready || !this._mounted) {
-	                return;
-	            }
-	
-	            this.setState({
-	                ready: true
-	            });
-	
-	            if (this.props.onSuccess) {
-	                this.props.onSuccess();
-	            }
-	        }
-	    }, {
-	        key: '_handleError',
-	        value: function _handleError(err) {
-	
-	            if (!this._mounted) {
-	                return;
-	            }
-	
-	            if (this.props.resolveOnError) {
-	                this._handleSuccess();
-	            }
-	
-	            if (this.props.onError) {
-	                this.props.onError(err);
-	            }
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return this.state.ready && this.props.mountChildren ? this.props.children : this.props.loadingIndicator;
-	        }
-	    }]);
-	
-	    return Preload;
-	}(_react.Component);
-	
-	Preload.propTypes = propTypes;
-	Preload.defaultProps = defaultProps;
-	
-	exports.default = Preload;
 
 /***/ }
 /******/ ]);
