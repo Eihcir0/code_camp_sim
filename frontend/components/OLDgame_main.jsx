@@ -1,4 +1,5 @@
 import React from 'react';
+import Preload from 'react-preload';
 import Game from './../../game_logic/game.js';
 import Player from './../../game_logic/player.js';
 import Clock from './../../game_logic/clock.js';
@@ -19,7 +20,8 @@ class GameMain extends React.Component {
     super();
     //HAVE TO DEAL WITH ATE LUNCH SHIT - reset each day, these should be tracked in day
     this.player = new Player("Guest");
-    this.player.loading = true;
+    this.player.loading = 0;
+    this.playerAnim = new playerAnim({player: this.player});
     if (this.player.week===undefined) {
       this.week = new Week(this.player);
       this.player.week = this.week;
@@ -27,8 +29,6 @@ class GameMain extends React.Component {
     } else {
       this.week = this.player.week;
     }
-    this.player.clock.pause();
-    this.playerAnim = new playerAnim({player: this.player});
 
     this.state = {
       currentPos: -1,
@@ -43,9 +43,10 @@ class GameMain extends React.Component {
     this.checkAteLunch = this.checkAteLunch.bind(this);
     this.handleLeaving = this.handleLeaving.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
+    this.player.clock.pause();
     this.ticksPerSecond = 100; //<<=If changed then update Clock class
     this.intervalTime = 1000 / this.ticksPerSecond;
-
+    this.player.loading = 0;
   }
 
   tick() {
@@ -153,19 +154,16 @@ class GameMain extends React.Component {
       if (this.player.happiness>100) {this.player.happiness = 100;}
     }
 
-    handleOpen() {
-      this.player.clock.unpause();
-      this.player.loading = false;
-      this.interval = window.setInterval(()=>this.tick(),this.intervalTime);
-    }
-
+  handleOpen() {
+    this.player.clock.unpause();
+    this.player.loading = 1;
+  }
 
   sesh() { // change this to a switch
-    if (this.player.loading) {
+    if (this.player.loading===0) {
       return <button className="leave-button-big" onClick={this.handleOpen}>
         PRESS TO START </button>;
     }
-
     if (this.player.newStrike) {
       this.player.clock.pause();
       return (
@@ -221,54 +219,95 @@ class GameMain extends React.Component {
     }
   }
 
+  images() {
+    return [
+      "./app/assets/images/bed.png",
+      "./app/assets/images/happy.png",
+      "./app/assets/images/star.png",
+      "./app/assets/images/ruby.png",
+      "./app/assets/images/face_icons/rested_happy.jpg",
+      "./app/assets/images/face_icons/tired_happy.jpg",
+      "./app/assets/images/face_icons/tired_happy2.jpg",
+      "./app/assets/images/face_icons/exhausted_sad.jpg",
+      "./app/assets/images/face_icons/rested_sad.jpg",
+      "./app/assets/images/face_icons/tired_indifferent.jpg",
+      "./app/assets/images/face_icons/exhausted_sad.jpg",
+      "./app/assets/images/face_icons/rested_angry.jpg",
+      "./app/assets/images/face_icons/tired_angry.jpg",
+      "./app/assets/images/face_icons/tired_miserable.jpg",
+      "./app/assets/images/face_icons/exhausted_angry.jpg"
 
-  render() {
-    return (
-      <section>
-        <span className="game-title">CODE CAMP SIM (ver 0.7.5)</span>
-
-        <div className="game-middle-container">
-          {this.sesh()}
-          <div className="game-right-side">
-            <div>
-              w{this.player.weekNum}d{this.player.dayNum}    {this.state.clock[0]}:{this.state.clock[1]}{this.state.clock[2]}</div>
-            <div className="stats-bar">
-              <meter value={this.player.sleepBank} min="0" max="100" low="30" high="70" optimum="100"/>
-              <img className="icon" src="./app/assets/images/bed.png" />
-              <meter value={this.player.happiness} min="0" max="100" low="30" high="70" optimum="100"/>
-              <img className="icon" src="./app/assets/images/happy.png" />
-              <meter value={this.player.focus} min="0" max="100" low="30" high="70" optimum="100"/>
-              <img className="icon" src="./app/assets/images/star.png" /><br/>
-              <span className="score">{this.player.score}</span><br/>
-              <span className="player-title">
-                <br/>LEVEL: {this.player.scoreTitle()}
-              </span>
-              <br/><br/>
-              <span className="current-subject">
-                <img className="icon" src="./app/assets/images/ruby.png" />
-                 {this.state.ruby}% <br/>
-              </span>
-              <br/><span className="strikes">
-                STRIKES:  {this.player.strikes}
-              </span>
-              <br/>
-              <br/>
-              <br/>
-              <br/>
-              <br/>
-
-              <span className="player-name">{this.player.name}</span>
-              <FaceAnim player={this.player}/>
-            </div>
-            <div className="player-pic-holder">
-            </div>
-          </div>
-        </div>
-        <div className="game-messages">{this.state.message} </div>
-      </section>
-    );
+    ];
   }
 
-}//end component
+
+  render() {
+    //{array} or <component className="" onClick={}
+    // if (this.loading) {
+    //   return <div className="loading">LOADING....</div>;
+    // }
+    var loadingIndicator = <div className="loading">LOADING MEDIA....</div>;
+    var images = this.images();
+    // onError={this._handleImageLoadError}
+    // autoResolveDelay={5000}
+    return (
+      <Preload
+        loadingIndicator={loadingIndicator}
+        images={images}
+        resolveOnError={true}
+        mountChildren={true}
+        onSuccess={()=> {
+          this.interval = window.setInterval(()=>this.tick(),this.intervalTime);}
+        }
+      >
+        {
+
+          <section>
+            <span className="game-title">CODE CAMP SIM (ver 0.7.5)</span>
+
+            <div className="game-middle-container">
+              {this.sesh()}
+              <div className="game-right-side">
+                <div>
+                  w{this.player.weekNum}d{this.player.dayNum}    {this.state.clock[0]}:{this.state.clock[1]}{this.state.clock[2]}</div>
+                <div className="stats-bar">
+                  <meter value={this.player.sleepBank} min="0" max="100" low="30" high="70" optimum="100"/>
+                  <img className="icon" src="./app/assets/images/bed.png" />
+                  <meter value={this.player.happiness} min="0" max="100" low="30" high="70" optimum="100"/>
+                  <img className="icon" src="./app/assets/images/happy.png" />
+                  <meter value={this.player.focus} min="0" max="100" low="30" high="70" optimum="100"/>
+                  <img className="icon" src="./app/assets/images/star.png" /><br/>
+                  <span className="score">{this.player.score}</span><br/>
+                  <span className="player-title">
+                    <br/>LEVEL: {this.player.scoreTitle()}
+                  </span>
+                  <br/><br/>
+                  <span className="current-subject">
+                    <img className="icon" src="./app/assets/images/ruby.png" />
+                     {this.state.ruby}% <br/>
+                  </span>
+                  <br/><span className="strikes">
+                    STRIKES:  {this.player.strikes}
+                  </span>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+
+                  <span className="player-name">{this.player.name}</span>
+                  <FaceAnim player={this.player}/>
+                </div>
+                <div className="player-pic-holder">
+                </div>
+              </div>
+            </div>
+            <div className="game-messages">{this.state.message} </div>
+          </section>
+        }
+    </Preload>
+    );
+  }
+}
 
 export default GameMain;

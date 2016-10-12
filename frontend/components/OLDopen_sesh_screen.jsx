@@ -20,6 +20,7 @@ class OpenSesh extends React.Component {
     this.player = this.props.player;
     this.player.clock.pause();
     this.playerAnim = this.props.playerAnim;
+    this.player.loading = 1;
     this.main = this.main.bind(this);
     this.renderSprites = this.renderSprites.bind(this);
     this.update = this.update.bind(this);
@@ -53,16 +54,22 @@ class OpenSesh extends React.Component {
     this.buttons = this.buttons.bind(this);
     this.handleGetOffComputer = this.handleGetOffComputer.bind(this);
     this.cancelAnimationFrame = this.cancelAnimationFrame.bind(this);
+    this.preMain = this.preMain.bind(this);
 
     this.sprites = [];
     this.player.ateDonut = false;
     this.player.lastCoffee = ["4","0","am"];
     this.leavingTime = false;
-    this.background = new Image();
-    this.background.src = './app/assets/images/newfloor.png';
   }//end constructor
 
   componentDidMount() {
+    this.background = new Image();
+    this.background.src = './app/assets/images/newfloor.png';
+
+  }
+
+  preMain() {
+
     this.canvas = document.getElementById('canvas');
     this.canvas.height = 500;
     this.canvas.width = 800;
@@ -74,13 +81,13 @@ class OpenSesh extends React.Component {
     this.initializeSprites();
     this.hover1 = document.getElementById('hover1');
     this.player.clock.animTickerCount = this.player.clock.tickCounter + 5 - 5;
+
     this.background.onload = () => {
+      this.player.loading = 2;
       this.player.clock.unpause();
       this.main();
     };
   }
-
-
   main() { //refactor!
     if (this.player.clock.is(["12","00","am"])) {this.handle1159();}
     if (this.player.clock.is(["2","00","am"])) {this.handleLeave();}
@@ -580,10 +587,55 @@ class OpenSesh extends React.Component {
 
   }//end initialize()
 
+
+    images() {
+      return [
+        "./app/assets/images/floors.png",
+        "./app/assets/images/face_icons/on_fire.jpg",
+        "./app/assets/images/face_icons/on_fire1.jpg",
+        "./app/assets/images/face_icons/on_fire2.jpg",
+        "./app/assets/images/face_icons/on_fire3.jpg",
+        "./app/assets/images/face_icons/on_fire4.jpg",
+        "./app/assets/images/face_icons/on_fire5.jpg",
+        "./app/assets/images/face_icons/on_fire6.jpg",
+        "./app/assets/images/face_icons/on_fire7.jpg",
+        "./app/assets/images/newfloor.png",
+        "./app/assets/images/bug.png",
+        "./app/assets/images/desks.png",
+        "./app/assets/images/desks2.png",
+        "./app/assets/images/desks2.png",
+        "./app/assets/images/fire.png",
+        "./app/assets/images/coffee.png",
+        "./app/assets/images/donut.png",
+        "./app/assets/images/lunch.png",
+        "./app/assets/images/hero_spritesheet.png",
+        "./app/assets/images/hero_seated_spritesheet.png",
+        "./app/assets/images/secretary.png",
+        "./app/assets/images/student1.png",
+        "./app/assets/images/student2.png",
+        "./app/assets/images/student3.png",
+        "./app/assets/images/student4.png",
+        "./app/assets/images/student5.png",
+        "./app/assets/images/student6.png"
+      ];
+    }
+
+
+
   render () {
+    var loadingIndicator = <div className="loading">LOADING MEDIA....</div>;
+    var images = this.images();
 
     return (
+      <Preload
+        loadingIndicator={loadingIndicator}
+        images={images}
+        resolveOnError={true}
+        mountChildren={true}
+        autoResolveDelay={5000}
+        onSuccess={this.preMain}
 
+        >{
           <div className="canvas-container">
             {this.quadrants()}
             <canvas id="canvas"
@@ -591,7 +643,8 @@ class OpenSesh extends React.Component {
               height="520"/>
             {this.buttons()}
           </div>
-
+        }
+      </Preload>
     );
   }
 

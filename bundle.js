@@ -21446,10 +21446,6 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactPreload = __webpack_require__(173);
-	
-	var _reactPreload2 = _interopRequireDefault(_reactPreload);
-	
 	var _game = __webpack_require__(177);
 	
 	var _game2 = _interopRequireDefault(_game);
@@ -21519,8 +21515,7 @@
 	    var _this = _possibleConstructorReturn(this, (GameMain.__proto__ || Object.getPrototypeOf(GameMain)).call(this));
 	
 	    _this.player = new _player2.default("Guest");
-	    _this.player.loading = 0;
-	    _this.playerAnim = new _player_anim2.default({ player: _this.player });
+	    _this.player.loading = true;
 	    if (_this.player.week === undefined) {
 	      _this.week = new _week2.default(_this.player);
 	      _this.player.week = _this.week;
@@ -21528,6 +21523,8 @@
 	    } else {
 	      _this.week = _this.player.week;
 	    }
+	    _this.player.clock.pause();
+	    _this.playerAnim = new _player_anim2.default({ player: _this.player });
 	
 	    _this.state = {
 	      currentPos: -1,
@@ -21542,10 +21539,9 @@
 	    _this.checkAteLunch = _this.checkAteLunch.bind(_this);
 	    _this.handleLeaving = _this.handleLeaving.bind(_this);
 	    _this.handleOpen = _this.handleOpen.bind(_this);
-	    _this.player.clock.pause();
 	    _this.ticksPerSecond = 100; //<<=If changed then update Clock class
 	    _this.intervalTime = 1000 / _this.ticksPerSecond;
-	    _this.player.loading = 0;
+	
 	    return _this;
 	  }
 	
@@ -21675,20 +21671,26 @@
 	  }, {
 	    key: 'handleOpen',
 	    value: function handleOpen() {
+	      var _this2 = this;
+	
 	      this.player.clock.unpause();
-	      this.player.loading = 1;
+	      this.player.loading = false;
+	      this.interval = window.setInterval(function () {
+	        return _this2.tick();
+	      }, this.intervalTime);
 	    }
 	  }, {
 	    key: 'sesh',
 	    value: function sesh() {
 	      // change this to a switch
-	      if (this.player.loading === 0) {
+	      if (this.player.loading) {
 	        return _react2.default.createElement(
 	          'button',
 	          { className: 'leave-button-big', onClick: this.handleOpen },
 	          'PRESS TO START '
 	        );
 	      }
+	
 	      if (this.player.newStrike) {
 	        this.player.clock.pause();
 	        return _react2.default.createElement(_strike_screen2.default, { player: this.player });
@@ -21730,136 +21732,103 @@
 	      }
 	    }
 	  }, {
-	    key: 'images',
-	    value: function images() {
-	      return ["./app/assets/images/bed.png", "./app/assets/images/happy.png", "./app/assets/images/star.png", "./app/assets/images/ruby.png", "./app/assets/images/face_icons/rested_happy.jpg", "./app/assets/images/face_icons/tired_happy.jpg", "./app/assets/images/face_icons/tired_happy2.jpg", "./app/assets/images/face_icons/exhausted_sad.jpg", "./app/assets/images/face_icons/rested_sad.jpg", "./app/assets/images/face_icons/tired_indifferent.jpg", "./app/assets/images/face_icons/exhausted_sad.jpg", "./app/assets/images/face_icons/rested_angry.jpg", "./app/assets/images/face_icons/tired_angry.jpg", "./app/assets/images/face_icons/tired_miserable.jpg", "./app/assets/images/face_icons/exhausted_angry.jpg"];
-	    }
-	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this2 = this;
-	
-	      //{array} or <component className="" onClick={}
-	      // if (this.loading) {
-	      //   return <div className="loading">LOADING....</div>;
-	      // }
-	      var loadingIndicator = _react2.default.createElement(
-	        'div',
-	        { className: 'loading' },
-	        'LOADING MEDIA....'
-	      );
-	      var images = this.images();
-	      // onError={this._handleImageLoadError}
-	      // autoResolveDelay={5000}
 	      return _react2.default.createElement(
-	        _reactPreload2.default,
-	        {
-	          loadingIndicator: loadingIndicator,
-	          images: images,
-	          resolveOnError: true,
-	          mountChildren: true,
-	          onSuccess: function onSuccess() {
-	            _this2.interval = window.setInterval(function () {
-	              return _this2.tick();
-	            }, _this2.intervalTime);
-	          }
-	        },
+	        'section',
+	        null,
 	        _react2.default.createElement(
-	          'section',
-	          null,
-	          _react2.default.createElement(
-	            'span',
-	            { className: 'game-title' },
-	            'CODE CAMP SIM (ver 0.7.5)'
-	          ),
+	          'span',
+	          { className: 'game-title' },
+	          'CODE CAMP SIM (ver 0.7.5)'
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'game-middle-container' },
+	          this.sesh(),
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'game-middle-container' },
-	            this.sesh(),
+	            { className: 'game-right-side' },
 	            _react2.default.createElement(
 	              'div',
-	              { className: 'game-right-side' },
+	              null,
+	              'w',
+	              this.player.weekNum,
+	              'd',
+	              this.player.dayNum,
+	              '    ',
+	              this.state.clock[0],
+	              ':',
+	              this.state.clock[1],
+	              this.state.clock[2]
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'stats-bar' },
+	              _react2.default.createElement('meter', { value: this.player.sleepBank, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
+	              _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/bed.png' }),
+	              _react2.default.createElement('meter', { value: this.player.happiness, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
+	              _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/happy.png' }),
+	              _react2.default.createElement('meter', { value: this.player.focus, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
+	              _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/star.png' }),
+	              _react2.default.createElement('br', null),
 	              _react2.default.createElement(
-	                'div',
-	                null,
-	                'w',
-	                this.player.weekNum,
-	                'd',
-	                this.player.dayNum,
-	                '    ',
-	                this.state.clock[0],
-	                ':',
-	                this.state.clock[1],
-	                this.state.clock[2]
+	                'span',
+	                { className: 'score' },
+	                this.player.score
 	              ),
+	              _react2.default.createElement('br', null),
 	              _react2.default.createElement(
-	                'div',
-	                { className: 'stats-bar' },
-	                _react2.default.createElement('meter', { value: this.player.sleepBank, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
-	                _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/bed.png' }),
-	                _react2.default.createElement('meter', { value: this.player.happiness, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
-	                _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/happy.png' }),
-	                _react2.default.createElement('meter', { value: this.player.focus, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
-	                _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/star.png' }),
+	                'span',
+	                { className: 'player-title' },
 	                _react2.default.createElement('br', null),
-	                _react2.default.createElement(
-	                  'span',
-	                  { className: 'score' },
-	                  this.player.score
-	                ),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement(
-	                  'span',
-	                  { className: 'player-title' },
-	                  _react2.default.createElement('br', null),
-	                  'LEVEL: ',
-	                  this.player.scoreTitle()
-	                ),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement(
-	                  'span',
-	                  { className: 'current-subject' },
-	                  _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/ruby.png' }),
-	                  this.state.ruby,
-	                  '% ',
-	                  _react2.default.createElement('br', null)
-	                ),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement(
-	                  'span',
-	                  { className: 'strikes' },
-	                  'STRIKES:  ',
-	                  this.player.strikes
-	                ),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement(
-	                  'span',
-	                  { className: 'player-name' },
-	                  this.player.name
-	                ),
-	                _react2.default.createElement(_face_anim2.default, { player: this.player })
+	                'LEVEL: ',
+	                this.player.scoreTitle()
 	              ),
-	              _react2.default.createElement('div', { className: 'player-pic-holder' })
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'game-messages' },
-	            this.state.message,
-	            ' '
+	              _react2.default.createElement('br', null),
+	              _react2.default.createElement('br', null),
+	              _react2.default.createElement(
+	                'span',
+	                { className: 'current-subject' },
+	                _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/ruby.png' }),
+	                this.state.ruby,
+	                '% ',
+	                _react2.default.createElement('br', null)
+	              ),
+	              _react2.default.createElement('br', null),
+	              _react2.default.createElement(
+	                'span',
+	                { className: 'strikes' },
+	                'STRIKES:  ',
+	                this.player.strikes
+	              ),
+	              _react2.default.createElement('br', null),
+	              _react2.default.createElement('br', null),
+	              _react2.default.createElement('br', null),
+	              _react2.default.createElement('br', null),
+	              _react2.default.createElement('br', null),
+	              _react2.default.createElement(
+	                'span',
+	                { className: 'player-name' },
+	                this.player.name
+	              ),
+	              _react2.default.createElement(_face_anim2.default, { player: this.player })
+	            ),
+	            _react2.default.createElement('div', { className: 'player-pic-holder' })
 	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'game-messages' },
+	          this.state.message,
+	          ' '
 	        )
 	      );
 	    }
 	  }]);
 	
 	  return GameMain;
-	}(_react2.default.Component);
+	}(_react2.default.Component); //end component
 	
 	exports.default = GameMain;
 
@@ -23319,7 +23288,7 @@
 	
 	    this.player = player;
 	    if (this.player.dayNum === 1) {
-	      arrivalTime = ["6", "30", "pm"];
+	      arrivalTime = ["8", "30", "am"];
 	    }
 	    this.player.clock = new _clock2.default(arrivalTime, this.player.defaultClockSpeed);
 	    this.player.currentPos = 0;
@@ -23808,7 +23777,6 @@
 	    _this.player = _this.props.player;
 	    _this.player.clock.pause();
 	    _this.playerAnim = _this.props.playerAnim;
-	    _this.player.loading = 1;
 	    _this.main = _this.main.bind(_this);
 	    _this.renderSprites = _this.renderSprites.bind(_this);
 	    _this.update = _this.update.bind(_this);
@@ -23842,24 +23810,19 @@
 	    _this.buttons = _this.buttons.bind(_this);
 	    _this.handleGetOffComputer = _this.handleGetOffComputer.bind(_this);
 	    _this.cancelAnimationFrame = _this.cancelAnimationFrame.bind(_this);
-	    _this.preMain = _this.preMain.bind(_this);
 	
 	    _this.sprites = [];
 	    _this.player.ateDonut = false;
 	    _this.player.lastCoffee = ["4", "0", "am"];
 	    _this.leavingTime = false;
+	    _this.background = new Image();
+	    _this.background.src = './app/assets/images/newfloor.png';
 	    return _this;
 	  } //end constructor
 	
 	  _createClass(OpenSesh, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.background = new Image();
-	      this.background.src = './app/assets/images/newfloor.png';
-	    }
-	  }, {
-	    key: 'preMain',
-	    value: function preMain() {
 	      var _this2 = this;
 	
 	      this.canvas = document.getElementById('canvas');
@@ -23873,9 +23836,7 @@
 	      this.initializeSprites();
 	      this.hover1 = document.getElementById('hover1');
 	      this.player.clock.animTickerCount = this.player.clock.tickCounter + 5 - 5;
-	
 	      this.background.onload = function () {
-	        _this2.player.loading = 2;
 	        _this2.player.clock.unpause();
 	        _this2.main();
 	      };
@@ -24461,42 +24422,18 @@
 	      this.sprites.push(d);
 	    } //end initialize()
 	
-	
-	  }, {
-	    key: 'images',
-	    value: function images() {
-	      return ["./app/assets/images/floors.png", "./app/assets/images/face_icons/on_fire.jpg", "./app/assets/images/face_icons/on_fire1.jpg", "./app/assets/images/face_icons/on_fire2.jpg", "./app/assets/images/face_icons/on_fire3.jpg", "./app/assets/images/face_icons/on_fire4.jpg", "./app/assets/images/face_icons/on_fire5.jpg", "./app/assets/images/face_icons/on_fire6.jpg", "./app/assets/images/face_icons/on_fire7.jpg", "./app/assets/images/newfloor.png", "./app/assets/images/bug.png", "./app/assets/images/desks.png", "./app/assets/images/desks2.png", "./app/assets/images/desks2.png", "./app/assets/images/fire.png", "./app/assets/images/coffee.png", "./app/assets/images/donut.png", "./app/assets/images/lunch.png", "./app/assets/images/hero_spritesheet.png", "./app/assets/images/hero_seated_spritesheet.png", "./app/assets/images/secretary.png", "./app/assets/images/student1.png", "./app/assets/images/student2.png", "./app/assets/images/student3.png", "./app/assets/images/student4.png", "./app/assets/images/student5.png", "./app/assets/images/student6.png"];
-	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var loadingIndicator = _react2.default.createElement(
-	        'div',
-	        { className: 'loading' },
-	        'LOADING MEDIA....'
-	      );
-	      var images = this.images();
 	
 	      return _react2.default.createElement(
-	        _reactPreload2.default,
-	        {
-	          loadingIndicator: loadingIndicator,
-	          images: images,
-	          resolveOnError: true,
-	          mountChildren: true,
-	          autoResolveDelay: 5000,
-	          onSuccess: this.preMain
-	
-	        },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'canvas-container' },
-	          this.quadrants(),
-	          _react2.default.createElement('canvas', { id: 'canvas',
-	            width: '800',
-	            height: '520' }),
-	          this.buttons()
-	        )
+	        'div',
+	        { className: 'canvas-container' },
+	        this.quadrants(),
+	        _react2.default.createElement('canvas', { id: 'canvas',
+	          width: '800',
+	          height: '520' }),
+	        this.buttons()
 	      );
 	    }
 	  }]);
