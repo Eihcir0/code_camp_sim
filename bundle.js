@@ -23844,8 +23844,6 @@
 	    _this.cancelAnimationFrame = _this.cancelAnimationFrame.bind(_this);
 	    _this.preMain = _this.preMain.bind(_this);
 	
-	    _this.background = new Image();
-	    _this.background.src = './app/assets/images/newfloor.png';
 	    _this.sprites = [];
 	    _this.player.ateDonut = false;
 	    _this.player.lastCoffee = ["4", "0", "am"];
@@ -23855,7 +23853,10 @@
 	
 	  _createClass(OpenSesh, [{
 	    key: 'componentDidMount',
-	    value: function componentDidMount() {}
+	    value: function componentDidMount() {
+	      this.background = new Image();
+	      this.background.src = './app/assets/images/newfloor.png';
+	    }
 	  }, {
 	    key: 'preMain',
 	    value: function preMain() {

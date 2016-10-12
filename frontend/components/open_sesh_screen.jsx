@@ -56,8 +56,6 @@ class OpenSesh extends React.Component {
     this.cancelAnimationFrame = this.cancelAnimationFrame.bind(this);
     this.preMain = this.preMain.bind(this);
 
-    this.background = new Image();
-    this.background.src = './app/assets/images/newfloor.png';
     this.sprites = [];
     this.player.ateDonut = false;
     this.player.lastCoffee = ["4","0","am"];
@@ -65,6 +63,9 @@ class OpenSesh extends React.Component {
   }//end constructor
 
   componentDidMount() {
+    this.background = new Image();
+    this.background.src = './app/assets/images/newfloor.png';
+
   }
 
   preMain() {
