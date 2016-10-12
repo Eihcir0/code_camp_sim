@@ -285,7 +285,7 @@ class GameMain extends React.Component {
       "./app/assets/sounds/microwave.wav",
       "./app/assets/sounds/woohoo.wav",
       "./app/assets/sounds/icon.wav"
-    ]
+    ];
   }
 
 
@@ -298,11 +298,11 @@ class GameMain extends React.Component {
     var images = this.images();
     // onError={this._handleImageLoadError}
     // onSuccess={this._handleImageLoadSuccess}
+    // autoResolveDelay={5000}
     return (
       <Preload
         loadingIndicator={loadingIndicator}
         images={images}
-        autoResolveDelay={3000}
         resolveOnError={true}
         mountChildren={true}
       >

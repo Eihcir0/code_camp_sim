@@ -21737,12 +21737,12 @@
 	      var images = this.images();
 	      // onError={this._handleImageLoadError}
 	      // onSuccess={this._handleImageLoadSuccess}
+	      // autoResolveDelay={5000}
 	      return _react2.default.createElement(
 	        _reactPreload2.default,
 	        {
 	          loadingIndicator: loadingIndicator,
 	          images: images,
-	          autoResolveDelay: 3000,
 	          resolveOnError: true,
 	          mountChildren: true
 	        },
