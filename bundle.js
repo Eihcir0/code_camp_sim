@@ -21541,8 +21541,11 @@
 	    _this.updateAttributes = _this.updateAttributes.bind(_this);
 	    _this.checkAteLunch = _this.checkAteLunch.bind(_this);
 	    _this.handleLeaving = _this.handleLeaving.bind(_this);
+	    _this.open = _this.open.bind(_this);
+	    _this.player.clock.pause();
 	    _this.ticksPerSecond = 100; //<<=If changed then update Clock class
 	    _this.intervalTime = 1000 / _this.ticksPerSecond;
+	    _this.open = true;
 	    return _this;
 	  }
 	
@@ -21670,10 +21673,22 @@
 	      }
 	    }
 	  }, {
+	    key: 'open',
+	    value: function open() {
+	      this.player.clock.unpause();
+	      this.open = false;
+	    }
+	  }, {
 	    key: 'sesh',
 	    value: function sesh() {
 	      // change this to a switch
-	
+	      if (this.open) {
+	        return _react2.default.createElement(
+	          'button',
+	          { className: 'middle-button1', onClick: this.handleOpen },
+	          'PRESS TO START PLAYING'
+	        );
+	      }
 	      if (this.player.newStrike) {
 	        this.player.clock.pause();
 	        return _react2.default.createElement(_strike_screen2.default, { player: this.player });

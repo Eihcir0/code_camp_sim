@@ -42,8 +42,11 @@ class GameMain extends React.Component {
     this.updateAttributes = this.updateAttributes.bind(this);
     this.checkAteLunch = this.checkAteLunch.bind(this);
     this.handleLeaving = this.handleLeaving.bind(this);
+    this.open = this.open.bind(this);
+    this.player.clock.pause();
     this.ticksPerSecond = 100; //<<=If changed then update Clock class
     this.intervalTime = 1000 / this.ticksPerSecond;
+    this.open = true;
   }
 
   tick() {
@@ -151,8 +154,16 @@ class GameMain extends React.Component {
       if (this.player.happiness>100) {this.player.happiness = 100;}
     }
 
-  sesh() { // change this to a switch
+  open() {
+    this.player.clock.unpause();
+    this.open = false;
+  }
 
+  sesh() { // change this to a switch
+    if (this.open) {
+      return <button className="middle-button1" onClick={this.handleOpen}>
+        PRESS TO START PLAYING</button>;
+    }
     if (this.player.newStrike) {
       this.player.clock.pause();
       return (
