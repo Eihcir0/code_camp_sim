@@ -583,10 +583,6 @@ class OpenSesh extends React.Component {
 
     images() {
       return [
-        "./app/assets/images/bed.png",
-        "./app/assets/images/happy.png",
-        "./app/assets/images/star.png",
-        "./app/assets/images/ruby.png",
         "./app/assets/images/floors.png",
         "./app/assets/images/face_icons/on_fire.jpg",
         "./app/assets/images/face_icons/on_fire1.jpg",
@@ -629,7 +625,6 @@ class OpenSesh extends React.Component {
         "./app/assets/images/hero_spritesheet.png",
         "./app/assets/images/hero_seated_spritesheet.png",
         "./app/assets/images/secretary.png",
-        "./app/assets/images/ruby.png",
         "./app/assets/images/student1.png",
         "./app/assets/images/student2.png",
         "./app/assets/images/student3.png",
