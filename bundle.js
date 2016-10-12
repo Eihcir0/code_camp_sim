@@ -21543,9 +21543,6 @@
 	    _this.handleLeaving = _this.handleLeaving.bind(_this);
 	    _this.ticksPerSecond = 100; //<<=If changed then update Clock class
 	    _this.intervalTime = 1000 / _this.ticksPerSecond;
-	    _this.interval = window.setInterval(function () {
-	      return _this.tick();
-	    }, _this.intervalTime);
 	    return _this;
 	  }
 	
@@ -21725,6 +21722,8 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this2 = this;
+	
 	      //{array} or <component className="" onClick={}
 	      // if (this.loading) {
 	      //   return <div className="loading">LOADING....</div>;
@@ -21732,11 +21731,10 @@
 	      var loadingIndicator = _react2.default.createElement(
 	        'div',
 	        { className: 'loading' },
-	        'LOADING....'
+	        'LOADING MEDIA....'
 	      );
 	      var images = this.images();
 	      // onError={this._handleImageLoadError}
-	      // onSuccess={this._handleImageLoadSuccess}
 	      // autoResolveDelay={5000}
 	      return _react2.default.createElement(
 	        _reactPreload2.default,
@@ -21744,7 +21742,12 @@
 	          loadingIndicator: loadingIndicator,
 	          images: images,
 	          resolveOnError: true,
-	          mountChildren: true
+	          mountChildren: true,
+	          onSuccess: function onSuccess() {
+	            _this2.interval = window.setInterval(function () {
+	              return _this2.tick();
+	            }, _this2.intervalTime);
+	          }
 	        },
 	        _react2.default.createElement(
 	          'section',

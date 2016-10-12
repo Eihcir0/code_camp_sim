@@ -44,7 +44,6 @@ class GameMain extends React.Component {
     this.handleLeaving = this.handleLeaving.bind(this);
     this.ticksPerSecond = 100; //<<=If changed then update Clock class
     this.intervalTime = 1000 / this.ticksPerSecond;
-    this.interval = window.setInterval(()=>this.tick(),this.intervalTime);
   }
 
   tick() {
@@ -294,10 +293,9 @@ class GameMain extends React.Component {
     // if (this.loading) {
     //   return <div className="loading">LOADING....</div>;
     // }
-    var loadingIndicator = <div className="loading">LOADING....</div>;
+    var loadingIndicator = <div className="loading">LOADING MEDIA....</div>;
     var images = this.images();
     // onError={this._handleImageLoadError}
-    // onSuccess={this._handleImageLoadSuccess}
     // autoResolveDelay={5000}
     return (
       <Preload
@@ -305,6 +303,9 @@ class GameMain extends React.Component {
         images={images}
         resolveOnError={true}
         mountChildren={true}
+        onSuccess={()=> {
+          this.interval = window.setInterval(()=>this.tick(),this.intervalTime);}
+        }
       >
         {
 
