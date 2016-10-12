@@ -52,7 +52,7 @@ class LectureSeshScreen extends React.Component {
     var time = this.player.clock.time();
     if (this.player.clock.is(["11","00","am"])) {
       this.player.clock = new Clock([11,1],this.player.defaultClockSpeed*3);
-      this.player.clock.lastClockTickCounter = this.player.clock.tickCounter;
+      this.player.clock.lastTickerCount = this.player.clock.tickCounter;
     }
     if (this.player.clock.isBetween([10,55],[12,0])) {
         this.updateFocus();
@@ -188,8 +188,8 @@ class LectureSeshScreen extends React.Component {
     if (!(this.state.eyesClosed)) {
       if (this.player.focus<=50) {
       var shadow = `0 0 ${50-this.player.focus}px rgba(0,0,0,0.5)`;
+      var raysStyle = {opacity: (this.state.faintMeter)/100};
       var style = {color: "transparent", textShadow: `${shadow}` };
-      var raysStyle = {opacity: (this.faintMeter)/100};
       return (
         <div>
           <ul id="lecture-slide" className="lecture-slide" style={style}>
@@ -221,36 +221,45 @@ class LectureSeshScreen extends React.Component {
 
 
   handleCloseEyesOn() {
-    if (this.faintSoundOn) {
-      this.faintSound.pause();
-      this.faintSoundOn = false;
+    var now = this.player.clock.tickCounter;
+    if ((now - this.startTime) > (1000*this.player.clock.relativeSpeed)) {
+      if (this.faintSoundOn) {
+        this.faintSound.pause();
+        this.faintSoundOn = false;
+      }
+      this.sleepSound.play();
+      this.eyesClosedTimer++;
+      this.setState({eyesClosed: true});
+      this.player.currentEmotion = "eyes closed";
+      this.startTime = this.player.clock.tickCounter;
     }
-    this.sleepSound.play();
-    this.eyesClosedTimer++;
-    this.setState({eyesClosed: true});
-    this.player.currentEmotion = "eyes closed";
-    this.startTime = this.player.clock.tickCounter;
   }
 
   handleCloseEyesOff() {
-    if (this.player.focus < 50) {
-      this.faintSound.play();
-      this.faintSoundOn = true;}
-    else {
-      this.faintSound = new Audio("./app/assets/sounds/trippy.wav");
-      this.faintSoundOn = false;
+    var now = this.player.clock.tickCounter;
+    if ((now - this.startTime) > (1000*this.player.clock.relativeSpeed)) {
+
+      if (this.player.focus < 50) {
+        this.faintSound.play();
+        this.faintSoundOn = true;}
+      else {
+        this.faintSound = new Audio("./app/assets/sounds/trippy.wav");
+        this.faintSoundOn = false;
+      }
+      this.sleepSound.pause();
+      this.startTime = this.player.clock.tickCounter;
+      this.eyesClosed++;
+      this.setState({eyesClosed: false});
+      this.player.currentEmotion = "excited";
     }
-    this.sleepSound.pause();
-    this.startTime = this.player.clock.tickCounter;
-    this.eyesClosed++;
-    this.setState({eyesClosed: false});
-    this.player.currentEmotion = "excited";
   }
 
   button() {
+    var sleepStyle = {opacity: (1-(this.state.goesToSleepMeter)/100)};
+    var faintStyle = {opacity: (1-(this.state.faintMeter)/100)};
     var button = <div/>;
     var now = this.player.clock.tickCounter;
-    if ((now - this.startTime) > (1500*this.player.clock.relativeSpeed)) {
+    if ((now - this.startTime) > (1000*this.player.clock.relativeSpeed)) {
       if (!(this.state.eyesClosed)) {
       button = (
         <button className="middle-button"
@@ -261,7 +270,8 @@ class LectureSeshScreen extends React.Component {
       else {
         button = (
           <button className="middle-button"
-            onClick={this.handleCloseEyesOff}>
+            onClick={this.handleCloseEyesOff}
+            style={sleepStyle}>
             OPEN EYES
           </button>
         );
@@ -270,10 +280,13 @@ class LectureSeshScreen extends React.Component {
     if (this.player.focus < 50 && (!(this.state.eyesClosed)) ) {
       return (
 
-        <div className="eyes-open">
+        <div className="eyes-open"
+          onClick={this.handleCloseEyesOn}
+          style={faintStyle}
+          >
 
           <img src="./app/assets/images/eyes_open.png"
-            className="eyes" />
+            className="eyes"/>
           {button}
 
         </div>
@@ -281,9 +294,13 @@ class LectureSeshScreen extends React.Component {
       );
     } else if (this.state.eyesClosed) {
       return (
-        <div className="eyes-open">
+        <div className="eyes-open"
+          onClick={this.handleCloseEyesOff}
+          style={sleepStyle}>
           <img src="./app/assets/images/eyes_closed.png"
-            className="eyes"/>
+            className="eyes"
+            onClick={this.handleCloseEyesOff}
+            />
           {button}
         </div>
       );

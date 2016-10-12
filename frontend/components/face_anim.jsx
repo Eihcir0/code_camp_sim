@@ -46,7 +46,7 @@ class FaceAnim extends React.Component {
     this.winkCounter++;
     if (this.winkCounter>50) {
       this.winkCounter=0;
-      if (!(this.player.onFire)  && !(this.newFace===false)) {
+      if (!(this.player.onFire)  && (this.newFace===false)) {
         if (Math.random()>0.5) {
           this.setLookLeft();
         } else {

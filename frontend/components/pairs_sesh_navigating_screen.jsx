@@ -186,7 +186,7 @@ class PairsSeshNavigatingScreen extends React.Component {
   pairsLines() {
     var results = [];
     this.sentences.forEach((sentence, idx) => {
-    if (sentence.yPos<500) {
+    if (sentence.yPos<450) {
     results.push(
       <div key={++this.counter} className="pairs-navigating-line" style={sentence.exploded ? {display: "none"} : {top: sentence.yPos + "px"}} >
         {sentence.text}
@@ -208,9 +208,9 @@ class PairsSeshNavigatingScreen extends React.Component {
         width="800"
         height="520"/>
 
-        <img src="/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/computer_screen2.png" className="pairs-computer-screen"/>
+      <img src="/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/computer_screen2.png" className="pairs-computer-screen-nav"/>
         <div className="pairs-input-text">
-          <textarea id="pairs-input"
+          <textarea id="pairs-input-nav"
             value={this.state.currentInput}
             onKeyDown={this.handleSubmit}
             onChange={this.update("currentInput")}

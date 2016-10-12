@@ -52,9 +52,9 @@ class GameMain extends React.Component {
 
   tick() {
     this.player.clock.tick();
-    var dt= (this.player.clock.tickCounter - this.player.clock.lastClockTickCounter);
-    if (dt>300) {
-      this.player.clock.lastClockTickCounter = this.player.clock.tickCounter;
+    var dt = (this.player.clock.tickCounter - this.player.clock.lastTickerCount);
+    if (dt>=300) {
+      this.player.clock.lastTickerCount = this.player.clock.tickCounter + 5 - 5;
       this.setState({
         currentPos: this.player.currentPos,
         clock: this.player.clock.time()
@@ -128,7 +128,7 @@ class GameMain extends React.Component {
     if (!(this.player.ateLunch)) {
       //ADD A WARNING SCREEN
       this.player.message = "BECAUSE YOU DIDN'T TAKE A LUNCH BREAK YOU ARE LIMITED TO HALF ENERGY FOR THE DAY";
-      
+
       this.player.noLunchPenalty = 0.5;
       var maxEnergy = this.player.sleepBank*this.player.noLunchPenalty;
       if (this.player.focus>maxEnergy) {this.player.focus=maxEnergy;}

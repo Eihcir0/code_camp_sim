@@ -10,6 +10,7 @@ class StrikeScreen extends React.Component {
     this.buzzerSound.play();
     if (this.props.player.onFire) {this.props.player.onFire=false;}
     this.props.player.strikes = this.props.player.strikes + "X";
+    this.props.player.happiness -= 15;
     this.props.player.tempMessage = this.strike.message +
     `  You now have ${this.props.player.strikes.length}
     strike${this.props.player.strikes.length>1 ? "s" : ""}!`;

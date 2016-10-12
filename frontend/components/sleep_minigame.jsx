@@ -17,12 +17,13 @@ class SleepMinigame extends React.Component {
 
   render () {
     var starsStyle = {opacity: ((this.props.goesToSleepMeter)/100)*2};
+    
     return (
       <div className="eyes-closed" >
+        <img src="./app/assets/images/moon.png"
+          className="rays" style={starsStyle} />
           YOU ARE GETTING SLEEPY....VERY SLEEEPY....
           <img src="./app/assets/images/sheep2.png" className="sheep-image" style={this.sheepStyle()}/>
-      <img src="./app/assets/images/moon.png"
-        className="rays" style={starsStyle} />
     </div>
     );
   }

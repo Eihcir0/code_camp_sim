@@ -29,9 +29,12 @@ class Week {
     // get alarm, calc new stats and arrival time within session(nighttime)
     console.log("advancing day");
     this.player.dayNum +=1;
-    if (!(this.currentWeekDay())) {this.weekend();}
+    debugger;
+    if ([6,7].includes(this.currentWeekDay())) {this.weekend();}
     var now = this.player.clock.time();
-    var diff = this.player.clock.diff(now)/60;
+
+    var diff = this.player.clock.diff(["10","00","pm"])/60;
+    if (this.day.lastCoffee[2]==="pm" && parseInt(this.day.lastCoffee[0]) > 8) {diff+=3}
     this.player.sleepBank -= diff*5;
     if (this.player.sleepBank<20) {this.player.sleepBank=20;}
     this.player.focus = this.player.sleepBank;

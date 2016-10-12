@@ -21551,9 +21551,9 @@
 	    key: 'tick',
 	    value: function tick() {
 	      this.player.clock.tick();
-	      var dt = this.player.clock.tickCounter - this.player.clock.lastClockTickCounter;
-	      if (dt > 300) {
-	        this.player.clock.lastClockTickCounter = this.player.clock.tickCounter;
+	      var dt = this.player.clock.tickCounter - this.player.clock.lastTickerCount;
+	      if (dt >= 300) {
+	        this.player.clock.lastTickerCount = this.player.clock.tickCounter + 5 - 5;
 	        this.setState({
 	          currentPos: this.player.currentPos,
 	          clock: this.player.clock.time()
@@ -21940,7 +21940,6 @@
 	    this.currentPos = obj ? obj.currentPos : 0;
 	    this.lastCurrentPos = obj ? obj.lastCurrentPos : -1;
 	    this.message = obj ? obj.message : "";
-	    this.lastIconTickerCount = obj ? obj.lastIconTickerCount : 0;
 	    this.onFire = obj ? obj.onFire : false;
 	    this.fire = undefined;
 	    this.leaving = false;
@@ -22008,25 +22007,25 @@
 	        return "intermediate";
 	      }
 	      if (this.score < 500000) {
-	        return "hot shot";
+	        return "wannabe";
 	      }
 	      if (this.score < 600000) {
-	        return "guru-in-training";
+	        return "hacker jr.";
 	      }
 	      if (this.score < 700000) {
 	        return "coding ace";
 	      }
 	      if (this.score < 800000) {
-	        return "7x programmer";
+	        return "7x coder";
 	      }
 	      if (this.score < 900000) {
-	        return "8x programmer";
+	        return "8x coder";
 	      }
 	      if (this.score < 1000000) {
-	        return "9x programmer";
+	        return "9x coder";
 	      }
 	      if (this.score < 2000000) {
-	        return "10x programmer";
+	        return "10x coder";
 	      }
 	      return "cheater";
 	    }
@@ -22035,14 +22034,15 @@
 	    value: function workstationGo(playerAnim) {
 	      var now = this.clock.tickCounter;
 	      //frequency driven by speed of clock:
-	      if (now - this.lastIconTickerCount < 50 / this.clock.relativeSpeed) {
+	      if (now - this.clock.lastIconTickerCount < 100 / this.clock.relativeSpeed) {
 	        return false;
 	      }
-	      this.lastIconTickerCount = this.clock.tickCounter;
+	      this.clock.lastIconTickerCount = this.clock.tickCounter;
 	      //scoreDivisor - adjust to increase/decrease chance of something
 	      //so scoreDivsor set to 50,000 with score is 5% chance plus offset
-	      var scoreDivisor = 10000;
+	      var scoreDivisor = 30000;
 	      var scoreOffset = 100000;
+	      console.log((this.score + scoreOffset) / scoreDivisor / 100 * (this.onFire ? 4 : 1));
 	      var gotSomething = Math.random() < (this.score + scoreOffset) / scoreDivisor / 100 * (this.onFire ? 4 : 1);
 	      if (!gotSomething) {
 	        return false;
@@ -22050,7 +22050,7 @@
 	
 	      //onFire -- for now just score /1000000 * 50% (so 100k = 5%) + offset <== for testing
 	
-	      var chanceForFire = this.score / 1000000 * 0.5 + this.chanceForFireOffset;
+	      var chanceForFire = this.score / 1000000 * 0.1 + this.chanceForFireOffset;
 	      if (this.onFire) {
 	        chanceForFire = 0;
 	      }
@@ -22094,8 +22094,8 @@
 	  }, {
 	    key: 'newBug',
 	    value: function newBug() {
-	      this.happiness -= 0.25;
-	      this.skills[this.currentSkill] += 0.25;
+	      this.happiness -= 0.35;
+	      this.skills[this.currentSkill] += 0.35;
 	      if (this.sleepBank > 30) {
 	        this.newFace = this.sleepBank > 70 ? { filename: "rested_teeth", duration: 10 } : { filename: "tired_teeth", duration: 10 };
 	      }
@@ -22104,7 +22104,8 @@
 	  }, {
 	    key: 'newSkillIncrease',
 	    value: function newSkillIncrease() {
-	      this.skills[this.currentSkill]++;
+	      this.skills[this.currentSkill] += 2;
+	      this.happiness += 0.1;
 	      if (this.sleepBank > 30) {
 	        this.newFace = this.sleepBank > 70 ? { filename: "rested_happy", duration: 10 } : { filename: "tired_happy", duration: 10 };
 	      }
@@ -22115,16 +22116,19 @@
 	    value: function newPoints() {
 	      var rand = Math.floor(Math.random() * 10 + 1) * 10 + this.score / 50000;
 	      var points;
-	      if (rand > 95) {
-	        points = 1000;
+	      if (rand === 100) {
+	        console.log("WOOOPPPEEE");
 	      } else {
 	        points = Math.max(Math.floor((rand - 20) / 10) * 100, 100);
+	      }
+	      if (rand > 98.5) {
+	        points = 1000;
 	      }
 	      if (this.sleepBank > 30) {
 	        this.newFace = this.sleepBank > 70 ? { filename: "rested_happy", duration: 10 } : { filename: "tired_happy", duration: 10 };
 	      }
 	      if (points === 1000) {
-	        this.happiness++;
+	        this.happiness += 8;
 	        if (this.sleepBank > 30) {
 	          this.newFace = { filename: "super_happy", duration: 20 };
 	        }
@@ -22179,7 +22183,9 @@
 	    this.tick = this.tick.bind(this);
 	    this.lastTime = [];
 	    this.tickCounter = 0;
-	    this.lastClockTickCounter = this.tickCounter + 5 - 5;
+	    this.lastTickerCount = this.tickCounter + 5 - 5;
+	    this.lastIconTickerCount = this.tickCounter + 5 - 5;
+	    this.animTickerCount = this.tickCounter + 5 - 5;
 	  }
 	
 	  _createClass(Clock, [{
@@ -22233,6 +22239,9 @@
 	      }
 	
 	      if (currentTime[2] === "pm" && currentTime[0] !== "12") {
+	        currentTime[0] = parseInt(currentTime[0]) + 12;
+	      }
+	      if (currentTime[2] === "am" && currentTime[0] === "12") {
 	        currentTime[0] = parseInt(currentTime[0]) + 12;
 	      }
 	      var hoursDiff = parseInt(currentTime[0]) - parseInt(newLastTime[0]);
@@ -22645,7 +22654,9 @@
 	    _this.image = new Image();
 	    _this.image.src = _this.getImage();
 	    _this.sound = new Audio("./app/assets/sounds/icon.wav");
-	    _this.sound.play();
+	    window.setTimeout(function () {
+	      return _this.sound.play();
+	    }, 1);
 	    _this.moves = 0;
 	    _this.sunset = Math.floor(Math.random() * 2) - 0.5 > 0 ? -1 : 1;
 	    _this.done = false;
@@ -22892,11 +22903,16 @@
 	      // get alarm, calc new stats and arrival time within session(nighttime)
 	      console.log("advancing day");
 	      this.player.dayNum += 1;
-	      if (!this.currentWeekDay()) {
+	      debugger;
+	      if ([6, 7].includes(this.currentWeekDay())) {
 	        this.weekend();
 	      }
 	      var now = this.player.clock.time();
-	      var diff = this.player.clock.diff(now) / 60;
+	
+	      var diff = this.player.clock.diff(["10", "00", "pm"]) / 60;
+	      if (this.day.lastCoffee[2] === "pm" && parseInt(this.day.lastCoffee[0]) > 8) {
+	        diff += 3;
+	      }
 	      this.player.sleepBank -= diff * 5;
 	      if (this.player.sleepBank < 20) {
 	        this.player.sleepBank = 20;
@@ -22956,13 +22972,14 @@
 	
 	    this.player = player;
 	    if (this.player.dayNum === 1) {
-	      arrivalTime = ["8", "45", "am"];
+	      arrivalTime = ["1", "30", "pm"];
 	    }
 	    this.player.clock = new _clock2.default(arrivalTime, this.player.defaultClockSpeed);
 	    this.player.currentPos = 0;
 	    this.player.ateDonut = false;
 	    this.player.lastCoffee = [4, 0];
 	    this.player.ateLunch = false;
+	    this.player.lastIconTickerCount = 0;
 	    this.beginningScore = this.player.score;
 	    this.beginningSkillPoints = this.player.skills[this.player.currentSkill] ? this.player.skills[this.player.currentSkill] : 0;
 	    this.beginningHappiness = this.player.happiness;
@@ -23477,40 +23494,9 @@
 	    _this.background = new Image();
 	    _this.background.src = './app/assets/images/newfloor.png';
 	    _this.sprites = [];
-	    _this.lastTickerCount = _this.player.clock.tickCounter;
-	    _this.updateCount = 0;
 	    _this.player.ateDonut = false;
 	    _this.player.lastCoffee = ["4", "0", "am"];
 	    _this.leavingTime = false;
-	
-	    // var funs = [ //bind functions
-	    //   this.main,
-	    //   this.renderSprites,
-	    //   this.update,
-	    //   this.render,
-	    //   this.checkForDoneSprites,
-	    //   this.checkFocus,
-	    //
-	    //   this.quadrants,
-	    //   this.mouseOverWorkStation,
-	    //   this.mouseOverLecture,
-	    //   this.mouseOverKitchen,
-	    //   this.mouseOverCandanessa,
-	    //   this.clickWorkStation,
-	    //   this.clickLecture,
-	    //   this.clickKitchen,
-	    //   this.clickCandanessa,
-	    //
-	    //   this.handleSave,
-	    //   this.initializeSprites,
-	    //   this.buttons,
-	    //   this.handleGetOffComputer,
-	    //   this.cancelAnimationFrame
-	    // ];
-	    // var that = this;
-	    // funs.forEach(fun => {
-	    //   this.fun = this.fun.bind(that);
-	    // });
 	    return _this;
 	  } //end constructor
 	
@@ -23529,7 +23515,7 @@
 	      this.playerAnim.canvas = this.canvas;
 	      this.initializeSprites();
 	      this.hover1 = document.getElementById('hover1');
-	
+	      this.player.clock.animTickerCount = this.player.clock.tickCounter + 5 - 5;
 	      this.background.onload = function () {
 	        return _this2.main();
 	      };
@@ -23553,11 +23539,11 @@
 	      if (this.player.clock.paused) {
 	        return;
 	      }
-	      var dt = this.player.clock.tickCounter - this.lastTickerCount;
-	      this.lastTickerCount = this.player.clock.tickCounter;
+	      var dt = this.player.clock.tickCounter - this.player.clock.animTickerCount;
 	      this.ctx.drawImage(this.background, -28, 0);
 	      this.update(dt);
 	      this.renderSprites();
+	      this.player.clock.animTickerCount = this.player.clock.tickCounter;
 	
 	      if (this.player.newStrike) {
 	        this.cancelAnimationFrame(this.openSeshAnimationFrame);
@@ -23760,6 +23746,7 @@
 	      this.player.ateDonut = true;
 	      this.player.focus += 15;
 	      this.player.sleepBank += 3;
+	      this.player.happiness += 3;
 	      this.player.score += 1000;
 	      var donut = new _food_anim2.default({ canvas: this.canvas, ctx: this.ctx }, "donut");
 	      this.sprites.push(donut);
@@ -23785,7 +23772,6 @@
 	          this.player.tempMessage = "Stuck in the microwave line!!!";
 	        }
 	        this.player.clock = new _clock2.default(now, this.player.defaultClockSpeed * 3);
-	        this.lastTickerCount = this.player.clock.tickCounter;
 	      }
 	    }
 	  }, {
@@ -23800,7 +23786,6 @@
 	      var now = this.player.clock.time();
 	      this.lunchTime = null;
 	      this.player.clock = new _clock2.default(now, this.player.defaultClockSpeed);
-	      this.lastTickerCount = this.player.clock.tickCounter;
 	      var lunch = new _food_anim2.default({ canvas: this.canvas, ctx: this.ctx }, "lunch");
 	      this.sprites.push(lunch);
 	    }
@@ -23936,8 +23921,9 @@
 	    key: 'clickExit',
 	    value: function clickExit() {
 	      var now = this.player.clock.time();
+	      debugger;
 	      switch (true) {
-	        case this.player.clock.isBetween([6, 0], [16, 59]):
+	        case this.player.clock.isBetween(["6", "00", "am"], ["4", "59", "pm"]):
 	          this.leavingEarly();
 	          break;
 	        default:
@@ -23978,7 +23964,6 @@
 	    key: 'handle1159',
 	    value: function handle1159() {
 	      this.player.clock = new _clock2.default([24, 1]);
-	      this.lastTickerCount = this.player.clock.tickCounter;
 	      this.player.clock.pause();
 	      this.player.tempMessage = "It is 11:59pm.  This is your last chance to leave and be guaranteed you can get in on time in the morning.  Stay at your own risk!  Would you like to leave now?";
 	      this.leavingTime = "normal";
@@ -23998,15 +23983,11 @@
 	    key: 'update',
 	    value: function update(dt) {
 	      this.checkFocus();
-	      this.updateCount += dt;
 	      if (this.player.working()) {
-	        if (this.updateCount > 100) {
-	          this.updateCount = 0;
 	
-	          var workstationUpdate = this.player.workstationGo();
-	          if (workstationUpdate) {
-	            this.addStudyIcon(workstationUpdate);
-	          }
+	        var workstationUpdate = this.player.workstationGo();
+	        if (workstationUpdate) {
+	          this.addStudyIcon(workstationUpdate);
 	        }
 	      }
 	      this.sprites.forEach(function (sprite) {
@@ -24594,7 +24575,7 @@
 	      var time = this.player.clock.time();
 	      if (this.player.clock.is(["11", "00", "am"])) {
 	        this.player.clock = new _clock2.default([11, 1], this.player.defaultClockSpeed * 3);
-	        this.player.clock.lastClockTickCounter = this.player.clock.tickCounter;
+	        this.player.clock.lastTickerCount = this.player.clock.tickCounter;
 	      }
 	      if (this.player.clock.isBetween([10, 55], [12, 0])) {
 	        this.updateFocus();
@@ -24745,8 +24726,8 @@
 	      if (!this.state.eyesClosed) {
 	        if (this.player.focus <= 50) {
 	          var shadow = '0 0 ' + (50 - this.player.focus) + 'px rgba(0,0,0,0.5)';
+	          var raysStyle = { opacity: this.state.faintMeter / 100 };
 	          var style = { color: "transparent", textShadow: '' + shadow };
-	          var raysStyle = { opacity: this.faintMeter / 100 };
 	          return _react2.default.createElement(
 	            'div',
 	            null,
@@ -24789,38 +24770,47 @@
 	  }, {
 	    key: 'handleCloseEyesOn',
 	    value: function handleCloseEyesOn() {
-	      if (this.faintSoundOn) {
-	        this.faintSound.pause();
-	        this.faintSoundOn = false;
+	      var now = this.player.clock.tickCounter;
+	      if (now - this.startTime > 1000 * this.player.clock.relativeSpeed) {
+	        if (this.faintSoundOn) {
+	          this.faintSound.pause();
+	          this.faintSoundOn = false;
+	        }
+	        this.sleepSound.play();
+	        this.eyesClosedTimer++;
+	        this.setState({ eyesClosed: true });
+	        this.player.currentEmotion = "eyes closed";
+	        this.startTime = this.player.clock.tickCounter;
 	      }
-	      this.sleepSound.play();
-	      this.eyesClosedTimer++;
-	      this.setState({ eyesClosed: true });
-	      this.player.currentEmotion = "eyes closed";
-	      this.startTime = this.player.clock.tickCounter;
 	    }
 	  }, {
 	    key: 'handleCloseEyesOff',
 	    value: function handleCloseEyesOff() {
-	      if (this.player.focus < 50) {
-	        this.faintSound.play();
-	        this.faintSoundOn = true;
-	      } else {
-	        this.faintSound = new Audio("./app/assets/sounds/trippy.wav");
-	        this.faintSoundOn = false;
+	      var now = this.player.clock.tickCounter;
+	      if (now - this.startTime > 1000 * this.player.clock.relativeSpeed) {
+	
+	        if (this.player.focus < 50) {
+	          this.faintSound.play();
+	          this.faintSoundOn = true;
+	        } else {
+	          this.faintSound = new Audio("./app/assets/sounds/trippy.wav");
+	          this.faintSoundOn = false;
+	        }
+	        this.sleepSound.pause();
+	        this.startTime = this.player.clock.tickCounter;
+	        this.eyesClosed++;
+	        this.setState({ eyesClosed: false });
+	        this.player.currentEmotion = "excited";
 	      }
-	      this.sleepSound.pause();
-	      this.startTime = this.player.clock.tickCounter;
-	      this.eyesClosed++;
-	      this.setState({ eyesClosed: false });
-	      this.player.currentEmotion = "excited";
 	    }
 	  }, {
 	    key: 'button',
 	    value: function button() {
+	      var sleepStyle = { opacity: 1 - this.state.goesToSleepMeter / 100 };
+	      var faintStyle = { opacity: 1 - this.state.faintMeter / 100 };
 	      var button = _react2.default.createElement('div', null);
 	      var now = this.player.clock.tickCounter;
-	      if (now - this.startTime > 1500 * this.player.clock.relativeSpeed) {
+	      if (now - this.startTime > 1000 * this.player.clock.relativeSpeed) {
 	        if (!this.state.eyesClosed) {
 	          button = _react2.default.createElement(
 	            'button',
@@ -24832,7 +24822,8 @@
 	          button = _react2.default.createElement(
 	            'button',
 	            { className: 'middle-button',
-	              onClick: this.handleCloseEyesOff },
+	              onClick: this.handleCloseEyesOff,
+	              style: sleepStyle },
 	            'OPEN EYES'
 	          );
 	        }
@@ -24840,7 +24831,10 @@
 	      if (this.player.focus < 50 && !this.state.eyesClosed) {
 	        return _react2.default.createElement(
 	          'div',
-	          { className: 'eyes-open' },
+	          { className: 'eyes-open',
+	            onClick: this.handleCloseEyesOn,
+	            style: faintStyle
+	          },
 	          _react2.default.createElement('img', { src: './app/assets/images/eyes_open.png',
 	            className: 'eyes' }),
 	          button
@@ -24848,9 +24842,13 @@
 	      } else if (this.state.eyesClosed) {
 	        return _react2.default.createElement(
 	          'div',
-	          { className: 'eyes-open' },
+	          { className: 'eyes-open',
+	            onClick: this.handleCloseEyesOff,
+	            style: sleepStyle },
 	          _react2.default.createElement('img', { src: './app/assets/images/eyes_closed.png',
-	            className: 'eyes' }),
+	            className: 'eyes',
+	            onClick: this.handleCloseEyesOff
+	          }),
 	          button
 	        );
 	      }
@@ -24927,13 +24925,14 @@
 	    key: "render",
 	    value: function render() {
 	      var starsStyle = { opacity: this.props.goesToSleepMeter / 100 * 2 };
+	
 	      return _react2.default.createElement(
 	        "div",
 	        { className: "eyes-closed" },
-	        "YOU ARE GETTING SLEEPY....VERY SLEEEPY....",
-	        _react2.default.createElement("img", { src: "./app/assets/images/sheep2.png", className: "sheep-image", style: this.sheepStyle() }),
 	        _react2.default.createElement("img", { src: "./app/assets/images/moon.png",
-	          className: "rays", style: starsStyle })
+	          className: "rays", style: starsStyle }),
+	        "YOU ARE GETTING SLEEPY....VERY SLEEEPY....",
+	        _react2.default.createElement("img", { src: "./app/assets/images/sheep2.png", className: "sheep-image", style: this.sheepStyle() })
 	      );
 	    }
 	  }]);
@@ -25081,12 +25080,13 @@
 	          badSwitches: this.badSwitches,
 	          player: this.props.player });
 	      } else {
+	
 	        return _react2.default.createElement(
 	          'div',
 	          null,
 	          _react2.default.createElement(
 	            'span',
-	            { className: 'pair-title' },
+	            { className: this.current === 1 ? "pair-title" : "pair-title-nav" },
 	            'YOU ARE',
 	            this.current === 1 ? " DRIVING" : " NAVIGATING"
 	          ),
@@ -25102,6 +25102,7 @@
 	            stopped: this.stopNav,
 	            current: this.current,
 	            player: this.props.player }),
+	          _react2.default.createElement('img', { className: 'pair-partner-img', src: '/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/frontface2.png' }),
 	          _react2.default.createElement(
 	            'button',
 	            { className: 'switch-button',
@@ -25368,7 +25369,7 @@
 	
 	      var results = [];
 	      this.sentences.forEach(function (sentence, idx) {
-	        if (sentence.yPos < 500) {
+	        if (sentence.yPos < 450) {
 	          results.push(_react2.default.createElement(
 	            'div',
 	            { key: ++_this6.counter, className: 'pairs-line', style: { top: sentence.yPos + "px" } },
@@ -25765,7 +25766,7 @@
 	
 	      var results = [];
 	      this.sentences.forEach(function (sentence, idx) {
-	        if (sentence.yPos < 500) {
+	        if (sentence.yPos < 450) {
 	          results.push(_react2.default.createElement(
 	            'div',
 	            { key: ++_this6.counter, className: 'pairs-navigating-line', style: sentence.exploded ? { display: "none" } : { top: sentence.yPos + "px" } },
@@ -25791,11 +25792,11 @@
 	        _react2.default.createElement('canvas', { id: 'canvas2',
 	          width: '800',
 	          height: '520' }),
-	        _react2.default.createElement('img', { src: '/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/computer_screen2.png', className: 'pairs-computer-screen' }),
+	        _react2.default.createElement('img', { src: '/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/computer_screen2.png', className: 'pairs-computer-screen-nav' }),
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'pairs-input-text' },
-	          _react2.default.createElement('textarea', { id: 'pairs-input',
+	          _react2.default.createElement('textarea', { id: 'pairs-input-nav',
 	            value: this.state.currentInput,
 	            onKeyDown: this.handleSubmit,
 	            onChange: this.update("currentInput"),
@@ -25943,7 +25944,7 @@
 	      return _this.ticker++;
 	    }, 100);
 	    _this.redStyle = { color: "red" };
-	    _this.greenStyle = { color: "geen" };
+	    _this.greenStyle = { color: "green" };
 	    _this.graded = false;
 	    return _this;
 	  }
@@ -26207,6 +26208,7 @@
 	      _this.props.player.onFire = false;
 	    }
 	    _this.props.player.strikes = _this.props.player.strikes + "X";
+	    _this.props.player.happiness -= 15;
 	    _this.props.player.tempMessage = _this.strike.message + ('  You now have ' + _this.props.player.strikes.length + '\n    strike' + (_this.props.player.strikes.length > 1 ? "s" : "") + '!');
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.props.player.newFace = { filename: "tired_angry", duration: 10000 };
@@ -26298,10 +26300,10 @@
 	    _this.startTime = Date.now();
 	    _this.buzzerSound = new Audio("./app/assets/sounds/congrats-ding.wav");
 	    _this.buzzerSound.play();
-	
+	    _this.props.player.happiness += 8;
 	    _this.props.player.tempMessage = _this.congrats.message;
 	    _this.handleClick = _this.handleClick.bind(_this);
-	    _this.props.player.newFace = { filename: "super_happy", duration: 10 };
+	    _this.props.player.newFace = { filename: "super_happy", duration: 30 };
 	
 	    // this.main = this.main.bind(this);
 	
@@ -26431,7 +26433,7 @@
 	        this.winkCounter++;
 	        if (this.winkCounter > 50) {
 	          this.winkCounter = 0;
-	          if (!this.player.onFire && !(this.newFace === false)) {
+	          if (!this.player.onFire && this.newFace === false) {
 	            if (Math.random() > 0.5) {
 	              this.setLookLeft();
 	            } else {
@@ -26591,7 +26593,8 @@
 	
 	    _this.player = _this.props.player;
 	    _this.week = _this.player.week;
-	    _this.day = _this.player.day;
+	    _this.day = _this.week.day;
+	    debugger;
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.startTime = Date.now();
 	    _this.ticker = 0;
@@ -26608,7 +26611,8 @@
 	  _createClass(NightSeshScreen, [{
 	    key: 'scoreChange',
 	    value: function scoreChange() {
-	      var change = this.player.score - this.player.day.beginningScore;
+	      var change = this.player.score - this.day.beginningScore;
+	      debugger;
 	      var changeText = '+ ' + change;
 	      if (this.ticker === 20) {
 	        new Audio("./app/assets/sounds/explosion.wav").play();
@@ -26640,7 +26644,7 @@
 	          'SCORE',
 	          _react2.default.createElement(
 	            'span',
-	            { className: 'pair-result-number', style: change < 0 ? this.greenStyle : this.redStyle },
+	            { className: 'pair-result-number', style: change > 0 ? this.greenStyle : this.redStyle },
 	            changeText
 	          )
 	        );
@@ -26649,8 +26653,8 @@
 	  }, {
 	    key: 'skillChange',
 	    value: function skillChange() {
-	      var change = this.player.skills[this.player.currentSkill] - this.day.beginningSkillPoints;
-	      var changeText = '+ ' + change;
+	      var change = (this.player.skills[this.player.currentSkill] - this.day.beginningSkillPoints) / 10;
+	      var changeText = '+ %' + change;
 	      if (this.ticker === 40) {
 	        new Audio("./app/assets/sounds/explosion.wav").play();
 	      }
@@ -26659,17 +26663,18 @@
 	          'div',
 	          null,
 	          _react2.default.createElement('br', null),
-	          'SCORE '
+	          this.player.currentSKill,
+	          ' '
 	        );
 	      } else {
 	        return _react2.default.createElement(
 	          'div',
 	          null,
 	          _react2.default.createElement('br', null),
-	          'SCORE',
+	          this.player.currentSKill,
 	          _react2.default.createElement(
 	            'span',
-	            { className: 'pair-result-number', style: change < 0 ? this.greenStyle : this.redStyle },
+	            { className: 'pair-result-number', style: change > 0 ? this.greenStyle : this.redStyle },
 	            changeText
 	          )
 	        );
@@ -26679,7 +26684,7 @@
 	    key: 'happinessChange',
 	    value: function happinessChange() {
 	      var change = this.player.happiness - this.day.beginningHappiness;
-	      var changeText = change < 0 ? '- ' + change : '+ ' + change;
+	      var changeText = change < 0 ? '' + change : '+ ' + change;
 	      if (this.ticker === 60) {
 	        new Audio("./app/assets/sounds/explosion.wav").play();
 	      }
@@ -26699,7 +26704,7 @@
 	          'HAPPINESS',
 	          _react2.default.createElement(
 	            'span',
-	            { className: 'pair-result-number', style: change < 0 ? this.greenStyle : this.redStyle },
+	            { className: 'pair-result-number', style: change < 0 ? this.redStyle : this.greenStyle },
 	            changeText
 	          )
 	        );

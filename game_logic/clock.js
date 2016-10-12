@@ -22,7 +22,9 @@ class Clock {
     this.tick = this.tick.bind(this);
     this.lastTime = [];
     this.tickCounter = 0;
-    this.lastClockTickCounter = this.tickCounter + 5 - 5;
+    this.lastTickerCount = this.tickCounter + 5 - 5;
+    this.lastIconTickerCount = this.tickCounter + 5 - 5;
+    this.animTickerCount = this.tickCounter + 5 - 5;
   }
 
   tick(n=1){
@@ -59,6 +61,7 @@ class Clock {
     }
 
     if (currentTime[2]==="pm" && currentTime[0] !== "12") {currentTime[0] = parseInt(currentTime[0]) + 12;}
+    if (currentTime[2]==="am" && currentTime[0]==="12") {currentTime[0] = parseInt(currentTime[0]) + 12;}
     var hoursDiff = parseInt(currentTime[0]) - parseInt(newLastTime[0]);
     var minsDiff = parseInt(currentTime[1]) - parseInt(newLastTime[1]);
     return (hoursDiff*60 + minsDiff);

@@ -12,7 +12,7 @@ class PairsSeshResults extends React.Component {
       new Audio("./app/assets/sounds/typing.wav").play();
       this.interval = window.setInterval(()=>this.ticker++,100);
       this.redStyle={color: "red"};
-      this.greenStyle={color: "geen"};
+      this.greenStyle={color: "green"};
       this.graded=false;
       }
 

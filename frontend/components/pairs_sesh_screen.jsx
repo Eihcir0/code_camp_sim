@@ -93,9 +93,10 @@ class PairsSeshScreen extends React.Component {
           player={this.props.player} />
       );
     } else {
+
     return (
       <div>
-        <span className="pair-title">
+        <span className={this.current===1 ? "pair-title" : "pair-title-nav"}>
           YOU ARE{(this.current===1) ? " DRIVING" : " NAVIGATING" }
         </span>
 
@@ -113,6 +114,7 @@ class PairsSeshScreen extends React.Component {
           current={this.current}
           player={this.props.player} />
 
+        <img className="pair-partner-img" src="/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/frontface2.png"/>
 
         <button className="switch-button"
           onClick={this.handleClick}>SWITCH!</button>

@@ -185,7 +185,7 @@ class PairsSeshDrivingScreen extends React.Component {
   pairsLines() {
     var results = [];
     this.sentences.forEach((sentence, idx) => {
-    if (sentence.yPos<500) {
+    if (sentence.yPos<450) {
     results.push(
       <div key={++this.counter} className="pairs-line" style={{top: sentence.yPos + "px"}} >
         <PairsLine currentLine = {sentence} currentInput = {this.state.currentInput}/>

@@ -30,7 +30,6 @@ class Player {
     this.currentPos = obj ? obj.currentPos : 0;
     this.lastCurrentPos = obj ? obj.lastCurrentPos : -1;
     this.message = obj ? obj.message : "";
-    this.lastIconTickerCount = obj ? obj.lastIconTickerCount : 0;
     this.onFire = obj ? obj.onFire : false;
     this.fire = undefined;
     this.leaving = false;
@@ -81,34 +80,35 @@ class Player {
     if (this.score < 250000) {return "good student";}
     if (this.score < 300000) {return "hobbyist";}
     if (this.score < 400000) {return "intermediate";}
-    if (this.score < 500000) {return "hot shot";}
-    if (this.score < 600000) {return "guru-in-training";}
+    if (this.score < 500000) {return "wannabe";}
+    if (this.score < 600000) {return "hacker jr.";}
     if (this.score < 700000) {return "coding ace";}
-    if (this.score < 800000) {return "7x programmer";}
-    if (this.score < 900000) {return "8x programmer";}
-    if (this.score < 1000000) {return "9x programmer";}
-    if (this.score < 2000000) {return "10x programmer";}
+    if (this.score < 800000) {return "7x coder";}
+    if (this.score < 900000) {return "8x coder";}
+    if (this.score < 1000000) {return "9x coder";}
+    if (this.score < 2000000) {return "10x coder";}
     return "cheater";
   }
 
   workstationGo(playerAnim) {
    var now = this.clock.tickCounter;
    //frequency driven by speed of clock:
-   if (now-this.lastIconTickerCount < (50 / this.clock.relativeSpeed)) {
+   if (now - this.clock.lastIconTickerCount < (100 / this.clock.relativeSpeed)) {
      return false;
    }
-   this.lastIconTickerCount = this.clock.tickCounter;
+   this.clock.lastIconTickerCount = this.clock.tickCounter;
   //scoreDivisor - adjust to increase/decrease chance of something
   //so scoreDivsor set to 50,000 with score is 5% chance plus offset
-    var scoreDivisor = 10000;
+    var scoreDivisor = 30000;
     var scoreOffset = 100000;
+    console.log((((((this.score+scoreOffset) /scoreDivisor))/100) * (this.onFire ? 4 : 1)) );
     var gotSomething = (Math.random() <
     (((((this.score+scoreOffset) /scoreDivisor))/100) * (this.onFire ? 4 : 1)) );
     if (!(gotSomething)) {return false;}
 
     //onFire -- for now just score /1000000 * 50% (so 100k = 5%) + offset <== for testing
 
-    var chanceForFire = (((this.score) / 1000000) * 0.5) + this.chanceForFireOffset;
+    var chanceForFire = (((this.score) / 1000000) * 0.1) + this.chanceForFireOffset;
     if (this.onFire) {chanceForFire = 0;}
 
     // out of 1000 so /1000 to convert to % then /2
@@ -145,8 +145,8 @@ class Player {
   }
 
   newBug() {
-    this.happiness -=0.25;
-    this.skills[this.currentSkill] +=0.25;
+    this.happiness -=0.35;
+    this.skills[this.currentSkill] +=0.35;
     if (this.sleepBank>30) {
       this.newFace = (this.sleepBank>70) ?
         {filename: "rested_teeth", duration: 10} :
@@ -156,7 +156,8 @@ class Player {
   }
 
   newSkillIncrease() {
-    this.skills[this.currentSkill]++;
+    this.skills[this.currentSkill] +=2;
+    this.happiness += 0.1;
     if (this.sleepBank>30) {
       this.newFace = (this.sleepBank>70) ?
       {filename: "rested_happy", duration: 10} :
@@ -169,17 +170,18 @@ class Player {
   newPoints() {
     var rand = Math.floor(((Math.random()*10)+1))*10+(this.score/50000);
     var points;
-    if (rand>95) {points = 1000;}
+    if (rand===100) {console.log("WOOOPPPEEE");}
     else {
       points = Math.max(Math.floor((rand-20)/10)*100,100);
     }
+    if (rand>98.5) {points = 1000;}
     if (this.sleepBank>30) {
       this.newFace = (this.sleepBank>70) ?
       {filename: "rested_happy", duration: 10} :
       {filename: "tired_happy", duration: 10};
     }
     if (points===1000) {
-      this.happiness++;
+      this.happiness +=8;
       if (this.sleepBank>30) {
         this.newFace = {filename: "super_happy", duration: 20};
       }

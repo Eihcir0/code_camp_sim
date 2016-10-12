@@ -7,7 +7,8 @@ class NightSeshScreen extends React.Component {
       super(props);
       this.player = this.props.player;
       this.week = this.player.week;
-      this.day = this.player.day;
+      this.day = this.week.day;
+      debugger;
       this.handleClick = this.handleClick.bind(this);
       this.startTime = Date.now();
       this.ticker = 0;
@@ -20,7 +21,8 @@ class NightSeshScreen extends React.Component {
 
 
     scoreChange() {
-      var change = this.player.score - this.player.day.beginningScore;
+      var change = this.player.score - this.day.beginningScore;
+      debugger;
       var changeText = `+ ${change}`;
       if (this.ticker===20) {
         new Audio("./app/assets/sounds/explosion.wav").play();
@@ -35,7 +37,7 @@ class NightSeshScreen extends React.Component {
         return (
           <div>DAY {this.player.dayNum} RESULTS<br/><br/><br/>
             <br/>SCORE
-              <span className="pair-result-number" style={change<0 ? this.greenStyle :   this.redStyle}>
+              <span className="pair-result-number" style={change>0 ? this.greenStyle :   this.redStyle}>
                 {changeText}
               </span>
           </div>
@@ -45,22 +47,22 @@ class NightSeshScreen extends React.Component {
     }
 
     skillChange() {
-      var change = this.player.skills[this.player.currentSkill] - this.day.beginningSkillPoints;
-      var changeText = `+ ${change}`;
+      var change = (this.player.skills[this.player.currentSkill] - this.day.beginningSkillPoints)/10;
+      var changeText = `+ %${change}`;
       if (this.ticker===40) {
         new Audio("./app/assets/sounds/explosion.wav").play();
       }
       if (this.ticker<40) {
         return (
 
-          <div><br/>SCORE </div>
+          <div><br/>{this.player.currentSKill} </div>
         );
       } else {
         return (
 
           <div>
-            <br/>SCORE
-              <span className="pair-result-number" style={change<0 ? this.greenStyle :   this.redStyle}>
+            <br/>{this.player.currentSKill}
+              <span className="pair-result-number" style={change>0 ? this.greenStyle :   this.redStyle}>
                 {changeText}
               </span>
           </div>
@@ -71,7 +73,7 @@ class NightSeshScreen extends React.Component {
 
     happinessChange() {
       var change = this.player.happiness - this.day.beginningHappiness;
-      var changeText = change < 0 ? `- ${change}` : `+ ${change}`;
+      var changeText = change < 0 ? `${change}` : `+ ${change}`;
       if (this.ticker===60) {
         new Audio("./app/assets/sounds/explosion.wav").play();
       }
@@ -86,7 +88,7 @@ class NightSeshScreen extends React.Component {
 
           <div>
             <br/>HAPPINESS
-              <span className="pair-result-number" style={change<0 ? this.greenStyle :   this.redStyle}>
+              <span className="pair-result-number" style={change<0 ? this.redStyle :   this.greenStyle}>
                 {changeText}
               </span>
           </div>

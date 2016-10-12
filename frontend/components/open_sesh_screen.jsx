@@ -56,41 +56,9 @@ class OpenSesh extends React.Component {
     this.background = new Image();
     this.background.src = './app/assets/images/newfloor.png';
     this.sprites = [];
-    this.lastTickerCount = this.player.clock.tickCounter;
-    this.updateCount = 0;
     this.player.ateDonut = false;
     this.player.lastCoffee = ["4","0","am"];
     this.leavingTime = false;
-
-
-    // var funs = [ //bind functions
-    //   this.main,
-    //   this.renderSprites,
-    //   this.update,
-    //   this.render,
-    //   this.checkForDoneSprites,
-    //   this.checkFocus,
-    //
-    //   this.quadrants,
-    //   this.mouseOverWorkStation,
-    //   this.mouseOverLecture,
-    //   this.mouseOverKitchen,
-    //   this.mouseOverCandanessa,
-    //   this.clickWorkStation,
-    //   this.clickLecture,
-    //   this.clickKitchen,
-    //   this.clickCandanessa,
-    //
-    //   this.handleSave,
-    //   this.initializeSprites,
-    //   this.buttons,
-    //   this.handleGetOffComputer,
-    //   this.cancelAnimationFrame
-    // ];
-    // var that = this;
-    // funs.forEach(fun => {
-    //   this.fun = this.fun.bind(that);
-    // });
   }//end constructor
 
   componentDidMount() {
@@ -104,7 +72,7 @@ class OpenSesh extends React.Component {
     this.playerAnim.canvas = this.canvas;
     this.initializeSprites();
     this.hover1 = document.getElementById('hover1');
-
+    this.player.clock.animTickerCount = this.player.clock.tickCounter + 5 - 5;
     this.background.onload = () => this.main();
 
   }
@@ -119,11 +87,11 @@ class OpenSesh extends React.Component {
     }
 
     if (this.player.clock.paused) {return;}
-    var dt = (this.player.clock.tickCounter - this.lastTickerCount);
-    this.lastTickerCount = this.player.clock.tickCounter;
+    var dt = (this.player.clock.tickCounter - this.player.clock.animTickerCount);
     this.ctx.drawImage(this.background,-28,0);
     this.update(dt);
     this.renderSprites();
+    this.player.clock.animTickerCount = this.player.clock.tickCounter;
 
     if (this.player.newStrike) {this.cancelAnimationFrame(this.openSeshAnimationFrame);
     } else {
@@ -282,6 +250,7 @@ class OpenSesh extends React.Component {
     this.player.ateDonut = true;
     this.player.focus+=15;
     this.player.sleepBank +=3;
+    this.player.happiness +=3;
     this.player.score +=1000;
     var donut = new FoodAnim({canvas: this.canvas, ctx: this.ctx},
       "donut");
@@ -305,7 +274,8 @@ class OpenSesh extends React.Component {
         this.player.tempMessage = "Stuck in the microwave line!!!";
       }
       this.player.clock = new Clock(now, this.player.defaultClockSpeed*3);
-      this.lastTickerCount = this.player.clock.tickCounter;
+
+
     }
 
   }
@@ -320,7 +290,6 @@ class OpenSesh extends React.Component {
     var now = this.player.clock.time();
     this.lunchTime = null;
     this.player.clock = new Clock(now, this.player.defaultClockSpeed);
-    this.lastTickerCount = this.player.clock.tickCounter;
     var lunch = new FoodAnim({canvas: this.canvas, ctx: this.ctx},
       "lunch");
       this.sprites.push(lunch);
@@ -436,8 +405,9 @@ class OpenSesh extends React.Component {
 
   clickExit() {
     var now = this.player.clock.time();
+    debugger;
     switch (true) {
-      case (this.player.clock.isBetween([6,0],[16,59])):
+      case (this.player.clock.isBetween(["6","00","am"],["4","59","pm"])):
           this.leavingEarly();
         break;
       default:
@@ -478,7 +448,6 @@ class OpenSesh extends React.Component {
 
   handle1159() {
     this.player.clock = new Clock ([24,1]);
-    this.lastTickerCount = this.player.clock.tickCounter;
     this.player.clock.pause();
     this.player.tempMessage = "It is 11:59pm.  This is your last chance to leave and be guaranteed you can get in on time in the morning.  Stay at your own risk!  Would you like to leave now?";
     this.leavingTime = "normal";
@@ -494,16 +463,12 @@ class OpenSesh extends React.Component {
 
   update (dt) {
     this.checkFocus();
-    this.updateCount += dt;
     if (this.player.working()) {
-      if (this.updateCount>100) {
-        this.updateCount = 0;
 
         var workstationUpdate = this.player.workstationGo();
         if (workstationUpdate){
           this.addStudyIcon(workstationUpdate);
-          }
-      }
+        }
     }
     this.sprites.forEach(sprite => sprite.update(dt));
     if (this.player.onFire) {
