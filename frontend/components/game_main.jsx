@@ -1,5 +1,5 @@
 import React from 'react';
-import Preload from 'react-preload'
+import Preload from 'react-preload';
 import Game from './../../game_logic/game.js';
 import Player from './../../game_logic/player.js';
 import Clock from './../../game_logic/clock.js';

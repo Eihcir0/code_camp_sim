@@ -23742,6 +23742,10 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _reactPreload = __webpack_require__(173);
+	
+	var _reactPreload2 = _interopRequireDefault(_reactPreload);
+	
 	var _secretary = __webpack_require__(190);
 	
 	var _secretary2 = _interopRequireDefault(_secretary);
@@ -24435,16 +24439,43 @@
 	
 	
 	  }, {
+	    key: 'images',
+	    value: function images() {
+	      return ["./app/assets/images/bed.png", "./app/assets/images/happy.png", "./app/assets/images/star.png", "./app/assets/images/ruby.png", "./app/assets/images/floors.png", "./app/assets/images/face_icons/on_fire.jpg", "./app/assets/images/face_icons/on_fire1.jpg", "./app/assets/images/face_icons/on_fire2.jpg", "./app/assets/images/face_icons/on_fire3.jpg", "./app/assets/images/face_icons/on_fire4.jpg", "./app/assets/images/face_icons/on_fire5.jpg", "./app/assets/images/face_icons/on_fire6.jpg", "./app/assets/images/face_icons/on_fire7.jpg", "./app/assets/images/face_icons/rested_happy.jpg", "./app/assets/images/face_icons/tired_happy.jpg", "./app/assets/images/face_icons/tired_happy2.jpg", "./app/assets/images/face_icons/exhausted_sad.jpg", "./app/assets/images/face_icons/rested_sad.jpg", "./app/assets/images/face_icons/tired_indifferent.jpg", "./app/assets/images/face_icons/exhausted_sad.jpg", "./app/assets/images/face_icons/rested_angry.jpg", "./app/assets/images/face_icons/tired_angry.jpg", "./app/assets/images/face_icons/tired_miserable.jpg", "./app/assets/images/face_icons/exhausted_angry.jpg", "./app/assets/images/ned3-blur.png", "./app/assets/images/ned3.png", "./app/assets/images/rays.jpeg", "./app/assets/images/eyes_open.png", "./app/assets/images/eyes_closed.png", "./app/assets/images/newfloor.png", "./app/assets/images/line_explosion.jpg", "./app/assets/images/computer_screen2.png", "./app/assets/images/frontface2.png", "./app/assets/images/moon.png", "./app/assets/images/bug.png", "./app/assets/images/sheep2.png", "./app/assets/images/desks.png", "./app/assets/images/desks2.png", "./app/assets/images/desks2.png", "./app/assets/images/fire.png", "./app/assets/images/coffee.png", "./app/assets/images/donut.png", "./app/assets/images/lunch.png", "./app/assets/images/hero_spritesheet.png", "./app/assets/images/hero_seated_spritesheet.png", "./app/assets/images/secretary.png", "./app/assets/images/ruby.png", "./app/assets/images/student1.png", "./app/assets/images/student2.png", "./app/assets/images/student3.png", "./app/assets/images/student4.png", "./app/assets/images/student5.png", "./app/assets/images/student6.png", "./app/assets/sounds/trippy.wav", "./app/assets/sounds/Rock-a-bye Baby.mp3", "./app/assets/sounds/missed.wav", "./app/assets/sounds/shot.wav", "./app/assets/sounds/beep.wav", "./app/assets/sounds/congrats-ding.wav", "./app/assets/sounds/typing.wav", "./app/assets/sounds/explosion.wav", "./app/assets/sounds/microwave_start.wav", "./app/assets/sounds/shot.wav", "./app/assets/sounds/missed.wav", "./app/assets/sounds/beep.wav", "./app/assets/sounds/buzzer.mp3", "./app/assets/sounds/bug_sound.wav", "./app/assets/sounds/hes_on_fire.wav", "./app/assets/sounds/fire.wav", "./app/assets/sounds/coffee.wav", "./app/assets/sounds/donut.wav", "./app/assets/sounds/microwave.wav", "./app/assets/sounds/woohoo.wav", "./app/assets/sounds/icon.wav"];
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
-	      return _react2.default.createElement(
+	      var _this11 = this;
+	
+	      var loadingIndicator = _react2.default.createElement(
 	        'div',
-	        { className: 'canvas-container' },
-	        this.quadrants(),
-	        _react2.default.createElement('canvas', { id: 'canvas',
-	          width: '800',
-	          height: '520' }),
-	        this.buttons()
+	        { className: 'loading' },
+	        'LOADING MEDIA....'
+	      );
+	      var images = this.images();
+	
+	      return _react2.default.createElement(
+	        _reactPreload2.default,
+	        {
+	          loadingIndicator: loadingIndicator,
+	          images: images,
+	          resolveOnError: true,
+	          mountChildren: true,
+	          onSuccess: function onSuccess() {
+	            _this11.interval = window.setInterval(function () {
+	              return _this11.tick();
+	            }, _this11.intervalTime);
+	          } },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'canvas-container' },
+	          this.quadrants(),
+	          _react2.default.createElement('canvas', { id: 'canvas',
+	            width: '800',
+	            height: '520' }),
+	          this.buttons()
+	        )
 	      );
 	    }
 	  }]);
