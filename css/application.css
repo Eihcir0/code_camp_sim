@@ -726,3 +726,9 @@ top: 486px;
 left: 156px;
 height: 140px;
 }
+
+.loading {
+    color: white;
+    padding: 50px;
+    font-size: 100px;
+}

@@ -8,13 +8,12 @@ class NightSeshScreen extends React.Component {
       this.player = this.props.player;
       this.week = this.player.week;
       this.day = this.week.day;
-      debugger;
       this.handleClick = this.handleClick.bind(this);
       this.startTime = Date.now();
       this.ticker = 0;
       new Audio("./app/assets/sounds/typing.wav").play();
       this.redStyle={color: "red"};
-      this.greenStyle={color: "geen"};
+      this.greenStyle={color: "green"};
       this.done=false;
       this.interval = window.setInterval(()=>this.ticker++,100);
       }
@@ -22,7 +21,6 @@ class NightSeshScreen extends React.Component {
 
     scoreChange() {
       var change = this.player.score - this.day.beginningScore;
-      debugger;
       var changeText = `+ ${change}`;
       if (this.ticker===20) {
         new Audio("./app/assets/sounds/explosion.wav").play();
@@ -47,7 +45,8 @@ class NightSeshScreen extends React.Component {
     }
 
     skillChange() {
-      var change = (this.player.skills[this.player.currentSkill] - this.day.beginningSkillPoints)/10;
+      var skill = this.player.currentSkill.toUpperCase()+" SKILL ";
+      var change = Math.round((this.player.skills[this.player.currentSkill] - this.day.beginningSkillPoints)/10);
       var changeText = `+ %${change}`;
       if (this.ticker===40) {
         new Audio("./app/assets/sounds/explosion.wav").play();
@@ -55,13 +54,13 @@ class NightSeshScreen extends React.Component {
       if (this.ticker<40) {
         return (
 
-          <div><br/>{this.player.currentSKill} </div>
+          <div><br/>{skill} </div>
         );
       } else {
         return (
 
           <div>
-            <br/>{this.player.currentSKill}
+            <br/>{skill}
               <span className="pair-result-number" style={change>0 ? this.greenStyle :   this.redStyle}>
                 {changeText}
               </span>
@@ -72,7 +71,7 @@ class NightSeshScreen extends React.Component {
     }
 
     happinessChange() {
-      var change = this.player.happiness - this.day.beginningHappiness;
+      var change = Math.round(this.player.happiness - this.day.beginningHappiness);
       var changeText = change < 0 ? `${change}` : `+ ${change}`;
       if (this.ticker===60) {
         new Audio("./app/assets/sounds/explosion.wav").play();

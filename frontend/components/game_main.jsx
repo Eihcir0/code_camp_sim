@@ -1,6 +1,5 @@
 import React from 'react';
-// import someother component from './somewhere';
-// import someother component from './somewhere';
+import Preload from 'react-preload'
 import Game from './../../game_logic/game.js';
 import Player from './../../game_logic/player.js';
 import Clock from './../../game_logic/clock.js';
@@ -13,14 +12,14 @@ import PairsSeshScreen from './pairs_sesh_screen.jsx';
 import StrikeScreen from './strike_screen.jsx';
 import CongratsScreen from './congrats_screen.jsx';
 import FaceAnim from './face_anim.jsx';
-
-//before this I will have a modal that asks for the player name
+//before this implement a modal that asks for the player name
 //and asks if they want to create an account
 
 class GameMain extends React.Component {
   constructor() {
     super();
     //HAVE TO DEAL WITH ATE LUNCH SHIT - reset each day, these should be tracked in day
+    this.loading = true;
     this.player = new Player("Guest");
     this.playerAnim = new playerAnim({player: this.player});
     if (this.player.week===undefined) {
@@ -43,12 +42,10 @@ class GameMain extends React.Component {
     this.updateAttributes = this.updateAttributes.bind(this);
     this.checkAteLunch = this.checkAteLunch.bind(this);
     this.handleLeaving = this.handleLeaving.bind(this);
-    this.ticksPerSecond = 100; //<<=If changed then change Clock class
+    this.ticksPerSecond = 100; //<<=If changed then update Clock class
     this.intervalTime = 1000 / this.ticksPerSecond;
     this.interval = window.setInterval(()=>this.tick(),this.intervalTime);
   }
-
-
 
   tick() {
     this.player.clock.tick();
@@ -212,52 +209,151 @@ class GameMain extends React.Component {
     }
   }
 
+  images() {
+    return [
+      "./app/assets/images/bed.png",
+      "./app/assets/images/happy.png",
+      "./app/assets/images/star.png",
+      "./app/assets/images/ruby.png",
+      "./app/assets/images/floor.png",
+      "./app/assets/images/face_icons/on_fire.jpg",
+      "./app/assets/images/face_icons/on_fire1.jpg",
+      "./app/assets/images/face_icons/on_fire2.jpg",
+      "./app/assets/images/face_icons/on_fire3.jpg",
+      "./app/assets/images/face_icons/on_fire4.jpg",
+      "./app/assets/images/face_icons/on_fire5.jpg",
+      "./app/assets/images/face_icons/on_fire6.jpg",
+      "./app/assets/images/face_icons/on_fire7.jpg",
+      "./app/assets/images/face_icons/rested_happy.jpg",
+      "./app/assets/images/face_icons/tired_happy.jpg",
+      "./app/assets/images/face_icons/tired_happy2.jpg",
+      "./app/assets/images/face_icons/exhausted_sad.jpg",
+      "./app/assets/images/face_icons/rested_sad.jpg",
+      "./app/assets/images/face_icons/tired_indifferent.jpg",
+      "./app/assets/images/face_icons/exhausted_sad.jpg",
+      "./app/assets/images/face_icons/rested_angry.jpg",
+      "./app/assets/images/face_icons/tired_angry.jpg",
+      "./app/assets/images/face_icons/tired_miserable.jpg",
+      "./app/assets/images/face_icons/exhausted_angry.jpg",
+      "./app/assets/images/ned3-blur.png",
+      "./app/assets/images/ned3.png",
+      "./app/assets/images/rays.jpeg",
+      "./app/assets/images/exhausted_angry.jpg",
+      "./app/assets/images/eyes_open.png",
+      "./app/assets/images/eyes_closed.png",
+      "./app/assets/images/newfloor.png",
+      "./app/assets/images/line_explosion.jpg",
+      "./app/assets/images/computer_screen2.png",
+      "./app/assets/images/frontface2.png",
+      "./app/assets/images/moon.png",
+      "./app/assets/images/bug.png",
+      "./app/assets/images/sheep2.png",
+      "./app/assets/images/desks.png",
+      "./app/assets/images/desks2.png",
+      "./app/assets/images/desks2.png",
+      "./app/assets/images/fire.png",
+      "./app/assets/images/coffee.png",
+      "./app/assets/images/donut.png",
+      "./app/assets/images/lunch.png",
+      "./app/assets/images/hero_spritesheet.png",
+      "./app/assets/images/hero_seated_spritesheet.png",
+      "./app/assets/images/secretary.png",
+      "./app/assets/images/ruby.png",
+      "./app/assets/images/student1.png",
+      "./app/assets/images/student2.png",
+      "./app/assets/images/student3.png",
+      "./app/assets/images/student4.png",
+      "./app/assets/images/student5.png",
+      "./app/assets/images/student6.png",
+      "./app/assets/images/student7.png",
+      "./app/assets/sounds/trippy.wav",
+      "./app/assets/sounds/Rock-a-bye Baby.mp3",
+      "./app/assets/sounds/missed.wav",
+      "./app/assets/sounds/shot.wav",
+      "./app/assets/sounds/beep.wav",
+      "./app/assets/sounds/congrats-ding.wav",
+      "./app/assets/sounds/typing.wav",
+      "./app/assets/sounds/explosion.wav",
+      "./app/assets/sounds/microwave_start.wav",
+      "./app/assets/sounds/shot.wav",
+      "./app/assets/sounds/missed.wav",
+      "./app/assets/sounds/beep.wav",
+      "./app/assets/sounds/buzzer.mp3",
+      "./app/assets/sounds/bug_sound.wav",
+      "./app/assets/sounds/hes_on_fire.wav",
+      "./app/assets/sounds/fire.wav",
+      "./app/assets/sounds/coffee.wav",
+      "./app/assets/sounds/donut.wav",
+      "./app/assets/sounds/microwave.wav",
+      "./app/assets/sounds/woohoo.wav",
+      "./app/assets/sounds/icon.wav"
+    ]
+  }
+
 
   render() {
     //{array} or <component className="" onClick={}
+    // if (this.loading) {
+    //   return <div className="loading">LOADING....</div>;
+    // }
+    var loadingIndicator = <div className="loading">LOADING....</div>;
+    var images = this.images();
+    // onError={this._handleImageLoadError}
+    // onSuccess={this._handleImageLoadSuccess}
     return (
-      <section>
-        <span className="game-title">CODE CAMP SIM (ver 0.7.5)</span>
+      <Preload
+        loadingIndicator={loadingIndicator}
+        images={images}
+        autoResolveDelay={3000}
+        resolveOnError={true}
+        mountChildren={true}
+      >
+        {
 
-        <div className="game-middle-container">
-          {this.sesh()}
-          <div className="game-right-side">
-            <div>
-              w{this.player.weekNum}d{this.player.dayNum}    {this.state.clock[0]}:{this.state.clock[1]}{this.state.clock[2]}</div>
-            <div className="stats-bar">
-              <meter value={this.player.sleepBank} min="0" max="100" low="30" high="70" optimum="100"/>
-              <img className="icon" src="./app/assets/images/bed.png" />
-              <meter value={this.player.happiness} min="0" max="100" low="30" high="70" optimum="100"/>
-              <img className="icon" src="./app/assets/images/happy.png" />
-              <meter value={this.player.focus} min="0" max="100" low="30" high="70" optimum="100"/>
-              <img className="icon" src="./app/assets/images/star.png" /><br/>
-              <span className="score">{this.player.score}</span><br/>
-              <span className="player-title">
-                <br/>LEVEL: {this.player.scoreTitle()}
-              </span>
-              <br/><br/>
-              <span className="current-subject">
-                <img className="icon" src="./app/assets/images/ruby.png" />
-                 {this.state.ruby}% <br/>
-              </span>
-              <br/><span className="strikes">
-                STRIKES:  {this.player.strikes}
-              </span>
-              <br/>
-              <br/>
-              <br/>
-              <br/>
-              <br/>
+          <section>
+            <span className="game-title">CODE CAMP SIM (ver 0.7.5)</span>
 
-              <span className="player-name">{this.player.name}</span>
-              <FaceAnim player={this.player}/>
+            <div className="game-middle-container">
+              {this.sesh()}
+              <div className="game-right-side">
+                <div>
+                  w{this.player.weekNum}d{this.player.dayNum}    {this.state.clock[0]}:{this.state.clock[1]}{this.state.clock[2]}</div>
+                <div className="stats-bar">
+                  <meter value={this.player.sleepBank} min="0" max="100" low="30" high="70" optimum="100"/>
+                  <img className="icon" src="./app/assets/images/bed.png" />
+                  <meter value={this.player.happiness} min="0" max="100" low="30" high="70" optimum="100"/>
+                  <img className="icon" src="./app/assets/images/happy.png" />
+                  <meter value={this.player.focus} min="0" max="100" low="30" high="70" optimum="100"/>
+                  <img className="icon" src="./app/assets/images/star.png" /><br/>
+                  <span className="score">{this.player.score}</span><br/>
+                  <span className="player-title">
+                    <br/>LEVEL: {this.player.scoreTitle()}
+                  </span>
+                  <br/><br/>
+                  <span className="current-subject">
+                    <img className="icon" src="./app/assets/images/ruby.png" />
+                     {this.state.ruby}% <br/>
+                  </span>
+                  <br/><span className="strikes">
+                    STRIKES:  {this.player.strikes}
+                  </span>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+
+                  <span className="player-name">{this.player.name}</span>
+                  <FaceAnim player={this.player}/>
+                </div>
+                <div className="player-pic-holder">
+                </div>
+              </div>
             </div>
-            <div className="player-pic-holder">
-            </div>
-          </div>
-        </div>
-        <div className="game-messages">{this.state.message} </div>
-      </section>
+            <div className="game-messages">{this.state.message} </div>
+          </section>
+        }
+    </Preload>
     );
   }
 }

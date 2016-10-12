@@ -21446,6 +21446,10 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _reactPreload = __webpack_require__(202);
+	
+	var _reactPreload2 = _interopRequireDefault(_reactPreload);
+	
 	var _game = __webpack_require__(173);
 	
 	var _game2 = _interopRequireDefault(_game);
@@ -21501,11 +21505,8 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	// import someother component from './somewhere';
-	// import someother component from './somewhere';
 	
-	
-	//before this I will have a modal that asks for the player name
+	//before this implement a modal that asks for the player name
 	//and asks if they want to create an account
 	
 	var GameMain = function (_React$Component) {
@@ -21517,6 +21518,7 @@
 	    //HAVE TO DEAL WITH ATE LUNCH SHIT - reset each day, these should be tracked in day
 	    var _this = _possibleConstructorReturn(this, (GameMain.__proto__ || Object.getPrototypeOf(GameMain)).call(this));
 	
+	    _this.loading = true;
 	    _this.player = new _player2.default("Guest");
 	    _this.playerAnim = new _player_anim2.default({ player: _this.player });
 	    if (_this.player.week === undefined) {
@@ -21539,7 +21541,7 @@
 	    _this.updateAttributes = _this.updateAttributes.bind(_this);
 	    _this.checkAteLunch = _this.checkAteLunch.bind(_this);
 	    _this.handleLeaving = _this.handleLeaving.bind(_this);
-	    _this.ticksPerSecond = 100; //<<=If changed then change Clock class
+	    _this.ticksPerSecond = 100; //<<=If changed then update Clock class
 	    _this.intervalTime = 1000 / _this.ticksPerSecond;
 	    _this.interval = window.setInterval(function () {
 	      return _this.tick();
@@ -21716,97 +21718,123 @@
 	      }
 	    }
 	  }, {
+	    key: 'images',
+	    value: function images() {
+	      return ["./app/assets/images/bed.png", "./app/assets/images/happy.png", "./app/assets/images/star.png", "./app/assets/images/ruby.png", "./app/assets/images/floor.png", "./app/assets/images/face_icons/on_fire.jpg", "./app/assets/images/face_icons/on_fire1.jpg", "./app/assets/images/face_icons/on_fire2.jpg", "./app/assets/images/face_icons/on_fire3.jpg", "./app/assets/images/face_icons/on_fire4.jpg", "./app/assets/images/face_icons/on_fire5.jpg", "./app/assets/images/face_icons/on_fire6.jpg", "./app/assets/images/face_icons/on_fire7.jpg", "./app/assets/images/face_icons/rested_happy.jpg", "./app/assets/images/face_icons/tired_happy.jpg", "./app/assets/images/face_icons/tired_happy2.jpg", "./app/assets/images/face_icons/exhausted_sad.jpg", "./app/assets/images/face_icons/rested_sad.jpg", "./app/assets/images/face_icons/tired_indifferent.jpg", "./app/assets/images/face_icons/exhausted_sad.jpg", "./app/assets/images/face_icons/rested_angry.jpg", "./app/assets/images/face_icons/tired_angry.jpg", "./app/assets/images/face_icons/tired_miserable.jpg", "./app/assets/images/face_icons/exhausted_angry.jpg", "./app/assets/images/ned3-blur.png", "./app/assets/images/ned3.png", "./app/assets/images/rays.jpeg", "./app/assets/images/exhausted_angry.jpg", "./app/assets/images/eyes_open.png", "./app/assets/images/eyes_closed.png", "./app/assets/images/newfloor.png", "./app/assets/images/line_explosion.jpg", "./app/assets/images/computer_screen2.png", "./app/assets/images/frontface2.png", "./app/assets/images/moon.png", "./app/assets/images/bug.png", "./app/assets/images/sheep2.png", "./app/assets/images/desks.png", "./app/assets/images/desks2.png", "./app/assets/images/desks2.png", "./app/assets/images/fire.png", "./app/assets/images/coffee.png", "./app/assets/images/donut.png", "./app/assets/images/lunch.png", "./app/assets/images/hero_spritesheet.png", "./app/assets/images/hero_seated_spritesheet.png", "./app/assets/images/secretary.png", "./app/assets/images/ruby.png", "./app/assets/images/student1.png", "./app/assets/images/student2.png", "./app/assets/images/student3.png", "./app/assets/images/student4.png", "./app/assets/images/student5.png", "./app/assets/images/student6.png", "./app/assets/images/student7.png", "./app/assets/sounds/trippy.wav", "./app/assets/sounds/Rock-a-bye Baby.mp3", "./app/assets/sounds/missed.wav", "./app/assets/sounds/shot.wav", "./app/assets/sounds/beep.wav", "./app/assets/sounds/congrats-ding.wav", "./app/assets/sounds/typing.wav", "./app/assets/sounds/explosion.wav", "./app/assets/sounds/microwave_start.wav", "./app/assets/sounds/shot.wav", "./app/assets/sounds/missed.wav", "./app/assets/sounds/beep.wav", "./app/assets/sounds/buzzer.mp3", "./app/assets/sounds/bug_sound.wav", "./app/assets/sounds/hes_on_fire.wav", "./app/assets/sounds/fire.wav", "./app/assets/sounds/coffee.wav", "./app/assets/sounds/donut.wav", "./app/assets/sounds/microwave.wav", "./app/assets/sounds/woohoo.wav", "./app/assets/sounds/icon.wav"];
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      //{array} or <component className="" onClick={}
+	      // if (this.loading) {
+	      //   return <div className="loading">LOADING....</div>;
+	      // }
+	      var loadingIndicator = _react2.default.createElement(
+	        'div',
+	        { className: 'loading' },
+	        'LOADING....'
+	      );
+	      var images = this.images();
+	      // onError={this._handleImageLoadError}
+	      // onSuccess={this._handleImageLoadSuccess}
 	      return _react2.default.createElement(
-	        'section',
-	        null,
+	        _reactPreload2.default,
+	        {
+	          loadingIndicator: loadingIndicator,
+	          images: images,
+	          autoResolveDelay: 3000,
+	          resolveOnError: true,
+	          mountChildren: true
+	        },
 	        _react2.default.createElement(
-	          'span',
-	          { className: 'game-title' },
-	          'CODE CAMP SIM (ver 0.7.5)'
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'game-middle-container' },
-	          this.sesh(),
+	          'section',
+	          null,
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'game-title' },
+	            'CODE CAMP SIM (ver 0.7.5)'
+	          ),
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'game-right-side' },
+	            { className: 'game-middle-container' },
+	            this.sesh(),
 	            _react2.default.createElement(
 	              'div',
-	              null,
-	              'w',
-	              this.player.weekNum,
-	              'd',
-	              this.player.dayNum,
-	              '    ',
-	              this.state.clock[0],
-	              ':',
-	              this.state.clock[1],
-	              this.state.clock[2]
-	            ),
-	            _react2.default.createElement(
-	              'div',
-	              { className: 'stats-bar' },
-	              _react2.default.createElement('meter', { value: this.player.sleepBank, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
-	              _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/bed.png' }),
-	              _react2.default.createElement('meter', { value: this.player.happiness, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
-	              _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/happy.png' }),
-	              _react2.default.createElement('meter', { value: this.player.focus, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
-	              _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/star.png' }),
-	              _react2.default.createElement('br', null),
+	              { className: 'game-right-side' },
 	              _react2.default.createElement(
-	                'span',
-	                { className: 'score' },
-	                this.player.score
+	                'div',
+	                null,
+	                'w',
+	                this.player.weekNum,
+	                'd',
+	                this.player.dayNum,
+	                '    ',
+	                this.state.clock[0],
+	                ':',
+	                this.state.clock[1],
+	                this.state.clock[2]
 	              ),
-	              _react2.default.createElement('br', null),
 	              _react2.default.createElement(
-	                'span',
-	                { className: 'player-title' },
+	                'div',
+	                { className: 'stats-bar' },
+	                _react2.default.createElement('meter', { value: this.player.sleepBank, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
+	                _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/bed.png' }),
+	                _react2.default.createElement('meter', { value: this.player.happiness, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
+	                _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/happy.png' }),
+	                _react2.default.createElement('meter', { value: this.player.focus, min: '0', max: '100', low: '30', high: '70', optimum: '100' }),
+	                _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/star.png' }),
 	                _react2.default.createElement('br', null),
-	                'LEVEL: ',
-	                this.player.scoreTitle()
+	                _react2.default.createElement(
+	                  'span',
+	                  { className: 'score' },
+	                  this.player.score
+	                ),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(
+	                  'span',
+	                  { className: 'player-title' },
+	                  _react2.default.createElement('br', null),
+	                  'LEVEL: ',
+	                  this.player.scoreTitle()
+	                ),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(
+	                  'span',
+	                  { className: 'current-subject' },
+	                  _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/ruby.png' }),
+	                  this.state.ruby,
+	                  '% ',
+	                  _react2.default.createElement('br', null)
+	                ),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(
+	                  'span',
+	                  { className: 'strikes' },
+	                  'STRIKES:  ',
+	                  this.player.strikes
+	                ),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(
+	                  'span',
+	                  { className: 'player-name' },
+	                  this.player.name
+	                ),
+	                _react2.default.createElement(_face_anim2.default, { player: this.player })
 	              ),
-	              _react2.default.createElement('br', null),
-	              _react2.default.createElement('br', null),
-	              _react2.default.createElement(
-	                'span',
-	                { className: 'current-subject' },
-	                _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/ruby.png' }),
-	                this.state.ruby,
-	                '% ',
-	                _react2.default.createElement('br', null)
-	              ),
-	              _react2.default.createElement('br', null),
-	              _react2.default.createElement(
-	                'span',
-	                { className: 'strikes' },
-	                'STRIKES:  ',
-	                this.player.strikes
-	              ),
-	              _react2.default.createElement('br', null),
-	              _react2.default.createElement('br', null),
-	              _react2.default.createElement('br', null),
-	              _react2.default.createElement('br', null),
-	              _react2.default.createElement('br', null),
-	              _react2.default.createElement(
-	                'span',
-	                { className: 'player-name' },
-	                this.player.name
-	              ),
-	              _react2.default.createElement(_face_anim2.default, { player: this.player })
-	            ),
-	            _react2.default.createElement('div', { className: 'player-pic-holder' })
+	              _react2.default.createElement('div', { className: 'player-pic-holder' })
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'game-messages' },
+	            this.state.message,
+	            ' '
 	          )
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'game-messages' },
-	          this.state.message,
-	          ' '
 	        )
 	      );
 	    }
@@ -22910,9 +22938,10 @@
 	      var now = this.player.clock.time();
 	
 	      var diff = this.player.clock.diff(["10", "00", "pm"]) / 60;
-	      if (this.day.lastCoffee[2] === "pm" && parseInt(this.day.lastCoffee[0]) > 8) {
+	      if (this.player.lastCoffee[2] === "pm" && parseInt(this.player.lastCoffee[0]) > 8) {
 	        diff += 3;
 	      }
+	
 	      this.player.sleepBank -= diff * 5;
 	      if (this.player.sleepBank < 20) {
 	        this.player.sleepBank = 20;
@@ -22972,7 +23001,7 @@
 	
 	    this.player = player;
 	    if (this.player.dayNum === 1) {
-	      arrivalTime = ["8", "30", "am"];
+	      arrivalTime = ["6", "30", "pm"];
 	    }
 	    this.player.clock = new _clock2.default(arrivalTime, this.player.defaultClockSpeed);
 	    this.player.currentPos = 0;
@@ -23921,7 +23950,6 @@
 	    key: 'clickExit',
 	    value: function clickExit() {
 	      var now = this.player.clock.time();
-	      debugger;
 	      switch (true) {
 	        case this.player.clock.isBetween(["6", "00", "am"], ["4", "59", "pm"]):
 	          this.leavingEarly();
@@ -24986,13 +25014,12 @@
 	    _this.player = _this.props.player;
 	    _this.week = _this.player.week;
 	    _this.day = _this.week.day;
-	    debugger;
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.startTime = Date.now();
 	    _this.ticker = 0;
 	    new Audio("./app/assets/sounds/typing.wav").play();
 	    _this.redStyle = { color: "red" };
-	    _this.greenStyle = { color: "geen" };
+	    _this.greenStyle = { color: "green" };
 	    _this.done = false;
 	    _this.interval = window.setInterval(function () {
 	      return _this.ticker++;
@@ -25004,7 +25031,6 @@
 	    key: 'scoreChange',
 	    value: function scoreChange() {
 	      var change = this.player.score - this.day.beginningScore;
-	      debugger;
 	      var changeText = '+ ' + change;
 	      if (this.ticker === 20) {
 	        new Audio("./app/assets/sounds/explosion.wav").play();
@@ -25045,7 +25071,8 @@
 	  }, {
 	    key: 'skillChange',
 	    value: function skillChange() {
-	      var change = (this.player.skills[this.player.currentSkill] - this.day.beginningSkillPoints) / 10;
+	      var skill = this.player.currentSkill.toUpperCase() + " SKILL ";
+	      var change = Math.round((this.player.skills[this.player.currentSkill] - this.day.beginningSkillPoints) / 10);
 	      var changeText = '+ %' + change;
 	      if (this.ticker === 40) {
 	        new Audio("./app/assets/sounds/explosion.wav").play();
@@ -25055,7 +25082,7 @@
 	          'div',
 	          null,
 	          _react2.default.createElement('br', null),
-	          this.player.currentSKill,
+	          skill,
 	          ' '
 	        );
 	      } else {
@@ -25063,7 +25090,7 @@
 	          'div',
 	          null,
 	          _react2.default.createElement('br', null),
-	          this.player.currentSKill,
+	          skill,
 	          _react2.default.createElement(
 	            'span',
 	            { className: 'pair-result-number', style: change > 0 ? this.greenStyle : this.redStyle },
@@ -25075,7 +25102,7 @@
 	  }, {
 	    key: 'happinessChange',
 	    value: function happinessChange() {
-	      var change = this.player.happiness - this.day.beginningHappiness;
+	      var change = Math.round(this.player.happiness - this.day.beginningHappiness);
 	      var changeText = change < 0 ? '' + change : '+ ' + change;
 	      if (this.ticker === 60) {
 	        new Audio("./app/assets/sounds/explosion.wav").play();
@@ -26658,6 +26685,7 @@
 	  }, {
 	    key: "getFireFace",
 	    value: function getFireFace() {
+	      //ADD IMAGE => UPDATE PRELOADS!!!
 	      this.fireCounter++;
 	      if (this.fireCounter > 5) {
 	        this.fireCounter = 0;
@@ -26754,6 +26782,306 @@
 	}(_react2.default.Component); //end class
 	
 	exports.default = FaceAnim;
+
+/***/ },
+/* 202 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Preload = exports.ImageHelper = exports.ImageCache = undefined;
+	
+	var _ImageCache = __webpack_require__(203);
+	
+	Object.defineProperty(exports, 'ImageCache', {
+	  enumerable: true,
+	  get: function get() {
+	    return _interopRequireDefault(_ImageCache).default;
+	  }
+	});
+	
+	var _ImageHelper = __webpack_require__(204);
+	
+	Object.defineProperty(exports, 'ImageHelper', {
+	  enumerable: true,
+	  get: function get() {
+	    return _interopRequireDefault(_ImageHelper).default;
+	  }
+	});
+	
+	var _Preload2 = __webpack_require__(205);
+	
+	var _Preload3 = _interopRequireDefault(_Preload2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Preload = exports.Preload = _Preload3.default;
+	
+	exports.default = Preload;
+
+/***/ },
+/* 203 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var hash = {};
+	var cache = [];
+	
+	var add = function add(url) {
+	    if (!hash[url]) {
+	        hash[url] = new Image();
+	        hash[url].crossorigin = 'anonymous';
+	        hash[url].crossOrigin = 'anonymous';
+	        hash[url].src = url;
+	
+	        cache.push(hash[url]);
+	    }
+	    return hash[url];
+	};
+	
+	var get = function get(url) {
+	    return add(url);
+	};
+	
+	var stuff = function stuff(urls) {
+	    if (urls.length > 0) {
+	        urls.map(add);
+	    }
+	};
+	
+	var ImageCache = {
+	    add: add,
+	    stuff: stuff,
+	    get: get,
+	    hash: hash,
+	    cache: cache
+	};
+	
+	exports.default = ImageCache;
+
+/***/ },
+/* 204 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _ImageCache = __webpack_require__(203);
+	
+	var _ImageCache2 = _interopRequireDefault(_ImageCache);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ImageHelper = {
+	    loadImage: function loadImage(url) {
+	        var image = _ImageCache2.default.get(url);
+	
+	        return new Promise(function (resolve, reject) {
+	            var handleSuccess = function handleSuccess() {
+	                resolve(image);
+	            };
+	            var handleError = function handleError() {
+	                reject(image);
+	            };
+	
+	            if (image.complete) {
+	                // image is loaded, go ahead and change the state
+	
+	                if (image.naturalWidth && image.naturalHeight) {
+	                    // successful load
+	                    handleSuccess();
+	                } else {
+	                    handleError();
+	                }
+	            } else {
+	                image.addEventListener('load', handleSuccess, false);
+	                image.addEventListener('error', handleError, false);
+	            }
+	        });
+	    },
+	    loadImages: function loadImages(urls) {
+	        var promises = urls.map(this.loadImage.bind(this));
+	        return Promise.all(promises);
+	    },
+	
+	
+	    // preload without caring about the result
+	    stuffImages: function stuffImages(urls) {
+	        _ImageCache2.default.stuff(urls);
+	    }
+	};
+	
+	exports.default = ImageHelper;
+
+/***/ },
+/* 205 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _ImageHelper = __webpack_require__(204);
+	
+	var _ImageHelper2 = _interopRequireDefault(_ImageHelper);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var propTypes = {
+	    // Rendered on success
+	    children: _react.PropTypes.element.isRequired,
+	
+	    // Rendered during load
+	    loadingIndicator: _react.PropTypes.node.isRequired,
+	
+	    // Array of image urls to be preloaded
+	    images: _react.PropTypes.array,
+	
+	    // If set, the preloader will automatically show
+	    // the children content after this amount of time
+	    autoResolveDelay: _react.PropTypes.number,
+	
+	    // Error callback. Is passed the error
+	    onError: _react.PropTypes.func,
+	
+	    // Success callback
+	    onSuccess: _react.PropTypes.func,
+	
+	    // Whether or not we should still show the content
+	    // even if there is a preloading error
+	    resolveOnError: _react.PropTypes.bool,
+	
+	    // Whether or not we should mount the child content after
+	    // images have finished loading (or after autoResolveDelay)
+	    mountChildren: _react.PropTypes.bool
+	};
+	
+	var defaultProps = {
+	    images: [],
+	    resolveOnError: true,
+	    mountChildren: true,
+	    loadingIndicator: null
+	};
+	
+	var Preload = function (_Component) {
+	    _inherits(Preload, _Component);
+	
+	    function Preload(props) {
+	        _classCallCheck(this, Preload);
+	
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Preload).call(this, props));
+	
+	        _this.state = {
+	            ready: false
+	        };
+	
+	        _this._handleSuccess = _this._handleSuccess.bind(_this);
+	        _this._handleError = _this._handleError.bind(_this);
+	        _this._mounted = false;
+	        return _this;
+	    }
+	
+	    _createClass(Preload, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            if (!this.props.images || this.props.images.length === 0) {
+	                this._handleSuccess();
+	            }
+	        }
+	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this._mounted = true;
+	            if (!this.state.ready) {
+	                _ImageHelper2.default.loadImages(this.props.images).then(this._handleSuccess, this._handleError);
+	
+	                if (this.props.autoResolveDelay && this.props.autoResolveDelay > 0) {
+	                    this.autoResolveTimeout = setTimeout(this._handleSuccess, this.props.autoResolveDelay);
+	                }
+	            }
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            this._mounted = false;
+	            if (this.autoResolveTimeout) {
+	                clearTimeout(this.autoResolveTimeout);
+	            }
+	        }
+	    }, {
+	        key: '_handleSuccess',
+	        value: function _handleSuccess() {
+	            if (this.autoResolveTimeout) {
+	                clearTimeout(this.autoResolveTimeout);
+	                console.warn('images failed to preload, auto resolving');
+	            }
+	
+	            if (this.state.ready || !this._mounted) {
+	                return;
+	            }
+	
+	            this.setState({
+	                ready: true
+	            });
+	
+	            if (this.props.onSuccess) {
+	                this.props.onSuccess();
+	            }
+	        }
+	    }, {
+	        key: '_handleError',
+	        value: function _handleError(err) {
+	
+	            if (!this._mounted) {
+	                return;
+	            }
+	
+	            if (this.props.resolveOnError) {
+	                this._handleSuccess();
+	            }
+	
+	            if (this.props.onError) {
+	                this.props.onError(err);
+	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return this.state.ready && this.props.mountChildren ? this.props.children : this.props.loadingIndicator;
+	        }
+	    }]);
+	
+	    return Preload;
+	}(_react.Component);
+	
+	Preload.propTypes = propTypes;
+	Preload.defaultProps = defaultProps;
+	
+	exports.default = Preload;
 
 /***/ }
 /******/ ]);

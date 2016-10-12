@@ -405,7 +405,6 @@ class OpenSesh extends React.Component {
 
   clickExit() {
     var now = this.player.clock.time();
-    debugger;
     switch (true) {
       case (this.player.clock.isBetween(["6","00","am"],["4","59","pm"])):
           this.leavingEarly();

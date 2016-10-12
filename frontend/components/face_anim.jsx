@@ -63,7 +63,7 @@ class FaceAnim extends React.Component {
     this.setState({face: this.face});
   }
 
-  getFireFace() {
+  getFireFace() { //ADD IMAGE => UPDATE PRELOADS!!!
     this.fireCounter++;
     if (this.fireCounter>5) {
       this.fireCounter=0;

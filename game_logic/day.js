@@ -14,7 +14,7 @@ class Day {
   constructor (player, arrivalTime) {
     this.player = player;
     if (this.player.dayNum === 1) {
-      arrivalTime = ["8","30","am"];
+      arrivalTime = ["6","30","pm"];
     }
     this.player.clock = new Clock(arrivalTime, this.player.defaultClockSpeed);
     this.player.currentPos = 0;
