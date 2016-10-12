@@ -20,7 +20,7 @@ class GameMain extends React.Component {
     super();
     //HAVE TO DEAL WITH ATE LUNCH SHIT - reset each day, these should be tracked in day
     this.player = new Player("Guest");
-    this.player.loading = true;
+    this.player.loading = 0;
     this.playerAnim = new playerAnim({player: this.player});
     if (this.player.week===undefined) {
       this.week = new Week(this.player);
@@ -46,7 +46,7 @@ class GameMain extends React.Component {
     this.player.clock.pause();
     this.ticksPerSecond = 100; //<<=If changed then update Clock class
     this.intervalTime = 1000 / this.ticksPerSecond;
-    this.player.loading = true;
+    this.player.loading = 0;
   }
 
   tick() {
@@ -156,11 +156,11 @@ class GameMain extends React.Component {
 
   handleOpen() {
     this.player.clock.unpause();
-    this.player.loading = false;
+    this.player.loading = 1;
   }
 
   sesh() { // change this to a switch
-    if (this.player.loading) {
+    if (this.player.loading===0) {
       return <button className="leave-button-big" onClick={this.handleOpen}>
         PRESS TO START </button>;
     }

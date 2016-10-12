@@ -20,7 +20,7 @@ class OpenSesh extends React.Component {
     this.player = this.props.player;
     this.player.clock.pause();
     this.playerAnim = this.props.playerAnim;
-    this.player.loading = false;
+    this.player.loading = 1;
     this.main = this.main.bind(this);
     this.renderSprites = this.renderSprites.bind(this);
     this.update = this.update.bind(this);
@@ -83,7 +83,7 @@ class OpenSesh extends React.Component {
     this.player.clock.animTickerCount = this.player.clock.tickCounter + 5 - 5;
 
     this.background.onload = () => {
-      this.player.loading = false;
+      this.player.loading = 2;
       this.player.clock.unpause();
       this.main();
     };

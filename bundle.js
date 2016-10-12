@@ -21519,7 +21519,7 @@
 	    var _this = _possibleConstructorReturn(this, (GameMain.__proto__ || Object.getPrototypeOf(GameMain)).call(this));
 	
 	    _this.player = new _player2.default("Guest");
-	    _this.player.loading = true;
+	    _this.player.loading = 0;
 	    _this.playerAnim = new _player_anim2.default({ player: _this.player });
 	    if (_this.player.week === undefined) {
 	      _this.week = new _week2.default(_this.player);
@@ -21545,7 +21545,7 @@
 	    _this.player.clock.pause();
 	    _this.ticksPerSecond = 100; //<<=If changed then update Clock class
 	    _this.intervalTime = 1000 / _this.ticksPerSecond;
-	    _this.player.loading = true;
+	    _this.player.loading = 0;
 	    return _this;
 	  }
 	
@@ -21676,13 +21676,13 @@
 	    key: 'handleOpen',
 	    value: function handleOpen() {
 	      this.player.clock.unpause();
-	      this.player.loading = false;
+	      this.player.loading = 1;
 	    }
 	  }, {
 	    key: 'sesh',
 	    value: function sesh() {
 	      // change this to a switch
-	      if (this.player.loading) {
+	      if (this.player.loading === 0) {
 	        return _react2.default.createElement(
 	          'button',
 	          { className: 'leave-button-big', onClick: this.handleOpen },
@@ -23808,7 +23808,7 @@
 	    _this.player = _this.props.player;
 	    _this.player.clock.pause();
 	    _this.playerAnim = _this.props.playerAnim;
-	    _this.player.loading = false;
+	    _this.player.loading = 1;
 	    _this.main = _this.main.bind(_this);
 	    _this.renderSprites = _this.renderSprites.bind(_this);
 	    _this.update = _this.update.bind(_this);
@@ -23875,7 +23875,7 @@
 	      this.player.clock.animTickerCount = this.player.clock.tickCounter + 5 - 5;
 	
 	      this.background.onload = function () {
-	        _this2.player.loading = false;
+	        _this2.player.loading = 2;
 	        _this2.player.clock.unpause();
 	        _this2.main();
 	      };
