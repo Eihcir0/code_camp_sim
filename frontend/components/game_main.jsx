@@ -19,8 +19,8 @@ class GameMain extends React.Component {
   constructor() {
     super();
     //HAVE TO DEAL WITH ATE LUNCH SHIT - reset each day, these should be tracked in day
-    this.loading = true;
     this.player = new Player("Guest");
+    this.player.loading = true;
     this.playerAnim = new playerAnim({player: this.player});
     if (this.player.week===undefined) {
       this.week = new Week(this.player);
@@ -46,7 +46,7 @@ class GameMain extends React.Component {
     this.player.clock.pause();
     this.ticksPerSecond = 100; //<<=If changed then update Clock class
     this.intervalTime = 1000 / this.ticksPerSecond;
-    this.open = true;
+    this.player.loading = true;
   }
 
   tick() {
@@ -156,11 +156,11 @@ class GameMain extends React.Component {
 
   handleOpen() {
     this.player.clock.unpause();
-    this.open = false;
+    this.player.loading = false;
   }
 
   sesh() { // change this to a switch
-    if (this.open) {
+    if (this.player.loading) {
       return <button className="leave-button-big" onClick={this.handleOpen}>
         PRESS TO START </button>;
     }
@@ -225,6 +225,18 @@ class GameMain extends React.Component {
       "./app/assets/images/happy.png",
       "./app/assets/images/star.png",
       "./app/assets/images/ruby.png",
+      "./app/assets/images/face_icons/rested_happy.jpg",
+      "./app/assets/images/face_icons/tired_happy.jpg",
+      "./app/assets/images/face_icons/tired_happy2.jpg",
+      "./app/assets/images/face_icons/exhausted_sad.jpg",
+      "./app/assets/images/face_icons/rested_sad.jpg",
+      "./app/assets/images/face_icons/tired_indifferent.jpg",
+      "./app/assets/images/face_icons/exhausted_sad.jpg",
+      "./app/assets/images/face_icons/rested_angry.jpg",
+      "./app/assets/images/face_icons/tired_angry.jpg",
+      "./app/assets/images/face_icons/tired_miserable.jpg",
+      "./app/assets/images/face_icons/exhausted_angry.jpg"
+
     ];
   }
 

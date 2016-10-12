@@ -20,7 +20,7 @@ class OpenSesh extends React.Component {
     this.player = this.props.player;
     this.player.clock.pause();
     this.playerAnim = this.props.playerAnim;
-
+    this.player.loading = false;
     this.main = this.main.bind(this);
     this.renderSprites = this.renderSprites.bind(this);
     this.update = this.update.bind(this);
@@ -69,6 +69,7 @@ class OpenSesh extends React.Component {
   }
 
   preMain() {
+
     this.canvas = document.getElementById('canvas');
     this.canvas.height = 500;
     this.canvas.width = 800;
@@ -82,6 +83,7 @@ class OpenSesh extends React.Component {
     this.player.clock.animTickerCount = this.player.clock.tickCounter + 5 - 5;
 
     this.background.onload = () => {
+      this.player.loading = false;
       this.player.clock.unpause();
       this.main();
     };
@@ -597,29 +599,8 @@ class OpenSesh extends React.Component {
         "./app/assets/images/face_icons/on_fire5.jpg",
         "./app/assets/images/face_icons/on_fire6.jpg",
         "./app/assets/images/face_icons/on_fire7.jpg",
-        "./app/assets/images/face_icons/rested_happy.jpg",
-        "./app/assets/images/face_icons/tired_happy.jpg",
-        "./app/assets/images/face_icons/tired_happy2.jpg",
-        "./app/assets/images/face_icons/exhausted_sad.jpg",
-        "./app/assets/images/face_icons/rested_sad.jpg",
-        "./app/assets/images/face_icons/tired_indifferent.jpg",
-        "./app/assets/images/face_icons/exhausted_sad.jpg",
-        "./app/assets/images/face_icons/rested_angry.jpg",
-        "./app/assets/images/face_icons/tired_angry.jpg",
-        "./app/assets/images/face_icons/tired_miserable.jpg",
-        "./app/assets/images/face_icons/exhausted_angry.jpg",
-        "./app/assets/images/ned3-blur.png",
-        "./app/assets/images/ned3.png",
-        "./app/assets/images/rays.jpeg",
-        "./app/assets/images/eyes_open.png",
-        "./app/assets/images/eyes_closed.png",
         "./app/assets/images/newfloor.png",
-        "./app/assets/images/line_explosion.jpg",
-        "./app/assets/images/computer_screen2.png",
-        "./app/assets/images/frontface2.png",
-        "./app/assets/images/moon.png",
         "./app/assets/images/bug.png",
-        "./app/assets/images/sheep2.png",
         "./app/assets/images/desks.png",
         "./app/assets/images/desks2.png",
         "./app/assets/images/desks2.png",
@@ -635,28 +616,7 @@ class OpenSesh extends React.Component {
         "./app/assets/images/student3.png",
         "./app/assets/images/student4.png",
         "./app/assets/images/student5.png",
-        "./app/assets/images/student6.png",
-        "./app/assets/sounds/trippy.wav",
-        "./app/assets/sounds/Rock-a-bye Baby.mp3",
-        "./app/assets/sounds/missed.wav",
-        "./app/assets/sounds/shot.wav",
-        "./app/assets/sounds/beep.wav",
-        "./app/assets/sounds/congrats-ding.wav",
-        "./app/assets/sounds/typing.wav",
-        "./app/assets/sounds/explosion.wav",
-        "./app/assets/sounds/microwave_start.wav",
-        "./app/assets/sounds/shot.wav",
-        "./app/assets/sounds/missed.wav",
-        "./app/assets/sounds/beep.wav",
-        "./app/assets/sounds/buzzer.mp3",
-        "./app/assets/sounds/bug_sound.wav",
-        "./app/assets/sounds/hes_on_fire.wav",
-        "./app/assets/sounds/fire.wav",
-        "./app/assets/sounds/coffee.wav",
-        "./app/assets/sounds/donut.wav",
-        "./app/assets/sounds/microwave.wav",
-        "./app/assets/sounds/woohoo.wav",
-        "./app/assets/sounds/icon.wav"
+        "./app/assets/images/student6.png"
       ];
     }
 

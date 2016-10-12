@@ -21518,8 +21518,8 @@
 	    //HAVE TO DEAL WITH ATE LUNCH SHIT - reset each day, these should be tracked in day
 	    var _this = _possibleConstructorReturn(this, (GameMain.__proto__ || Object.getPrototypeOf(GameMain)).call(this));
 	
-	    _this.loading = true;
 	    _this.player = new _player2.default("Guest");
+	    _this.player.loading = true;
 	    _this.playerAnim = new _player_anim2.default({ player: _this.player });
 	    if (_this.player.week === undefined) {
 	      _this.week = new _week2.default(_this.player);
@@ -21545,7 +21545,7 @@
 	    _this.player.clock.pause();
 	    _this.ticksPerSecond = 100; //<<=If changed then update Clock class
 	    _this.intervalTime = 1000 / _this.ticksPerSecond;
-	    _this.open = true;
+	    _this.player.loading = true;
 	    return _this;
 	  }
 	
@@ -21676,13 +21676,13 @@
 	    key: 'handleOpen',
 	    value: function handleOpen() {
 	      this.player.clock.unpause();
-	      this.open = false;
+	      this.player.loading = false;
 	    }
 	  }, {
 	    key: 'sesh',
 	    value: function sesh() {
 	      // change this to a switch
-	      if (this.open) {
+	      if (this.player.loading) {
 	        return _react2.default.createElement(
 	          'button',
 	          { className: 'leave-button-big', onClick: this.handleOpen },
@@ -21732,7 +21732,7 @@
 	  }, {
 	    key: 'images',
 	    value: function images() {
-	      return ["./app/assets/images/bed.png", "./app/assets/images/happy.png", "./app/assets/images/star.png", "./app/assets/images/ruby.png"];
+	      return ["./app/assets/images/bed.png", "./app/assets/images/happy.png", "./app/assets/images/star.png", "./app/assets/images/ruby.png", "./app/assets/images/face_icons/rested_happy.jpg", "./app/assets/images/face_icons/tired_happy.jpg", "./app/assets/images/face_icons/tired_happy2.jpg", "./app/assets/images/face_icons/exhausted_sad.jpg", "./app/assets/images/face_icons/rested_sad.jpg", "./app/assets/images/face_icons/tired_indifferent.jpg", "./app/assets/images/face_icons/exhausted_sad.jpg", "./app/assets/images/face_icons/rested_angry.jpg", "./app/assets/images/face_icons/tired_angry.jpg", "./app/assets/images/face_icons/tired_miserable.jpg", "./app/assets/images/face_icons/exhausted_angry.jpg"];
 	    }
 	  }, {
 	    key: 'render',
@@ -23808,7 +23808,7 @@
 	    _this.player = _this.props.player;
 	    _this.player.clock.pause();
 	    _this.playerAnim = _this.props.playerAnim;
-	
+	    _this.player.loading = false;
 	    _this.main = _this.main.bind(_this);
 	    _this.renderSprites = _this.renderSprites.bind(_this);
 	    _this.update = _this.update.bind(_this);
@@ -23875,6 +23875,7 @@
 	      this.player.clock.animTickerCount = this.player.clock.tickCounter + 5 - 5;
 	
 	      this.background.onload = function () {
+	        _this2.player.loading = false;
 	        _this2.player.clock.unpause();
 	        _this2.main();
 	      };
@@ -24464,7 +24465,7 @@
 	  }, {
 	    key: 'images',
 	    value: function images() {
-	      return ["./app/assets/images/floors.png", "./app/assets/images/face_icons/on_fire.jpg", "./app/assets/images/face_icons/on_fire1.jpg", "./app/assets/images/face_icons/on_fire2.jpg", "./app/assets/images/face_icons/on_fire3.jpg", "./app/assets/images/face_icons/on_fire4.jpg", "./app/assets/images/face_icons/on_fire5.jpg", "./app/assets/images/face_icons/on_fire6.jpg", "./app/assets/images/face_icons/on_fire7.jpg", "./app/assets/images/face_icons/rested_happy.jpg", "./app/assets/images/face_icons/tired_happy.jpg", "./app/assets/images/face_icons/tired_happy2.jpg", "./app/assets/images/face_icons/exhausted_sad.jpg", "./app/assets/images/face_icons/rested_sad.jpg", "./app/assets/images/face_icons/tired_indifferent.jpg", "./app/assets/images/face_icons/exhausted_sad.jpg", "./app/assets/images/face_icons/rested_angry.jpg", "./app/assets/images/face_icons/tired_angry.jpg", "./app/assets/images/face_icons/tired_miserable.jpg", "./app/assets/images/face_icons/exhausted_angry.jpg", "./app/assets/images/ned3-blur.png", "./app/assets/images/ned3.png", "./app/assets/images/rays.jpeg", "./app/assets/images/eyes_open.png", "./app/assets/images/eyes_closed.png", "./app/assets/images/newfloor.png", "./app/assets/images/line_explosion.jpg", "./app/assets/images/computer_screen2.png", "./app/assets/images/frontface2.png", "./app/assets/images/moon.png", "./app/assets/images/bug.png", "./app/assets/images/sheep2.png", "./app/assets/images/desks.png", "./app/assets/images/desks2.png", "./app/assets/images/desks2.png", "./app/assets/images/fire.png", "./app/assets/images/coffee.png", "./app/assets/images/donut.png", "./app/assets/images/lunch.png", "./app/assets/images/hero_spritesheet.png", "./app/assets/images/hero_seated_spritesheet.png", "./app/assets/images/secretary.png", "./app/assets/images/student1.png", "./app/assets/images/student2.png", "./app/assets/images/student3.png", "./app/assets/images/student4.png", "./app/assets/images/student5.png", "./app/assets/images/student6.png", "./app/assets/sounds/trippy.wav", "./app/assets/sounds/Rock-a-bye Baby.mp3", "./app/assets/sounds/missed.wav", "./app/assets/sounds/shot.wav", "./app/assets/sounds/beep.wav", "./app/assets/sounds/congrats-ding.wav", "./app/assets/sounds/typing.wav", "./app/assets/sounds/explosion.wav", "./app/assets/sounds/microwave_start.wav", "./app/assets/sounds/shot.wav", "./app/assets/sounds/missed.wav", "./app/assets/sounds/beep.wav", "./app/assets/sounds/buzzer.mp3", "./app/assets/sounds/bug_sound.wav", "./app/assets/sounds/hes_on_fire.wav", "./app/assets/sounds/fire.wav", "./app/assets/sounds/coffee.wav", "./app/assets/sounds/donut.wav", "./app/assets/sounds/microwave.wav", "./app/assets/sounds/woohoo.wav", "./app/assets/sounds/icon.wav"];
+	      return ["./app/assets/images/floors.png", "./app/assets/images/face_icons/on_fire.jpg", "./app/assets/images/face_icons/on_fire1.jpg", "./app/assets/images/face_icons/on_fire2.jpg", "./app/assets/images/face_icons/on_fire3.jpg", "./app/assets/images/face_icons/on_fire4.jpg", "./app/assets/images/face_icons/on_fire5.jpg", "./app/assets/images/face_icons/on_fire6.jpg", "./app/assets/images/face_icons/on_fire7.jpg", "./app/assets/images/newfloor.png", "./app/assets/images/bug.png", "./app/assets/images/desks.png", "./app/assets/images/desks2.png", "./app/assets/images/desks2.png", "./app/assets/images/fire.png", "./app/assets/images/coffee.png", "./app/assets/images/donut.png", "./app/assets/images/lunch.png", "./app/assets/images/hero_spritesheet.png", "./app/assets/images/hero_seated_spritesheet.png", "./app/assets/images/secretary.png", "./app/assets/images/student1.png", "./app/assets/images/student2.png", "./app/assets/images/student3.png", "./app/assets/images/student4.png", "./app/assets/images/student5.png", "./app/assets/images/student6.png"];
 	    }
 	  }, {
 	    key: 'render',
