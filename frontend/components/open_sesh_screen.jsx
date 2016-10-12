@@ -671,7 +671,9 @@ class OpenSesh extends React.Component {
         images={images}
         resolveOnError={true}
         mountChildren={true}
+        autoResolveDelay={5000}
         onSuccess={this.preMain}
+
         >{
           <div className="canvas-container">
             {this.quadrants()}

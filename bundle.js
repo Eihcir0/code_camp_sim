@@ -24482,7 +24482,9 @@
 	          images: images,
 	          resolveOnError: true,
 	          mountChildren: true,
+	          autoResolveDelay: 5000,
 	          onSuccess: this.preMain
+	
 	        },
 	        _react2.default.createElement(
 	          'div',
