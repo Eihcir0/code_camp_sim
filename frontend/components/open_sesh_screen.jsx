@@ -74,7 +74,7 @@ class OpenSesh extends React.Component {
     this.initializeSprites();
     this.hover1 = document.getElementById('hover1');
     this.player.clock.animTickerCount = this.player.clock.tickCounter + 5 - 5;
-    this.background.onload = () => this.main();
+
 
   }
 
@@ -669,9 +669,8 @@ class OpenSesh extends React.Component {
         images={images}
         resolveOnError={true}
         mountChildren={true}
-        onSuccess={()=> {
-          this.interval = window.setInterval(()=>this.tick(),this.intervalTime);}
-        }>{
+        onSuccess={this.main}
+        >{
           <div className="canvas-container">
             {this.quadrants()}
             <canvas id="canvas"

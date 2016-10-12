@@ -23839,8 +23839,6 @@
 	  _createClass(OpenSesh, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      var _this2 = this;
-	
 	      this.canvas = document.getElementById('canvas');
 	      this.canvas.height = 500;
 	      this.canvas.width = 800;
@@ -23852,9 +23850,6 @@
 	      this.initializeSprites();
 	      this.hover1 = document.getElementById('hover1');
 	      this.player.clock.animTickerCount = this.player.clock.tickCounter + 5 - 5;
-	      this.background.onload = function () {
-	        return _this2.main();
-	      };
 	    }
 	  }, {
 	    key: 'main',
@@ -24012,14 +24007,14 @@
 	  }, {
 	    key: 'handleGetOffComputer',
 	    value: function handleGetOffComputer() {
-	      var _this3 = this;
+	      var _this2 = this;
 	
 	      this.playerAnim.soundTyping.pause();
 	      if (this.player.onFire) {
 	        this.player.fireOff();
 	      }
 	      this.playerAnim.moveTo(0, function () {
-	        _this3.player.currentPos = 0;
+	        _this2.player.currentPos = 0;
 	      });
 	    }
 	  }, {
@@ -24090,12 +24085,12 @@
 	  }, {
 	    key: 'eatsLunch',
 	    value: function eatsLunch() {
-	      var _this4 = this;
+	      var _this3 = this;
 	
 	      if (!this.player.ateLunch) {
 	        this.microwaveSound = new Audio("./app/assets/sounds/microwave_start.wav");
 	        window.setTimeout(function () {
-	          return _this4.microwaveSound.play();
+	          return _this3.microwaveSound.play();
 	        }, 100);
 	        this.player.eatingLunch = true;
 	        this.player.tempMessage = "TAKING LUNCH BREAK";
@@ -24128,7 +24123,7 @@
 	  }, {
 	    key: 'quadrants',
 	    value: function quadrants() {
-	      var _this5 = this;
+	      var _this4 = this;
 	
 	      if (this.player.eatingLunch || this.leavingTime) {
 	        return null;
@@ -24140,7 +24135,7 @@
 	          onMouseOver: this.mouseOverCandanessa,
 	          onClick: this.clickCandanessa,
 	          onMouseOut: function onMouseOut() {
-	            _this5.player.tempMessage = "";
+	            _this4.player.tempMessage = "";
 	          } });
 	      }
 	      if (this.player.currentPos !== 9) {
@@ -24148,7 +24143,7 @@
 	          onMouseOver: this.mouseOverKitchen,
 	          onClick: this.clickKitchen,
 	          onMouseOut: function onMouseOut() {
-	            _this5.player.tempMessage = "";
+	            _this4.player.tempMessage = "";
 	          } });
 	      }
 	      if (!this.player.working()) {
@@ -24159,19 +24154,19 @@
 	            onMouseOver: this.mouseOverWorkStation,
 	            onClick: this.clickWorkStation,
 	            onMouseOut: function onMouseOut() {
-	              _this5.player.tempMessage = "";
+	              _this4.player.tempMessage = "";
 	            } }),
 	          _react2.default.createElement('div', { id: 'hover2',
 	            onMouseOver: this.mouseOverLecture,
 	            onClick: this.clickLecture,
 	            onMouseOut: function onMouseOut() {
-	              _this5.player.tempMessage = "";
+	              _this4.player.tempMessage = "";
 	            } }),
 	          _react2.default.createElement('div', { id: 'hover5',
 	            onMouseOver: this.mouseOverExit,
 	            onClick: this.clickExit,
 	            onMouseOut: function onMouseOut() {
-	              _this5.player.tempMessage = "";
+	              _this4.player.tempMessage = "";
 	            } }),
 	          kitchen,
 	          candanessa
@@ -24181,14 +24176,14 @@
 	  }, {
 	    key: 'clickLecture',
 	    value: function clickLecture() {
-	      var _this6 = this;
+	      var _this5 = this;
 	
 	      if (this.player.clock.isBetween([8, 30], [9, 30])) {
 	        this.player.message = "";
 	        this.player.defaultMessage = "";
 	        this.playerAnim.moveTo(12, function () {
-	          _this6.player.currentPos = 12;
-	          _this6.player.session = 1;
+	          _this5.player.currentPos = 12;
+	          _this5.player.session = 1;
 	        });
 	      } else {
 	        this.player.message = "The lecture hall doors are locked.";
@@ -24206,10 +24201,10 @@
 	  }, {
 	    key: 'clickWorkStation',
 	    value: function clickWorkStation() {
-	      var _this7 = this;
+	      var _this6 = this;
 	
 	      this.playerAnim.moveTo(11, function () {
-	        _this7.player.currentPos = 11;
+	        _this6.player.currentPos = 11;
 	      });
 	    }
 	  }, {
@@ -24220,13 +24215,13 @@
 	  }, {
 	    key: 'clickKitchen',
 	    value: function clickKitchen() {
-	      var _this8 = this;
+	      var _this7 = this;
 	
 	      if (this.player.clock.isBetween([8, 45], [8, 59])) {
 	        this.player.tempMessage = "Oh look!  Someone left donuts in the kitchen!";
 	      }
 	      this.playerAnim.moveTo(9, function () {
-	        _this8.player.currentPos = 9;
+	        _this7.player.currentPos = 9;
 	      });
 	    }
 	  }, {
@@ -24237,10 +24232,10 @@
 	  }, {
 	    key: 'clickCandanessa',
 	    value: function clickCandanessa() {
-	      var _this9 = this;
+	      var _this8 = this;
 	
 	      this.playerAnim.moveTo(10, function () {
-	        _this9.player.currentPos = 10;
+	        _this8.player.currentPos = 10;
 	      });
 	    }
 	  }, {
@@ -24345,18 +24340,18 @@
 	  }, {
 	    key: 'renderSprites',
 	    value: function renderSprites() {
-	      var _this10 = this;
+	      var _this9 = this;
 	
 	      ////draw furniture first then fire, then study icons then hero
 	      this.sprites.forEach(function (sprite) {
 	        if (sprite.type !== "study icon" && sprite.type !== "student") {
-	          _this10.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
-	        } else if (sprite.type === "student" && !_this10.player.clock.isBetween([9, 1], [11, 59]) && !_this10.player.clock.isBetween([0, 0], [6, 0])) {
+	          _this9.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
+	        } else if (sprite.type === "student" && !_this9.player.clock.isBetween([9, 1], [11, 59]) && !_this9.player.clock.isBetween([0, 0], [6, 0])) {
 	          sprite.render();
 	        }
 	
-	        if (_this10.player.onFire) {
-	          _this10.player.fire.render();
+	        if (_this9.player.onFire) {
+	          _this9.player.fire.render();
 	        }
 	        if (sprite.type === "study icon") {
 	          sprite.render();
@@ -24446,8 +24441,6 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this11 = this;
-	
 	      var loadingIndicator = _react2.default.createElement(
 	        'div',
 	        { className: 'loading' },
@@ -24462,11 +24455,8 @@
 	          images: images,
 	          resolveOnError: true,
 	          mountChildren: true,
-	          onSuccess: function onSuccess() {
-	            _this11.interval = window.setInterval(function () {
-	              return _this11.tick();
-	            }, _this11.intervalTime);
-	          } },
+	          onSuccess: this.main
+	        },
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'canvas-container' },
