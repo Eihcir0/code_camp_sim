@@ -18,6 +18,7 @@ class OpenSesh extends React.Component {
   constructor (props) {
     super(props);
     this.player = this.props.player;
+    this.player.clock.pause();
     this.playerAnim = this.props.playerAnim;
 
     this.main = this.main.bind(this);
@@ -78,8 +79,11 @@ class OpenSesh extends React.Component {
     this.initializeSprites();
     this.hover1 = document.getElementById('hover1');
     this.player.clock.animTickerCount = this.player.clock.tickCounter + 5 - 5;
-    this.background.onload = () => this.main();
 
+    this.background.onload = () => {
+      this.player.clock.unpause();
+      this.main();
+    };
   }
   main() { //refactor!
     if (this.player.clock.is(["12","00","am"])) {this.handle1159();}

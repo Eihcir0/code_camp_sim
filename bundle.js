@@ -23806,6 +23806,7 @@
 	    var _this = _possibleConstructorReturn(this, (OpenSesh.__proto__ || Object.getPrototypeOf(OpenSesh)).call(this, props));
 	
 	    _this.player = _this.props.player;
+	    _this.player.clock.pause();
 	    _this.playerAnim = _this.props.playerAnim;
 	
 	    _this.main = _this.main.bind(_this);
@@ -23871,8 +23872,10 @@
 	      this.initializeSprites();
 	      this.hover1 = document.getElementById('hover1');
 	      this.player.clock.animTickerCount = this.player.clock.tickCounter + 5 - 5;
+	
 	      this.background.onload = function () {
-	        return _this2.main();
+	        _this2.player.clock.unpause();
+	        _this2.main();
 	      };
 	    }
 	  }, {
