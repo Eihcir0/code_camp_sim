@@ -21541,7 +21541,7 @@
 	    _this.updateAttributes = _this.updateAttributes.bind(_this);
 	    _this.checkAteLunch = _this.checkAteLunch.bind(_this);
 	    _this.handleLeaving = _this.handleLeaving.bind(_this);
-	    _this.open = _this.open.bind(_this);
+	    _this.handleOpen = _this.handleOpen.bind(_this);
 	    _this.player.clock.pause();
 	    _this.ticksPerSecond = 100; //<<=If changed then update Clock class
 	    _this.intervalTime = 1000 / _this.ticksPerSecond;
@@ -21673,8 +21673,8 @@
 	      }
 	    }
 	  }, {
-	    key: 'open',
-	    value: function open() {
+	    key: 'handleOpen',
+	    value: function handleOpen() {
 	      this.player.clock.unpause();
 	      this.open = false;
 	    }
@@ -21685,8 +21685,8 @@
 	      if (this.open) {
 	        return _react2.default.createElement(
 	          'button',
-	          { className: 'middle-button1', onClick: this.handleOpen },
-	          'PRESS TO START PLAYING'
+	          { className: 'leave-button-big', onClick: this.handleOpen },
+	          'PRESS TO START '
 	        );
 	      }
 	      if (this.player.newStrike) {
