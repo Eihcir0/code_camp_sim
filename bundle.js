@@ -24441,6 +24441,8 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this10 = this;
+	
 	      var loadingIndicator = _react2.default.createElement(
 	        'div',
 	        { className: 'loading' },
@@ -24455,7 +24457,11 @@
 	          images: images,
 	          resolveOnError: true,
 	          mountChildren: true,
-	          onSuccess: this.main
+	          onSuccess: function onSuccess() {
+	            _this10.background.onload = function () {
+	              return _this10.main();
+	            };
+	          }
 	        },
 	        _react2.default.createElement(
 	          'div',
