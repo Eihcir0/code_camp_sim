@@ -27,9 +27,7 @@ class Week {
   advanceDay() { //NOTE NEED TO HANDLE CHECK FOR WEEKEND IN GAME_MAIN
 
     // get alarm, calc new stats and arrival time within session(nighttime)
-    console.log("advancing day");
     this.player.dayNum +=1;
-    debugger;
     if ([6,7].includes(this.currentWeekDay())) {this.weekend();}
     var now = this.player.clock.time();
 

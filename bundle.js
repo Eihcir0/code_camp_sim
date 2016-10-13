@@ -23212,9 +23212,7 @@
 	      //NOTE NEED TO HANDLE CHECK FOR WEEKEND IN GAME_MAIN
 	
 	      // get alarm, calc new stats and arrival time within session(nighttime)
-	      console.log("advancing day");
 	      this.player.dayNum += 1;
-	      debugger;
 	      if ([6, 7].includes(this.currentWeekDay())) {
 	        this.weekend();
 	      }
@@ -23286,7 +23284,7 @@
 	
 	    this.player = player;
 	    if (this.player.dayNum === 1) {
-	      arrivalTime = ["07", "30", "am"];
+	      arrivalTime = ["08", "30", "am"];
 	    }
 	    this.player.clock = new _clock2.default(arrivalTime, this.player.defaultClockSpeed);
 	    this.player.currentPos = 0;
