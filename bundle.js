@@ -22357,7 +22357,6 @@
 	      //so scoreDivsor set to 50,000 with score is 5% chance plus offset
 	      var scoreDivisor = 30000;
 	      var scoreOffset = 100000;
-	      console.log((this.score + scoreOffset) / scoreDivisor / 100 * (this.onFire ? 4 : 1));
 	      var gotSomething = Math.random() < (this.score + scoreOffset) / scoreDivisor / 100 * (this.onFire ? 4 : 1);
 	      if (!gotSomething) {
 	        return false;
@@ -22431,12 +22430,8 @@
 	    value: function newPoints() {
 	      var rand = Math.floor(Math.random() * 10 + 1) * 10 + this.score / 50000;
 	      var points;
-	      if (rand === 100) {
-	        console.log("WOOOPPPEEE");
-	      } else {
-	        points = Math.max(Math.floor((rand - 20) / 10) * 100, 100);
-	      }
-	      if (rand > 98.5) {
+	      points = Math.max(Math.floor((rand - 20) / 10) * 100, 100);
+	      if (rand > 99.5) {
 	        points = 1000;
 	      }
 	      if (this.sleepBank > 30) {
@@ -22540,63 +22535,64 @@
 	      return newTime;
 	    }
 	  }, {
-	    key: "diff",
-	    value: function diff(lastTime) {
-	      //THIS CURRENTLY DOESN'T ACCOUNT FOR AFTER MIDNIGHT
-	      var newLastTime = lastTime.slice(0);
-	      newLastTime[0] = parseInt(newLastTime[0]);
-	      var currentTime = this.time();
-	
-	      if (newLastTime.length === 3) {
-	        if (newLastTime[2] === "pm" && newLastTime[0] !== 12) {
-	          newLastTime[0] = parseInt(newLastTime[0]) + 12;
-	        }
+	    key: "convertToMilitaryTime",
+	    value: function convertToMilitaryTime(timeX) {
+	      if (timeX.length === 2) {
+	        return timeX;
 	      }
-	
-	      if (currentTime[2] === "pm" && currentTime[0] !== "12") {
-	        currentTime[0] = parseInt(currentTime[0]) + 12;
+	      var hour = parseInt(timeX[0]);
+	      var minute = parseInt(timeX[1]);
+	      var ampm = timeX[2];
+	      if (timeX[0] !== "12" && ampm === "pm" || timeX[0] === "12" && ampm === "am" || hour < 6 && ampm === "am") {
+	        hour += 12;
 	      }
-	      if (currentTime[2] === "am" && currentTime[0] === "12") {
-	        currentTime[0] = parseInt(currentTime[0]) + 12;
-	      }
-	      var hoursDiff = parseInt(currentTime[0]) - parseInt(newLastTime[0]);
-	      var minsDiff = parseInt(currentTime[1]) - parseInt(newLastTime[1]);
-	      return hoursDiff * 60 + minsDiff;
+	      return [hour, minute];
 	    }
 	  }, {
 	    key: "is",
 	    value: function is(time) {
+	      //AMPM time only
 	      var currentTime = this.time();
 	      return time[0] === currentTime[0] && time[1] === currentTime[1] && time[2] === currentTime[2];
 	    }
+	  }, {
+	    key: "diff",
+	    value: function diff(lastTime) {
+	      var target = arguments.length <= 1 || arguments[1] === undefined ? this.time() : arguments[1];
+	      // target - lastTime in minutes
 	
-	    //this is kinda backwards, i change to am/pm then back
+	      var currentTime = this.convertToMilitaryTime(target);
+	      var currentHour = currentTime[0];
+	      var currentMinute = currentTime[1];
 	
+	      var startTime = this.convertToMilitaryTime(lastTime);
+	      var startHour = startTime[0];
+	      var startMinute = startTime[1];
+	
+	      var hoursDiff = currentHour - startHour;
+	      var minsDiff = currentMinute - startMinute;
+	
+	      return hoursDiff * 60 + minsDiff;
+	    }
 	  }, {
 	    key: "isBetween",
 	    value: function isBetween(startTime, endTime) {
-	      if (startTime.length === 2) {
-	        if (startTime[0] < 12) {
-	          startTime.push("am");
-	        } else {
-	          startTime.push("pm");
-	        }
-	      }
-	      if (endTime.length === 2) {
-	        if (endTime[0] < 12) {
-	          endTime.push("am");
-	        } else {
-	          endTime.push("pm");
-	        }
-	      }
+	      var target = arguments.length <= 2 || arguments[2] === undefined ? this.time() : arguments[2];
+	      //inclusive
 	
-	      var startHour = parseInt(startTime[0]) + (startTime[2] == "pm" && startTime[0] != 12 ? 12 : 0);
-	      var endHour = parseInt(endTime[0]) + (endTime[2] == "pm" && endTime[0] != 12 ? 12 : 0);
-	      var startMinute = parseInt(startTime[1]);
-	      var endMinute = parseInt(endTime[1]);
-	      var currentTime = this.time();
-	      var currentHour = parseInt(currentTime[0]) + (currentTime[2] == "pm" && currentTime[0] !== "12" ? 12 : 0);
-	      var currentMinute = parseInt(currentTime[1]);
+	
+	      var currentTime = this.convertToMilitaryTime(target);
+	      var currentHour = currentTime[0];
+	      var currentMinute = currentTime[1];
+	
+	      var startTime = this.convertToMilitaryTime(startTime);
+	      var startHour = startTime[0];
+	      var startMinute = startTime[1];
+	
+	      var endTime = this.convertToMilitaryTime(endTime);
+	      var endHour = endTime[0];
+	      var endMinute = endTime[1];
+	
 	      var startTotal = startHour * 60 + startMinute;
 	      var endTotal = endHour * 60 + endMinute;
 	      var currentTotal = currentHour * 60 + currentMinute;
@@ -23228,15 +23224,17 @@
 	      if (this.player.lastCoffee[2] === "pm" && parseInt(this.player.lastCoffee[0]) > 8) {
 	        diff += 3;
 	      }
-	
+	      console.log(diff);
 	      this.player.sleepBank -= diff * 5;
 	      if (this.player.sleepBank < 20) {
 	        this.player.sleepBank = 20;
 	      }
+	      if (this.player.sleepBank > 100) {
+	        this.player.sleepBank = 100;
+	      }
 	      this.player.focus = this.player.sleepBank;
 	      var day = new _day2.default(this.player, [8, 30]);
 	      this.player.session = 0;
-	      this.player.leaving = false;
 	    }
 	  }, {
 	    key: "weekEnd",
@@ -23288,15 +23286,17 @@
 	
 	    this.player = player;
 	    if (this.player.dayNum === 1) {
-	      arrivalTime = ["8", "30", "am"];
+	      arrivalTime = ["07", "30", "am"];
 	    }
 	    this.player.clock = new _clock2.default(arrivalTime, this.player.defaultClockSpeed);
 	    this.player.currentPos = 0;
+	    this.player.leaving = false;
 	    this.player.ateDonut = false;
 	    this.player.lastCoffee = [4, 0];
 	    this.player.ateLunch = false;
 	    this.player.lastIconTickerCount = 0;
 	    this.beginningScore = this.player.score;
+	
 	    this.beginningSkillPoints = this.player.skills[this.player.currentSkill] ? this.player.skills[this.player.currentSkill] : 0;
 	    this.beginningHappiness = this.player.happiness;
 	  }
@@ -24014,7 +24014,7 @@
 	      if (this.player.eatingLunch) {
 	        return null;
 	      }
-	      if (!this.player.ateLunch && this.player.clock.isBetween(["12", "01", "pm"], ["1", "26", "pm"])) {
+	      if (!this.player.ateLunch && this.player.clock.isBetween([12, 1], [13, 26])) {
 	        eatButton = _react2.default.createElement(
 	          'button',
 	          { className: 'middle-button5',
@@ -24283,7 +24283,7 @@
 	  }, {
 	    key: 'handle1159',
 	    value: function handle1159() {
-	      this.player.clock = new _clock2.default([24, 1]);
+	      this.player.clock = new _clock2.default([24, 1], this.player.defaultClockSpeed);
 	      this.player.clock.pause();
 	      this.player.tempMessage = "It is 11:59pm.  This is your last chance to leave and be guaranteed you can get in on time in the morning.  Stay at your own risk!  Would you like to leave now?";
 	      this.leavingTime = "normal";
@@ -24318,6 +24318,7 @@
 	      }
 	      this.playerAnim.update(dt);
 	      this.checkForDoneSprites();
+	      this.secretary.update(this.player.clock.isBetween([8, 0], [17, 0]));
 	      //check for new icon
 	    }
 	  }, {
@@ -24339,6 +24340,7 @@
 	        } else if (sprite.type === "student" && !_this10.player.clock.isBetween([9, 1], [11, 59]) && !_this10.player.clock.isBetween([0, 0], [6, 0])) {
 	          sprite.render();
 	        }
+	        _this10.ctx.drawImage(_this10.secretary.image, _this10.secretary.pos[0], _this10.secretary.pos[1]);
 	
 	        if (_this10.player.onFire) {
 	          _this10.player.fire.render();
@@ -24366,7 +24368,7 @@
 	    key: 'initializeSprites',
 	    value: function initializeSprites() {
 	      //need to change this up between animated and not-animated
-	      this.sprites.push(new _secretary2.default());
+	      this.secretary = new _secretary2.default();
 	      var d = new _desk2.default(1);
 	      d.pos = [290, 90];
 	      this.sprites.push(d);
@@ -24472,8 +24474,12 @@
 	
 	  _createClass(Secretary, [{
 	    key: "update",
-	    value: function update() {
-	      return;
+	    value: function update(here) {
+	      if (here) {
+	        this.image.src = "./app/assets/images/secretary.png";
+	      } else {
+	        this.image.src = "./app/assets/images/empty_secretary.png";
+	      }
 	    }
 	  }]);
 	
@@ -25304,8 +25310,6 @@
 	    var _this = _possibleConstructorReturn(this, (NightSeshScreen.__proto__ || Object.getPrototypeOf(NightSeshScreen)).call(this, props));
 	
 	    _this.player = _this.props.player;
-	    _this.week = _this.player.week;
-	    _this.day = _this.week.day;
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.startTime = Date.now();
 	    _this.ticker = 0;
@@ -25322,7 +25326,7 @@
 	  _createClass(NightSeshScreen, [{
 	    key: 'scoreChange',
 	    value: function scoreChange() {
-	      var change = this.player.score - this.day.beginningScore;
+	      var change = this.player.score - this.player.day.beginningScore;
 	      var changeText = '+ ' + change;
 	      if (this.ticker === 20) {
 	        new Audio("./app/assets/sounds/explosion.wav").play();
@@ -25364,7 +25368,7 @@
 	    key: 'skillChange',
 	    value: function skillChange() {
 	      var skill = this.player.currentSkill.toUpperCase() + " SKILL ";
-	      var change = Math.round((this.player.skills[this.player.currentSkill] - this.day.beginningSkillPoints) / 10);
+	      var change = Math.round((this.player.skills[this.player.currentSkill] - this.player.day.beginningSkillPoints) / 10);
 	      var changeText = '+ %' + change;
 	      if (this.ticker === 40) {
 	        new Audio("./app/assets/sounds/explosion.wav").play();
@@ -25394,7 +25398,7 @@
 	  }, {
 	    key: 'happinessChange',
 	    value: function happinessChange() {
-	      var change = Math.round(this.player.happiness - this.day.beginningHappiness);
+	      var change = Math.round(this.player.happiness - this.player.day.beginningHappiness);
 	      var changeText = change < 0 ? '' + change : '+ ' + change;
 	      if (this.ticker === 60) {
 	        new Audio("./app/assets/sounds/explosion.wav").play();
@@ -25732,7 +25736,7 @@
 	      this.drivingInterval = setInterval(function () {
 	        return _this2.tick();
 	      }, 50);
-	      document.getElementById("pairs-input").focus();
+	      this.el = document.getElementById("pairs-input");
 	    }
 	  }, {
 	    key: 'initializeSentences',
@@ -25926,7 +25930,7 @@
 	            value: this.state.currentInput,
 	            onKeyDown: this.handleSubmit,
 	            onChange: this.update("currentInput"),
-	            className: 'pairs-input', autoFocus: true })
+	            className: 'pairs-input' })
 	        ),
 	        _react2.default.createElement(
 	          'div',
@@ -26127,7 +26131,7 @@
 	      this.canvas.width = 800;
 	      this.ctx = this.canvas.getContext("2d");
 	      this.setState({ currentInput: this.sentences[0].error });
-	      this.el = document.getElementById("pairs-input");
+	      this.el = document.getElementById("pairs-input-nav");
 	      this.navigatingInterval = setInterval(function () {
 	        return _this2.tick();
 	      }, 50);
@@ -26151,7 +26155,9 @@
 	      if (!this.props.stopped && !this.props.done) {
 	        this.updateSentences();
 	        this.updateExplosions();
-	        this.el.focus();
+	        if (this.el) {
+	          this.el.focus();
+	        }
 	      }
 	    }
 	  }, {
@@ -26323,7 +26329,7 @@
 	            value: this.state.currentInput,
 	            onKeyDown: this.handleSubmit,
 	            onChange: this.update("currentInput"),
-	            className: 'pairs-input', autoFocus: true })
+	            className: 'pairs-input' })
 	        ),
 	        _react2.default.createElement(
 	          'div',
@@ -26823,7 +26829,8 @@
 	    _this.startTime = Date.now();
 	    _this.buzzerSound = new Audio("./app/assets/sounds/congrats-ding.wav");
 	    _this.buzzerSound.play();
-	    _this.props.player.happiness += 8;
+	    _this.props.player.happiness += 5;
+	    _this.props.player.skills[_this.props.player.currentSkill] += 50;
 	    _this.props.player.tempMessage = _this.congrats.message;
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.props.player.newFace = { filename: "super_happy", duration: 30 };

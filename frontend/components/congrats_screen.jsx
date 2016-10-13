@@ -8,7 +8,8 @@ class CongratsScreen extends React.Component {
     this.startTime = Date.now();
     this.buzzerSound = new Audio("./app/assets/sounds/congrats-ding.wav");
     this.buzzerSound.play();
-    this.props.player.happiness += 8;
+    this.props.player.happiness += 5;
+    this.props.player.skills[this.props.player.currentSkill] += 50;
     this.props.player.tempMessage =
     this.congrats.message;
     this.handleClick = this.handleClick.bind(this);

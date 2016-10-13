@@ -40,7 +40,7 @@ class PairsSeshNavigatingScreen extends React.Component {
     this.canvas.width = 800;
     this.ctx = this.canvas.getContext("2d");
     this.setState({currentInput: this.sentences[0].error});
-    this.el = document.getElementById("pairs-input");
+    this.el = document.getElementById("pairs-input-nav");
     this.navigatingInterval = setInterval(()=>this.tick(),50);
 
   }
@@ -62,7 +62,7 @@ class PairsSeshNavigatingScreen extends React.Component {
     if (!(this.props.stopped) && !(this.props.done)) {
         this.updateSentences();
         this.updateExplosions();
-        this.el.focus();
+        if (this.el) {this.el.focus();}
     }
   }
 
@@ -214,7 +214,7 @@ class PairsSeshNavigatingScreen extends React.Component {
             value={this.state.currentInput}
             onKeyDown={this.handleSubmit}
             onChange={this.update("currentInput")}
-            className="pairs-input" autoFocus />
+            className="pairs-input" />
        </div>
         <div className="pairs-partner-area">
           {this.pairsLines()}

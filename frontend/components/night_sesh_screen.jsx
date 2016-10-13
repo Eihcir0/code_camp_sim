@@ -6,8 +6,6 @@ class NightSeshScreen extends React.Component {
     constructor (props) {
       super(props);
       this.player = this.props.player;
-      this.week = this.player.week;
-      this.day = this.week.day;
       this.handleClick = this.handleClick.bind(this);
       this.startTime = Date.now();
       this.ticker = 0;
@@ -20,7 +18,7 @@ class NightSeshScreen extends React.Component {
 
 
     scoreChange() {
-      var change = this.player.score - this.day.beginningScore;
+      var change = this.player.score - this.player.day.beginningScore;
       var changeText = `+ ${change}`;
       if (this.ticker===20) {
         new Audio("./app/assets/sounds/explosion.wav").play();
@@ -46,7 +44,7 @@ class NightSeshScreen extends React.Component {
 
     skillChange() {
       var skill = this.player.currentSkill.toUpperCase()+" SKILL ";
-      var change = Math.round((this.player.skills[this.player.currentSkill] - this.day.beginningSkillPoints)/10);
+      var change = Math.round((this.player.skills[this.player.currentSkill] - this.player.day.beginningSkillPoints)/10);
       var changeText = `+ %${change}`;
       if (this.ticker===40) {
         new Audio("./app/assets/sounds/explosion.wav").play();
@@ -71,7 +69,7 @@ class NightSeshScreen extends React.Component {
     }
 
     happinessChange() {
-      var change = Math.round(this.player.happiness - this.day.beginningHappiness);
+      var change = Math.round(this.player.happiness - this.player.day.beginningHappiness);
       var changeText = change < 0 ? `${change}` : `+ ${change}`;
       if (this.ticker===60) {
         new Audio("./app/assets/sounds/explosion.wav").play();

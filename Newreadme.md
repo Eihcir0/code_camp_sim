@@ -15,7 +15,7 @@ I'm a recent App Academy bootcamp grad and this was my final project.  My goal i
 - [ ] Users can login, save status, and make post comments on the forums.
 
 NOT IN REAL LIFE:
-
+bugs usually last 5min to 2 hours
 ### Wireframes
 
 ![wireframes](https://github.com/Eihcir0/code_camp_sim/blob/master/docs/wireframe.jpg)

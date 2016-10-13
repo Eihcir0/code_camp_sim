@@ -50,55 +50,61 @@ class Clock {
     this.lastTime = newTime;
     return newTime;
   }
-
-  diff(lastTime) { //THIS CURRENTLY DOESN'T ACCOUNT FOR AFTER MIDNIGHT
-    var newLastTime = lastTime.slice(0);
-    newLastTime[0] = parseInt(newLastTime[0]);
-    var currentTime = this.time();
-
-    if (newLastTime.length===3) {
-      if (newLastTime[2]==="pm" && newLastTime[0] !== 12) { newLastTime[0] = parseInt(newLastTime[0]) + 12;}
-    }
-
-    if (currentTime[2]==="pm" && currentTime[0] !== "12") {currentTime[0] = parseInt(currentTime[0]) + 12;}
-    if (currentTime[2]==="am" && currentTime[0]==="12") {currentTime[0] = parseInt(currentTime[0]) + 12;}
-    var hoursDiff = parseInt(currentTime[0]) - parseInt(newLastTime[0]);
-    var minsDiff = parseInt(currentTime[1]) - parseInt(newLastTime[1]);
-    return (hoursDiff*60 + minsDiff);
+  convertToMilitaryTime(timeX) {
+    if (timeX.length === 2) {return timeX;}
+    var hour = parseInt(timeX[0]);
+    var minute = parseInt(timeX[1]);
+    var ampm = timeX[2];
+    if (
+        (timeX[0] !== "12" && ampm === "pm") ||
+        (timeX[0] === "12" && ampm === "am") ||
+        (hour < 6 && ampm ==="am" )
+      ) {
+          hour += 12;
+        }
+    return [hour,minute];
   }
 
-  is(time) {
+  is(time) { //AMPM time only
     var currentTime = this.time();
     return time[0]===currentTime[0]
     && time[1]===currentTime[1]
     && time[2]===currentTime[2];
   }
 
-//this is kinda backwards, i change to am/pm then back
-  isBetween(startTime,endTime) {
-    if (startTime.length === 2) {
-      if (startTime[0] <12) {
-        startTime.push("am");
-      } else {
-          startTime.push("pm");
-      }
-    }
-    if (endTime.length === 2) {
-      if (endTime[0] <12) {
-        endTime.push("am");
-      } else {
-        endTime.push("pm");
-      }
-    }
+
+  diff(lastTime, target = this.time()) { // target - lastTime in minutes
+
+    var currentTime = this.convertToMilitaryTime(target);
+    var currentHour = currentTime[0];
+    var currentMinute = currentTime[1];
+
+    var startTime = this.convertToMilitaryTime(lastTime);
+    var startHour = startTime[0];
+    var startMinute = startTime[1];
+
+    var hoursDiff = currentHour - startHour;
+    var minsDiff = currentMinute - startMinute;
 
 
-    var startHour = parseInt(startTime[0]) + (startTime[2] == "pm" && startTime[0] != 12 ? 12 : 0);
-    var endHour = parseInt(endTime[0]) + (endTime[2] == "pm" && endTime[0] !=12 ? 12 : 0);
-    var startMinute = parseInt(startTime[1]);
-    var endMinute = parseInt(endTime[1]);
-    var currentTime = this.time();
-    var currentHour = parseInt(currentTime[0])+ ((currentTime[2] == "pm" && currentTime[0] !=="12") ? 12 : 0);
-    var currentMinute = parseInt(currentTime[1]);
+    return (hoursDiff*60 + minsDiff);
+  }
+
+  isBetween(startTime,endTime, target = this.time()) { //inclusive
+
+
+    var currentTime = this.convertToMilitaryTime(target);
+    var currentHour = currentTime[0];
+    var currentMinute = currentTime[1];
+
+    var startTime = this.convertToMilitaryTime(startTime);
+    var startHour = startTime[0];
+    var startMinute = startTime[1];
+
+    var endTime = this.convertToMilitaryTime(endTime);
+    var endHour = endTime[0];
+    var endMinute = endTime[1];
+
     var startTotal = startHour*60 + startMinute;
     var endTotal = endHour*60 + endMinute;
     var currentTotal = currentHour*60 + currentMinute;

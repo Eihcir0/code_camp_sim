@@ -210,7 +210,7 @@ class OpenSesh extends React.Component {
   kitchenButtons() {
     var eatButton = null;
     if (this.player.eatingLunch) {return null;}
-    if ((!(this.player.ateLunch)) && this.player.clock.isBetween(["12","01","pm"],["1","26","pm"])) {
+    if ((!(this.player.ateLunch)) && this.player.clock.isBetween([12,1],[13,26])) {
       eatButton =
         <button className = "middle-button5"
           onClick = {this.eatsLunch}>
@@ -450,7 +450,7 @@ class OpenSesh extends React.Component {
   }
 
   handle1159() {
-    this.player.clock = new Clock ([24,1]);
+    this.player.clock = new Clock ([24,1], this.player.defaultClockSpeed);
     this.player.clock.pause();
     this.player.tempMessage = "It is 11:59pm.  This is your last chance to leave and be guaranteed you can get in on time in the morning.  Stay at your own risk!  Would you like to leave now?";
     this.leavingTime = "normal";
@@ -478,6 +478,7 @@ class OpenSesh extends React.Component {
       this.player.fire.update(dt);}
     this.playerAnim.update(dt);
     this.checkForDoneSprites();
+    this.secretary.update(this.player.clock.isBetween([8,0],[17,0]));
     //check for new icon
   }
 
@@ -498,6 +499,7 @@ class OpenSesh extends React.Component {
       ) {
         sprite.render();
       }
+      this.ctx.drawImage(this.secretary.image,this.secretary.pos[0],this.secretary.pos[1]);
 
       if (this.player.onFire) {
         this.player.fire.render();
@@ -523,7 +525,7 @@ class OpenSesh extends React.Component {
 
   initializeSprites () {
     //need to change this up between animated and not-animated
-    this.sprites.push(new Secretary);
+    this.secretary = new Secretary();
     var d = new Desk(1);
     d.pos = [290,90];
     this.sprites.push(d);

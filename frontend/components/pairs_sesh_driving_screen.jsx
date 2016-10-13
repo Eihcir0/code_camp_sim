@@ -38,7 +38,7 @@ class PairsSeshDrivingScreen extends React.Component {
     this.canvas.width = 800;
     this.ctx = this.canvas.getContext("2d");
     this.drivingInterval = setInterval(()=>this.tick(),50);
-    document.getElementById("pairs-input").focus();
+    this.el = document.getElementById("pairs-input");
 
   }
 
@@ -215,7 +215,7 @@ class PairsSeshDrivingScreen extends React.Component {
             value={this.state.currentInput}
             onKeyDown={this.handleSubmit}
             onChange={this.update("currentInput")}
-            className="pairs-input" autoFocus />
+            className="pairs-input"  />
        </div>
         <div key={++this.counter} className="pairs-partner-area">
           {this.pairsLines()}

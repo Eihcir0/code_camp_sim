@@ -8,10 +8,16 @@ class Secretary {
     this.pos = [30,360];
     this.done = false;
   }
-  update() {
-    return;
+  
+  update(here) {
+    if (here) {
+      this.image.src = "./app/assets/images/secretary.png";
+  } else {
+      this.image.src = "./app/assets/images/empty_secretary.png";
+    }
   }
 
 }
+
 
 export default Secretary;

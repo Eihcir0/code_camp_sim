@@ -101,7 +101,6 @@ class Player {
   //so scoreDivsor set to 50,000 with score is 5% chance plus offset
     var scoreDivisor = 30000;
     var scoreOffset = 100000;
-    console.log((((((this.score+scoreOffset) /scoreDivisor))/100) * (this.onFire ? 4 : 1)) );
     var gotSomething = (Math.random() <
     (((((this.score+scoreOffset) /scoreDivisor))/100) * (this.onFire ? 4 : 1)) );
     if (!(gotSomething)) {return false;}
@@ -170,11 +169,8 @@ class Player {
   newPoints() {
     var rand = Math.floor(((Math.random()*10)+1))*10+(this.score/50000);
     var points;
-    if (rand===100) {console.log("WOOOPPPEEE");}
-    else {
-      points = Math.max(Math.floor((rand-20)/10)*100,100);
-    }
-    if (rand>98.5) {points = 1000;}
+    points = Math.max(Math.floor((rand-20)/10)*100,100);
+    if (rand>99.5) {points = 1000;}
     if (this.sleepBank>30) {
       this.newFace = (this.sleepBank>70) ?
       {filename: "rested_happy", duration: 10} :
