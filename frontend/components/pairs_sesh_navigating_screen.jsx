@@ -208,7 +208,7 @@ class PairsSeshNavigatingScreen extends React.Component {
         width="800"
         height="520"/>
 
-      <img src="/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/computer_screen2.png" className="pairs-computer-screen-nav"/>
+      <img src="./app/assets/images/computer_screen2.png" className="pairs-computer-screen-nav"/>
         <div className="pairs-input-text">
           <textarea id="pairs-input-nav"
             value={this.state.currentInput}

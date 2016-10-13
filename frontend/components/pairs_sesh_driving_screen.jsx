@@ -209,7 +209,7 @@ class PairsSeshDrivingScreen extends React.Component {
         width="800"
         height="520"/>
 
-        <img src="/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/computer_screen2.png" className="pairs-computer-screen"/>
+      <img src="./app/assets/images/computer_screen2.png" className="pairs-computer-screen"/>
         <div className="pairs-input-text">
           <textarea id="pairs-input"
             value={this.state.currentInput}

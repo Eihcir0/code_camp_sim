@@ -14,6 +14,7 @@ I'm a recent App Academy bootcamp grad and this was my final project.  My goal i
 - [ ] Users play mini-games such as: "don't fall asleep during lecture", "hyper tic-tac-toe", "myTowersOf Hanoi""pair-programming" and "debugger"
 - [ ] Users can login, save status, and make post comments on the forums.
 
+NOT IN REAL LIFE:
 
 ### Wireframes
 

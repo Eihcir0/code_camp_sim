@@ -25625,7 +25625,7 @@
 	            stopped: this.stopNav,
 	            current: this.current,
 	            player: this.props.player }),
-	          _react2.default.createElement('img', { className: 'pair-partner-img', src: '/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/frontface2.png' }),
+	          _react2.default.createElement('img', { className: 'pair-partner-img', src: './app/assets/images/frontface2.png' }),
 	          _react2.default.createElement(
 	            'button',
 	            { className: 'switch-button',
@@ -25918,7 +25918,7 @@
 	        _react2.default.createElement('canvas', { id: 'canvas2',
 	          width: '800',
 	          height: '520' }),
-	        _react2.default.createElement('img', { src: '/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/computer_screen2.png', className: 'pairs-computer-screen' }),
+	        _react2.default.createElement('img', { src: './app/assets/images/computer_screen2.png', className: 'pairs-computer-screen' }),
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'pairs-input-text' },
@@ -26315,7 +26315,7 @@
 	        _react2.default.createElement('canvas', { id: 'canvas2',
 	          width: '800',
 	          height: '520' }),
-	        _react2.default.createElement('img', { src: '/Users/Eihcir0/Desktop/code_camp_sim/app/assets/images/computer_screen2.png', className: 'pairs-computer-screen-nav' }),
+	        _react2.default.createElement('img', { src: './app/assets/images/computer_screen2.png', className: 'pairs-computer-screen-nav' }),
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'pairs-input-text' },
