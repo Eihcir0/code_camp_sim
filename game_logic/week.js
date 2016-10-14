@@ -32,13 +32,14 @@ class Week {
     var now = this.player.clock.time();
 
     var diff = this.player.clock.diff(["10","00","pm"])/60;
-    if (this.player.lastCoffee[2]==="pm" && parseInt(this.player.lastCoffee[0]) > 8) {diff+=3;}
+    if (this.player.day.lastCoffee[2]==="pm" && parseInt(this.player.day.lastCoffee[0]) > 8) {diff+=3;}
     console.log(diff);
     this.player.sleepBank -= diff*5;
     if (this.player.sleepBank<20) {this.player.sleepBank=20;}
     if (this.player.sleepBank>100) {this.player.sleepBank=100;}
     this.player.focus = this.player.sleepBank;
     var day = new Day(this.player, [8,30]);
+    this.player.day = day;
     this.player.session = 0;
 
 

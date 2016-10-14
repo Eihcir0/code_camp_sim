@@ -45,6 +45,9 @@ class OpenSesh extends React.Component {
     this.leavingEarly = this.leavingEarly.bind(this);
     this.leaving = this.leaving.bind(this);
     this.leavingButtons = this.leavingButtons.bind(this);
+    this.candanessaButtons = this.candanessaButtons.bind(this);
+    this.spitGameAtCandanessa = this.spitGameAtCandanessa.bind(this);
+    this.askOutCandanessa = this.askOutCandanessa.bind(this);
     this.handleLeave = this.handleLeave.bind(this);
     this.handleDontLeave = this.handleDontLeave.bind(this);
     this.handle1159 = this.handle1159.bind(this);
@@ -56,7 +59,6 @@ class OpenSesh extends React.Component {
 
     this.sprites = [];
     this.player.ateDonut = false;
-    this.player.lastCoffee = ["4","0","am"];
     this.leavingTime = false;
     this.background = new Image();
     this.background.src = './app/assets/images/newfloor.png';
@@ -121,6 +123,7 @@ class OpenSesh extends React.Component {
     if (this.leavingTime) {return this.leavingButtons();}
     if (this.player.working())  {return this.workStationButtons();}
     if (this.player.currentPos===9) {return this.kitchenButtons();}
+    if (this.player.currentPos===10) {return this.candanessaButtons();}
   }
 
   leavingButtons() {
@@ -152,12 +155,14 @@ class OpenSesh extends React.Component {
   }
 
   handleDontLeave() {
+    this.player.tempMessage = "";
     this.leavingTime = false;
     this.player.clock.unpause();
     this.openSeshAnimationFrame = window.requestAnimationFrame(this.main);
   }
 
   handleLeave() {
+    this.player.tempMessage = "";
     this.player.clock.unpause();
     this.cancelAnimationFrame();
     this.leavingTime = false;
@@ -237,12 +242,82 @@ class OpenSesh extends React.Component {
   }
 
 
+  candanessaButtons() {
+    var candanessaButton = null;
+
+    if (!(this.player.day.talkedToCandanessa)) {
+      candanessaButton =
+        <button className = "middle-button6" //change to 6
+          onClick = {this.spitGameAtCandanessa}>
+          TALK TO CANDANESSA
+        </button>;
+      }
+    if ((this.player.day.talkedToCandanessa)) {
+      candanessaButton =
+        <button className = "middle-button6"
+          onClick = {this.askOutCandanessa}>
+          ASK CANDANESSA ON A DATE
+        </button>;
+      }
+
+    return (
+      <div className="middle-buttons-area">
+        {candanessaButton}
+      </div>
+    );
+  }
+
+   spitGameAtCandanessa() {
+      this.player.talkingToCandanessa = true;
+      this.player.day.talkedToCandanessa = true;
+       this.player.tempMessage = this.getCandanessaMessage();
+       this.player.happiness +=3;
+       var now = this.player.clock.time();
+       this.player.eatingLunch = true;
+       this.lunchTime = now;
+       this.lunchMinutes = 15;
+       this.player.clock = new Clock(now, this.player.defaultClockSpeed*4);
+   }
+
+
+   askOutCandanessa() {
+     if (this.player.askedOutCandanessa) {
+
+       this.player.newStrike = {message: "You receive a strike for violating the code of conduct.  If you ask someone out and they say they're not interested, you cannot ask again.    No means no.", newTime: this.player.clock.time(), newClockSpeed: this.player.defaultClockSpeed, newPos: 0};
+     } else {
+       this.player.tempMessage = `No, thank you.  I'm not interested.`;
+       this.player.askedOutCandanessa = true;
+     }
+     this.player.currentPos = 0;
+   }
+
+   getCandanessaMessage() {
+     var x = Math.floor(Math.random()*5)+1;
+     switch (x) {
+       case 1:
+         return "The biggest mistake I see students make is not managing their sleep well.";
+       case 2:
+         return "Hi!  How are you doing today?";
+       case 3:
+         return "Don't forget to eat lunch every day!";
+       case 4:
+         return "The main point of Pair Programming is to learn to work well with other.  Make sure you switch every 30 minutes!";
+       case 5:
+         return "If you drink coffee too late, you won't be able to fall asleep at night.";
+       default:
+         console.log("some weird numbe showed up when getting the candanessa message  " + x);
+
+     }
+   }
 
   drinksCoffee() {
-    if (this.player.clock.diff(this.player.lastCoffee) < 30) {
+    if ((Math.random()*5)< 1) {
+      this.player.day.lastCoffee = this.player.clock.time();
+    }
+    if (this.player.clock.diff(this.player.day.lastCoffee) < 30) {
       this.player.tempMessage = "COFFEE BREWING...";
     } else {
-      this.player.lastCoffee = this.player.clock.time();
+      this.player.day.lastCoffee = this.player.clock.time();
       this.player.focus+=35;
       var coffee = new FoodAnim({canvas: this.canvas, ctx: this.ctx},
         "coffee");
@@ -285,18 +360,24 @@ class OpenSesh extends React.Component {
   }
 
   endLunch() {
+    if (this.player.talkingToCandanessa) {
+      this.player.talkingToCandanessa = false;
+      this.player.day.talkedToCandanessa = true;
+      this.player.eatingLunch = false; //should rename this
+    } else {
     this.microwaveSound.pause();
     this.microwaveSound = undefined;
     this.player.eatingLunch = false;
     this.player.ateLunch = true;
     this.player.tempMessage = "";
     this.player.message = "Be sure you're seated at your workstation at 1:30pm for pair programming!";
-    var now = this.player.clock.time();
-    this.lunchTime = null;
-    this.player.clock = new Clock(now, this.player.defaultClockSpeed);
     var lunch = new FoodAnim({canvas: this.canvas, ctx: this.ctx},
       "lunch");
       this.sprites.push(lunch);
+  }
+    var now = this.player.clock.time();
+    this.lunchTime = null;
+    this.player.clock = new Clock(now, this.player.defaultClockSpeed);
 
   }
 
@@ -494,11 +575,16 @@ class OpenSesh extends React.Component {
         this.ctx.drawImage(sprite.image,sprite.pos[0],sprite.pos[1]);
       } else if (
         sprite.type==="student" &&
+        sprite.number !== 1 &&
         (!(this.player.clock.isBetween([9,1],[11,59]))) &&
-        (!(this.player.clock.isBetween([0,0],[6,0])))
-      ) {
+        (!(this.player.clock.isBetween([24,0],[30,0])))) {
         sprite.render();
-      }
+        if (sprite.number !== 1 && this.player.clock.isBetween([20,0],[24,0])) {
+          if (Math.random()*3000 < 1) {
+            sprite.done= true;
+          }
+        }
+      } else if (sprite.number === 1 && (!(this.player.clock.isBetween([9,1],[11,59])))) {sprite.render();}
       this.ctx.drawImage(this.secretary.image,this.secretary.pos[0],this.secretary.pos[1]);
 
       if (this.player.onFire) {

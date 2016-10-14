@@ -33,6 +33,8 @@ class Player {
     this.onFire = obj ? obj.onFire : false;
     this.fire = undefined;
     this.leaving = false;
+    this.talkingToCandanessa = false;
+    this.askedOutCandanessa = false;
 
     this.eatingLunch = false; //these should be in the day
     this.ateLunch = false;
@@ -99,7 +101,7 @@ class Player {
    this.clock.lastIconTickerCount = this.clock.tickCounter;
   //scoreDivisor - adjust to increase/decrease chance of something
   //so scoreDivsor set to 50,000 with score is 5% chance plus offset
-    var scoreDivisor = 30000;
+    var scoreDivisor = 40000;
     var scoreOffset = 100000;
     var gotSomething = (Math.random() <
     (((((this.score+scoreOffset) /scoreDivisor))/100) * (this.onFire ? 4 : 1)) );
@@ -107,7 +109,7 @@ class Player {
 
     //onFire -- for now just score /1000000 * 50% (so 100k = 5%) + offset <== for testing
 
-    var chanceForFire = (((this.score) / 1000000) * 0.1) + this.chanceForFireOffset;
+    var chanceForFire = (((this.score) / 1000000) * 0.05) + this.chanceForFireOffset;
     if (this.onFire) {chanceForFire = 0;}
 
     // out of 1000 so /1000 to convert to % then /2
@@ -130,7 +132,7 @@ class Player {
     this.onFire=true;
     window.setTimeout(()=> {
       this.fireOff();
-    },5000);
+    },(3000 * (1 + this.player.score / 500000)) + (4000*Math.random())  );
     this.fire = new FireAnim(this);
     return false;
   }
@@ -144,8 +146,8 @@ class Player {
   }
 
   newBug() {
-    this.happiness -=0.35;
-    this.skills[this.currentSkill] +=0.35;
+    this.happiness -=0.5;
+    this.skills[this.currentSkill] +=0.20;
     if (this.sleepBank>30) {
       this.newFace = (this.sleepBank>70) ?
         {filename: "rested_teeth", duration: 10} :
@@ -155,7 +157,8 @@ class Player {
   }
 
   newSkillIncrease() {
-    this.skills[this.currentSkill] +=2;
+    this.skills[this.currentSkill]+=0.75;
+    if (this.skills[this.currentSkill]<800) {this.skills[this.currentSkill]+=0.75;}
     this.happiness += 0.1;
     if (this.sleepBank>30) {
       this.newFace = (this.sleepBank>70) ?
@@ -169,7 +172,7 @@ class Player {
   newPoints() {
     var rand = Math.floor(((Math.random()*10)+1))*10+(this.score/50000);
     var points;
-    points = Math.max(Math.floor((rand-20)/10)*100,100);
+    points = Math.max(Math.floor((rand-30)/10)*100,100);
     if (rand>99.5) {points = 1000;}
     if (this.sleepBank>30) {
       this.newFace = (this.sleepBank>70) ?

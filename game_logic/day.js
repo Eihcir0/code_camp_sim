@@ -13,14 +13,17 @@ import Clock from './clock.js';
 class Day {
   constructor (player, arrivalTime) {
     this.player = player;
+
     if (this.player.dayNum === 1) {
-      arrivalTime = ["08","30","am"];
+      arrivalTime = ["8","30","am"];
     }
-    this.player.clock = new Clock(arrivalTime, this.player.defaultClockSpeed);
+    this.player.clock = new Clock(arrivalTime, this.player.defaultClockSpeed); //CHANGE ME!! *****
     this.player.currentPos = 0;
     this.player.leaving=false;
     this.player.ateDonut = false;
-    this.player.lastCoffee = [4,0];
+    this.lastCoffee = [6,0];
+    this.talkedToCandanessa = false;
+
     this.player.ateLunch = false;
     this.player.lastIconTickerCount = 0;
     this.beginningScore = this.player.score;

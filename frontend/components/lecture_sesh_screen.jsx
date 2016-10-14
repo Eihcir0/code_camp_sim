@@ -137,9 +137,9 @@ class LectureSeshScreen extends React.Component {
       if (time[0]==="11" && parseInt(time[1])>45) {this.player.focus--;}
 
       if (this.player.focus<50 && (!(this.state.eyesClosed))) {
-        this.player.message =
+        this.player.tempMessage =
          "You're losing focus!  You'll faint soon!";
-      } else {this.player.message = "";}
+      } else {this.player.tempMessage = "";}
     }
     else { //if eyes ARE closed:
       if (!(this.faintMeterOn)) {

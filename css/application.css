@@ -11,6 +11,14 @@ article, aside, canvas, details, embed,
 figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+
 	outline: none;
 	margin: 0;
 	padding: 0;
@@ -73,6 +81,7 @@ table {
 }
 
 .game-buttons {
+	cursor: pointer;
 	outline: none;
   height: 500px;
   width: 156px;
@@ -169,7 +178,8 @@ table {
 
 button {
 		/*box-shadow: 1px 2px 2px 2px;*/
-    width: 120px;
+		cursor: pointer;
+		width: 120px;
     position: absolute;
     top: 520px;
     left: 300px;
@@ -260,6 +270,16 @@ button {
 	font-size: 567px;
 }
 
+.game-over {
+  width: 752px;
+  height: 553px;
+  margin-left: 35px;
+  background: black;
+  color: red;
+  font-size: 72px;
+  text-align: center;
+  margin-top: 100px;}
+
 .congrats {
 	width: 752px;
 	background: black;
@@ -282,6 +302,15 @@ button {
 }
 
 .middle-button {
+	outline: none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+
   width: 200px;
 	font-size: 18px;
   padding: 10px;
@@ -406,6 +435,28 @@ button {
     left: 249px;
     height: 90px;
     width: 90px;
+    font-size: 14px;
+    padding: 5px;
+    border-radius: 8px;
+    background-color: blanchedalmond;
+}
+
+.middle-button6 {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+
+		user-select: none;
+    outline: none;
+    position: absolute;
+    top: 436px;
+    left: 249px;
+    height: 90px;
+    width: 115px;
+		padding: 5px;
     font-size: 14px;
     padding: 5px;
     border-radius: 8px;
@@ -563,6 +614,16 @@ span, .x, {
 }
 
 .leave-button-big {
+	outline: none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	cursor: pointer;
+	user-select: none;
+
 	background-color: blanchedalmond;
 	position: absolute;
 	top: 250px;
@@ -584,7 +645,9 @@ span, .x, {
 		width: 279px;
 		font-family: 'Exo 2', sans-serif;
 		border-radius: 12px;
+			cursor: pointer;
 		box-shadow: 1px 1px 1px 1px;}
+
 meter {
 	vertical-align: middle;
 }
@@ -686,6 +749,7 @@ meter {
 
 
 .switch-button {
+		cursor: pointer;
     height: 100px;
 		font-family: 'Exo 2', sans-serif;
     font-size: 24px;

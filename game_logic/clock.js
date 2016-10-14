@@ -34,6 +34,7 @@ class Clock {
   }
 
   time() {
+
     if (this.paused) {return this.lastTime;}
     //convert to seconds passed, then minutes, then game minutes
     let elapsed = (this.tickCounter /1000);
@@ -51,17 +52,21 @@ class Clock {
     return newTime;
   }
   convertToMilitaryTime(timeX) {
-    if (timeX.length === 2) {return timeX;}
+    if (timeX.length === 2) {
+      if (timeX[0] < 6) {
+        timeX[0] += 24;
+      }
+      return timeX;}
     var hour = parseInt(timeX[0]);
     var minute = parseInt(timeX[1]);
     var ampm = timeX[2];
     if (
         (timeX[0] !== "12" && ampm === "pm") ||
-        (timeX[0] === "12" && ampm === "am") ||
-        (hour < 6 && ampm ==="am" )
+        (timeX[0] === "12" && ampm === "am")
       ) {
           hour += 12;
         }
+    if (hour < 6) {hour += 24;}
     return [hour,minute];
   }
 

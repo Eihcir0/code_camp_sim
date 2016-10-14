@@ -6,10 +6,11 @@ class NightSeshScreen extends React.Component {
     constructor (props) {
       super(props);
       this.player = this.props.player;
+      this.player.clock.pause();
       this.handleClick = this.handleClick.bind(this);
-      this.startTime = Date.now();
       this.ticker = 0;
-      new Audio("./app/assets/sounds/typing.wav").play();
+      this.sound = new Audio("./app/assets/sounds/typing.wav");
+      window.setTimeout(this.sound.play(),1);
       this.redStyle={color: "red"};
       this.greenStyle={color: "green"};
       this.done=false;
@@ -45,7 +46,7 @@ class NightSeshScreen extends React.Component {
     skillChange() {
       var skill = this.player.currentSkill.toUpperCase()+" SKILL ";
       var change = Math.round((this.player.skills[this.player.currentSkill] - this.player.day.beginningSkillPoints)/10);
-      var changeText = `+ %${change}`;
+      var changeText = `+ ${change}%`;
       if (this.ticker===40) {
         new Audio("./app/assets/sounds/explosion.wav").play();
       }
@@ -95,6 +96,7 @@ class NightSeshScreen extends React.Component {
     }
 
     handleClick() {
+      if (this.ticker<60) {return;}
       clearInterval(this.interval);
       var newClockSpeed;
       //cancel interval

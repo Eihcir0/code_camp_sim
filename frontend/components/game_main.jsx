@@ -9,6 +9,7 @@ import LectureSeshScreen from './lecture_sesh_screen.jsx';
 import NightSeshScreen from './night_sesh_screen.jsx';
 import PairsSeshScreen from './pairs_sesh_screen.jsx';
 import StrikeScreen from './strike_screen.jsx';
+import GameOver from './game_over.jsx';
 import CongratsScreen from './congrats_screen.jsx';
 import FaceAnim from './face_anim.jsx';
 //before this implement a modal that asks for the player name
@@ -43,6 +44,7 @@ class GameMain extends React.Component {
     this.checkAteLunch = this.checkAteLunch.bind(this);
     this.handleLeaving = this.handleLeaving.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
+    this.gameOver = this.gameOver.bind(this);
     this.ticksPerSecond = 100; //<<=If changed then update Clock class
     this.intervalTime = 1000 / this.ticksPerSecond;
 
@@ -94,7 +96,12 @@ class GameMain extends React.Component {
     }
     if (this.player.session === 0 && this.player.currentPos !==12) {
       if (this.player.clock.is(["9","00","am"])) {
-       this.player.newStrike = {message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9,1], newPos: this.player.currentPos, newClockSpeed: this.player.defaultClockSpeed, };
+       if (this.player.talkingToCandanessa) {
+         this.player.talkingToCandanessa = false;
+         this.player.eatingLunch = false;
+         this.player.currentPos = 0;
+       }
+       this.player.newStrike = {message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9,1], newPos: this.player.currentPos, newClockSpeed: this.player.defaultClockSpeed };
       }
       else if (this.player.clock.is(["9","30","am"])) {
        this.player.newStrike = {message: "You cannot enter the lecture hall after 9:30am.  You received a strike for missing morning lecture.", newTime: [9,31], newClockSpeed: this.player.defaultClockSpeed, newPos: this.player.currentPos};
@@ -102,7 +109,7 @@ class GameMain extends React.Component {
     }
     if (this.player.clock.is(["12","01","pm"])) {
       this.player.session = 2;
-      this.player.message = "It's lunch time. Take a lunch break but be sure to be logged in at your workstation by 1:30pm for pair programming.";
+      this.player.message = "It's lunch time. Take a lunch break but be sure to be at your workstation by 1:30pm for pair programming.";
     }
 
     if (this.player.clock.is(["1","30","pm"])) {
@@ -159,19 +166,37 @@ class GameMain extends React.Component {
       this.interval = window.setInterval(()=>this.tick(),this.intervalTime);
     }
 
+  gameOver() {
+    switch (true) {
+      case (this.player.happiness <= 0):
+        return "You're happiness is at 0.  You don't have the motivation to continue with the program.";
+      case (this.player.sleepBank <= 0):
+        return "Your sleep bank is at 0.  You're exhausted.  You can't continue with the program.";
+      case (this.player.strikes === "XXXXXXXXXX"):
+        return "You had your chance.  10 in fact.  10 strikes and you're out.";
+
+      default:
+        return false;
+    }
+  }
+
 
   sesh() { // change this to a switch
+    var reason = this.gameOver();
     if (this.player.loading) {
       return <button className="leave-button-big" onClick={this.handleOpen}>
         PRESS TO START </button>;
-    }
-
+      }
     if (this.player.newStrike) {
       this.player.clock.pause();
       return (
         <StrikeScreen player={this.player}/>
       );
     }
+    if (reason) {
+      return <GameOver reason={reason} player={this.player}/>;
+    }
+
     else if (this.player.newCongrats) {
       this.player.clock.pause();
       return (
@@ -249,9 +274,9 @@ class GameMain extends React.Component {
                  {this.state.ruby}% <br/>
               </span>
               <br/><span className="strikes">
-                STRIKES:  {this.player.strikes}
+                STRIKES:  <br/>
+              {this.player.strikes}
               </span>
-              <br/>
               <br/>
               <br/>
               <br/>

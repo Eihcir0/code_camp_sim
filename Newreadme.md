@@ -11,8 +11,8 @@ I'm a recent App Academy bootcamp grad and this was my final project.  My goal i
 
 -[ ] HAPPINESS: We were all so focused on learning that it was difficult to
 - [ ] Code snippets for "homework" and "assessments" evaluated through API calls to the REPL.IT server
-- [ ] Users play mini-games such as: "don't fall asleep during lecture", "hyper tic-tac-toe", "myTowersOf Hanoi""pair-programming" and "debugger"
 - [ ] Users can login, save status, and make post comments on the forums.
+- Microwave line
 
 NOT IN REAL LIFE:
 bugs usually last 5min to 2 hours

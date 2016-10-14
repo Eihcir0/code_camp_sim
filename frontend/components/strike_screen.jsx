@@ -5,6 +5,7 @@ class StrikeScreen extends React.Component {
   constructor (props) {
     super(props);
     this.strike = this.props.player.newStrike;
+
     this.startTime = Date.now();
     this.buzzerSound = new Audio("./app/assets/sounds/buzzer.mp3");
     this.buzzerSound.play();
