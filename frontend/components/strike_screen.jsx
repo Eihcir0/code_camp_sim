@@ -32,7 +32,7 @@ class StrikeScreen extends React.Component {
       }
       this.props.player.newFace=false;
       this.props.player.clock = new Clock (this.strike.newTime, newClockSpeed);
-      if (this.strike.newPos) {
+      if (this.strike.newPos !== false) {
         this.props.player.currentPos = this.strike.newPos;
       }
       if (this.strike.newSession) {

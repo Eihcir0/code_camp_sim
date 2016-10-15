@@ -4,7 +4,7 @@ import Day from './day.js';
 class Week {
   constructor (player) {
     this.player = player;
-    this.day = new Day (this.player);
+    this.day = new Day (this.player, ["8","30","am"]); //change this to new arrival time
     this.material = this.materials();
   }
 

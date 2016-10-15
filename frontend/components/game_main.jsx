@@ -211,10 +211,14 @@ class GameMain extends React.Component {
     }
 
     else if (this.player.currentPos === 12){
-      return (
-        <LectureSeshScreen className="lecture-sesh"
-          player={this.player}/>
-        );
+      if (this.player.dayNum % 7 === 1 && this.player.dayNum !== 1) {
+        console.log("ASSESSMENT");
+      } else {
+        return (
+          <LectureSeshScreen className="lecture-sesh"
+            player={this.player}/>
+          );
+        }
     } else if ([0,2,4].includes(this.player.session)) {
         return (
           <OpenSeshScreen className="open-sesh"

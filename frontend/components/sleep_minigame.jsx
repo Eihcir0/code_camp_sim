@@ -17,7 +17,7 @@ class SleepMinigame extends React.Component {
 
   render () {
     var starsStyle = {opacity: ((this.props.goesToSleepMeter)/100)*2};
-    this.props.player.tempMessage = "You are about to fall asleep...";  
+    this.props.player.tempMessage = "When the sheep crosses the screen you're asleep...";
 
     return (
       <div className="eyes-closed" >

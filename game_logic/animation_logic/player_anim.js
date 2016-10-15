@@ -232,6 +232,10 @@ class PlayerAnim extends Moveable {
           this.destination={x:200, y:330, cb: callback};
           this.player.currentPos = 4;
           break;
+        case (this.player.currentPos ===10 && newPos===0):
+          this.destination={x:200, y:330, cb: callback};
+          this.player.currentPos = 3;
+          break;
         case ((this.player.currentPos ===0
             || this.player.currentPos === 13)
             && newPos===12):

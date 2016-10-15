@@ -287,8 +287,10 @@ class OpenSesh extends React.Component {
      } else {
        this.player.tempMessage = `No, thank you.  I'm not interested.`;
        this.player.askedOutCandanessa = true;
+       this.playerAnim.moveTo(0, ()=> {
+         this.player.currentPos=0;
+       });
      }
-     this.player.currentPos = 0;
    }
 
    getCandanessaMessage() {

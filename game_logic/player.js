@@ -21,6 +21,7 @@ class Player {
     this.currentEmotion = obj ? obj.currentEmotion : "excited";
     this.info = obj ? obj.info : "";
 
+    this.dayNum = obj ? obj.dayNum : 1;
     this.sleepBank = obj ? obj.sleepBank : 100;
     this.happiness = obj ? obj.happiness : 100;
     this.focus = obj ? obj.focus : this.sleepBank;
@@ -48,7 +49,6 @@ class Player {
     // 3 = pairs/solo project
     // 4 = evening
     // 5 = night
-    this.dayNum = obj ? obj.dayNum : 1;
     this.session = obj ? obj.session : 0;
     this.weekNum = Math.floor(this.dayNum / 7) + 1;
     this.weekDay = this.day % 7;
@@ -101,7 +101,7 @@ class Player {
    this.clock.lastIconTickerCount = this.clock.tickCounter;
   //scoreDivisor - adjust to increase/decrease chance of something
   //so scoreDivsor set to 50,000 with score is 5% chance plus offset
-    var scoreDivisor = 40000;
+    var scoreDivisor = 35000;
     var scoreOffset = 100000;
     var gotSomething = (Math.random() <
     (((((this.score+scoreOffset) /scoreDivisor))/100) * (this.onFire ? 4 : 1)) );
@@ -132,7 +132,7 @@ class Player {
     this.onFire=true;
     window.setTimeout(()=> {
       this.fireOff();
-    },(3000 * (1 + this.player.score / 500000)) + (4000*Math.random())  );
+    },(3000 * (1 + this.score / 500000)) + (4000*Math.random())  );
     this.fire = new FireAnim(this);
     return false;
   }

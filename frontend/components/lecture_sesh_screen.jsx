@@ -14,7 +14,7 @@ class LectureSeshScreen extends React.Component {
     } else {
       startTime = this.player.clock.time();
     }
-    this.player.clock = new Clock(startTime, this.player.defaultClockSpeed*2);
+    this.player.clock = new Clock(startTime, this.player.defaultClockSpeed);
     this.startingFocus = this.player.focus;
     this.eyesClosedTimer = 0;
     this.startTime = this.player.clock.tickCounter;
@@ -37,15 +37,17 @@ class LectureSeshScreen extends React.Component {
     this.handleCloseEyesOff = this.handleCloseEyesOff.bind(this);
     this.button = this.button.bind(this);
     this.tick = this.tick.bind(this);
+    this.slide = this.slide.bind(this);
     this.updateFocus = this.updateFocus.bind(this);
     this.updateFaintMeter = this.updateFaintMeter.bind(this);
     this.updateGoesToSleepMeter = this.updateGoesToSleepMeter.bind(this);
+    this.checkWinner = this.checkWinner.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.sleepSound = new Audio("./app/assets/sounds/Rock-a-bye Baby.mp3");
     this.faintSound = new Audio("./app/assets/sounds/trippy.wav");
     this.faintSoundOn = false;
     this.xxinterval = setInterval(()=>this.tick(),50);
-
+    this.lectureNotes = this.player.day.lectureNotes;
   }
 
   tick() {
@@ -59,12 +61,12 @@ class LectureSeshScreen extends React.Component {
         this.updateFaintMeter();
         if (this.state.eyesClosed) {this.updateGoesToSleepMeter();}
       }
-    this.checkWinner(time);
+    this.checkWinner();
 
   }
 
   checkWinner(time) {
-    if (time[0]==="12") {
+    if (this.player.clock.isBetween(["12","00","pm"],["1","00","pm"])) {
         clearInterval(this.xxinterval);
         this.faintSound.pause();
         this.sleepSound.pause();
@@ -152,20 +154,21 @@ class LectureSeshScreen extends React.Component {
   }
 
   slide() {
-    var time = this.player.clock.time();
-    if (time[0]==="9") {
-      if (parseInt(time[1])<30) {
-        return [
-          "One of the hardest parts of an intensive bootcamp like this is getting enough sleep...","",
-          "...and staying awake during lectures! "
-      ];
-    } else {return ["Stare at the lecture too long, you lose focus and you'll eventually lose consciousness...",];}
-    } else if (time[0]==="10") {
-      if (parseInt(time[1])<30) {
-        return ["To regain focus, you need to close your eyes.","","But if you keep your eyes closed too long you'll fall asleep.",""];
-      } else {return ["Fainting during lecture gets you a strike.","Falling asleep gets you a strike,","10 strikes and you're out!","","OK, with that out of the way,","let's learn Ruby!!!",""," Take a look at this code:"];}
-    } else {
-    return ["def my_each","..i = 0","..while i < self.length","....yield self[i]","....i += 1", "..end", "..self[0]","end"];
+    var time = this.player.clock;
+
+    switch (true) {
+      case (time.isBetween([9,0],[9,29])):
+        return this.lectureNotes[0];
+      case (time.isBetween([9,30],[9,59])):
+        return this.lectureNotes[1];
+      case (time.isBetween([10,0],[10,29])):
+        return this.lectureNotes[2];
+      case (time.isBetween([10,30],[11,0])):
+        return this.lectureNotes[3];
+      case (time.isBetween([11,0],[11,59])):
+        return this.lectureNotes[4];
+      default:
+        return [];
     }
   }
 
