@@ -13,6 +13,7 @@ class PairsSeshScreen extends React.Component {
     this.handleOpenClick = this.handleOpenClick.bind(this);
     this.sesh = this.sesh.bind(this);
     this.newSwitch = this.newSwitch.bind(this);
+    this.totalSwitches = this.totalSwitches.bind(this);
     this.current = 0;
     this.stopDriving = false;
     this.stopNav = true;
@@ -61,6 +62,9 @@ class PairsSeshScreen extends React.Component {
       }
     }
 
+  totalSwitches() {
+    return this.goodSwitches + this.badSwitches;
+  }
 
   handleOpenClick() {
     this.props.player.clock.unpause();
@@ -101,6 +105,7 @@ class PairsSeshScreen extends React.Component {
         </span>
 
         <PairsSeshDrivingScreen
+          switches={this.totalSwitches()}
           sentences={this.drivingSentences}
           drivingLines = {this.drivingLines}
           stopped={this.stopDriving}
@@ -108,6 +113,7 @@ class PairsSeshScreen extends React.Component {
           player={this.props.player} />
 
         <PairsSeshNavigatingScreen
+          switches={this.totalSwitches()}
           sentences={this.navigatingSentences}
           navigatingLines = {this.navigatingLines}
           stopped={this.stopNav}

@@ -4,7 +4,7 @@ import Day from './day.js';
 class Week {
   constructor (player) {
     this.player = player;
-    this.day = new Day (this.player, ["8","30","am"]); //change this to new arrival time
+    this.day = new Day (this.player, ["1","20","pm"]); //change this to new arrival time
     this.material = this.materials();
   }
 
@@ -32,9 +32,11 @@ class Week {
     var now = this.player.clock.time();
 
     var diff = this.player.clock.diff(["10","00","pm"])/60;
-    if (this.player.day.lastCoffee[2]==="pm" && parseInt(this.player.day.lastCoffee[0]) > 8) {diff+=3;}
-    console.log(diff);
-    this.player.sleepBank -= diff*5;
+    if (this.player.clock.diff([20,0],this.player.day.lastCoffee) > 0) {
+      diff+=3;
+    }
+
+    this.player.sleepBank -= diff*10;
     if (this.player.sleepBank<20) {this.player.sleepBank=20;}
     if (this.player.sleepBank>100) {this.player.sleepBank=100;}
     this.player.focus = this.player.sleepBank;

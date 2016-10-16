@@ -25,9 +25,10 @@ class PairsSeshNavigatingScreen extends React.Component {
     this.updateExplosions = this.updateExplosions.bind(this);
     this.pairsLines = this.pairsLines.bind(this);
     this.findActive = this.findActive.bind(this);
+    this.lineSpacing = this.lineSpacing.bind(this);
+
     this.over = false;
     this.yPosIncrement = 2;
-    this.lineSpacing = 100;
     this.explosionImage = new Image ();
     this.explosionImage.src = "./app/assets/images/line_explosion.jpg";
     if (this.sentences.length === 0) {this.initializeSentences();}
@@ -35,7 +36,7 @@ class PairsSeshNavigatingScreen extends React.Component {
   }
 
   componentDidMount() {
-    this.canvas = document.getElementById('canvas2');
+    this.canvas = document.getElementById('canvas1');
     this.canvas.height = 500;
     this.canvas.width = 800;
     this.ctx = this.canvas.getContext("2d");
@@ -45,10 +46,15 @@ class PairsSeshNavigatingScreen extends React.Component {
 
   }
 
+  lineSpacing() {
+    return (Math.max((150 - this.props.switches * 10),80));
+  }
+
   initializeSentences() {
+    var yOffset = this.lineSpacing();
     this.sentenceTexts.forEach((el,idx) => {
       this.sentences.push(
-        {id: idx, error: this.errorTexts[idx], text: el, active: (idx===0 ? true : false), done: false, exploded: false, yPos: 500 + idx*100}
+        {id: idx, error: this.errorTexts[idx], text: el, active: (idx===0 ? true : false), done: false, exploded: false, yPos: 500 + (idx * yOffset)}
       );
     });
 
@@ -94,6 +100,7 @@ class PairsSeshNavigatingScreen extends React.Component {
   renderExplosion(a) {
     // this.ctx.fillStyle = "rgb(51, 118, 36)";
     // this.ctx.fillRect(550, a.yPos + 310, 200, 50);
+    // this.ctx.fillRect(0, 0, 500, 500);
     var xOffset=(a.timer %3) * 75;
     var yOffset=Math.floor(a.timer / 3) * 75;
     for (var i = 0; i < 4; i++) {
@@ -105,7 +112,7 @@ class PairsSeshNavigatingScreen extends React.Component {
 
   addNewSentence() {
     var a = this.sentences.length - 1;
-    var newYpos = this.sentences[a].yPos + this.lineSpacing;
+    var newYpos = this.sentences[a].yPos + this.lineSpacing();
     var firstOne = this.sentences[0];
     this.sentences.push(
       {error: firstOne.error,
@@ -204,7 +211,7 @@ class PairsSeshNavigatingScreen extends React.Component {
   render () {
     return (
       <div className="pairs-navigating-sesh" style={this.showing()}>
-      <canvas id="canvas2"
+      <canvas id="canvas1"
         width="800"
         height="520"/>
 

@@ -7,6 +7,10 @@ class NightSeshScreen extends React.Component {
       super(props);
       this.player = this.props.player;
       this.player.clock.pause();
+      if (this.player.clock.diff([20,0],this.player.day.lastCoffee) > 0) {
+            this.player.tempMessage =  "YOU DRANK COFFEE TOO LATE!  It will be tough to sleep tonight.  " + this.player.tempMessage;
+          }
+
       this.handleClick = this.handleClick.bind(this);
       this.ticker = 0;
       this.sound = new Audio("./app/assets/sounds/typing.wav");
@@ -99,7 +103,7 @@ class NightSeshScreen extends React.Component {
       if (this.ticker<60) {return;}
       clearInterval(this.interval);
       var newClockSpeed;
-      //cancel interval
+
       if (this.done===false) {return;}
 
       this.player.week.advanceDay();

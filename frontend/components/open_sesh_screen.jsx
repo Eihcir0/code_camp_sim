@@ -86,7 +86,7 @@ class OpenSesh extends React.Component {
   main() { //refactor!
     if (this.player.clock.is(["12","00","am"])) {this.handle1159();}
     if (this.player.clock.is(["2","00","am"])) {this.handleLeave();}
-    if (this.player.eatingLunch) {
+    if (this.player.day.eatingLunch) {
       if (this.player.clock.diff(this.lunchTime) > this.lunchMinutes) {
         this.endLunch();
       }
@@ -203,6 +203,7 @@ class OpenSesh extends React.Component {
 
   handleGetOffComputer() {
     this.playerAnim.soundTyping.pause();
+    this.player.day.chanceForFireOffset = 0;
     if (this.player.onFire) {this.player.fireOff();}
     this.playerAnim.moveTo(0, ()=> {
       this.player.currentPos=0;
@@ -214,8 +215,8 @@ class OpenSesh extends React.Component {
 
   kitchenButtons() {
     var eatButton = null;
-    if (this.player.eatingLunch) {return null;}
-    if ((!(this.player.ateLunch)) && this.player.clock.isBetween([12,1],[13,26])) {
+    if (this.player.day.eatingLunch) {return null;}
+    if ((!(this.player.day.ateLunch)) && this.player.clock.isBetween([12,1],[13,26])) {
       eatButton =
         <button className = "middle-button5"
           onClick = {this.eatsLunch}>
@@ -273,7 +274,7 @@ class OpenSesh extends React.Component {
        this.player.tempMessage = this.getCandanessaMessage();
        this.player.happiness +=3;
        var now = this.player.clock.time();
-       this.player.eatingLunch = true;
+       this.player.day.eatingLunch = true;
        this.lunchTime = now;
        this.lunchMinutes = 15;
        this.player.clock = new Clock(now, this.player.defaultClockSpeed*4);
@@ -341,10 +342,10 @@ class OpenSesh extends React.Component {
   }
 
   eatsLunch() {
-    if (!(this.player.ateLunch)) {
+    if (!(this.player.day.ateLunch)) {
       this.microwaveSound = new Audio("./app/assets/sounds/microwave_start.wav");
       window.setTimeout(()=>this.microwaveSound.play(),100);
-      this.player.eatingLunch = true;
+      this.player.day.eatingLunch = true;
       this.player.tempMessage = "TAKING LUNCH BREAK";
       this.player.focus = 100;
       this.player.happiness +=2;
@@ -365,12 +366,12 @@ class OpenSesh extends React.Component {
     if (this.player.talkingToCandanessa) {
       this.player.talkingToCandanessa = false;
       this.player.day.talkedToCandanessa = true;
-      this.player.eatingLunch = false; //should rename this
+      this.player.day.eatingLunch = false; //should rename this
     } else {
     this.microwaveSound.pause();
     this.microwaveSound = undefined;
-    this.player.eatingLunch = false;
-    this.player.ateLunch = true;
+    this.player.day.eatingLunch = false;
+    this.player.day.ateLunch = true;
     this.player.tempMessage = "";
     this.player.message = "Be sure you're seated at your workstation at 1:30pm for pair programming!";
     var lunch = new FoodAnim({canvas: this.canvas, ctx: this.ctx},
@@ -386,7 +387,7 @@ class OpenSesh extends React.Component {
 
 
   quadrants() {
-    if (this.player.eatingLunch || this.leavingTime){return null;}
+    if (this.player.day.eatingLunch || this.leavingTime){return null;}
     var candanessa = null;
     var kitchen = null;
     if (this.player.clock.isBetween([7,0],[17,0]) && this.player.currentPos !==10 ) {
@@ -540,9 +541,7 @@ class OpenSesh extends React.Component {
   }
   checkFocus() {
     if (this.player.focus>0) {return;}
-    if (!(this.player.message === "You can't focus any longer.  Take a break.")) {
-      this.player.oldMessage = this.player.message;
-    }
+    this.player.tempMessage === "You can't focus any longer.  Take a break."
     this.handleGetOffComputer();
   }
 

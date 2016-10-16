@@ -24,9 +24,9 @@ class PairsSeshDrivingScreen extends React.Component {
     this.updateExplosions = this.updateExplosions.bind(this);
     this.pairsLines = this.pairsLines.bind(this);
     this.findActive = this.findActive.bind(this);
+    this.lineSpacing = this.lineSpacing.bind(this);
     this.over = false;
     this.yPosIncrement = 2;
-    this.lineSpacing = 100;
     this.explosionImage = new Image ();
     this.explosionImage.src = "./app/assets/images/line_explosion.jpg";
     if (this.sentences.length === 0) {this.initializeSentences();}
@@ -42,10 +42,16 @@ class PairsSeshDrivingScreen extends React.Component {
 
   }
 
+
+  lineSpacing() {
+      return (Math.max((150 - this.props.switches * 10),80));
+  }
+
   initializeSentences() {
+    var yOffset = this.lineSpacing();
     this.sentenceTexts.forEach((el,idx) => {
       this.sentences.push(
-        {id: idx, text: el, active: (idx===0 ? true : false), exploded: false, yPos: 500 + idx*100}
+        {id: idx, text: el, active: (idx===0 ? true : false), exploded: false, yPos: (500 + (idx * yOffset))}
       );
     });
 
@@ -93,10 +99,11 @@ class PairsSeshDrivingScreen extends React.Component {
   renderExplosion(a) {
     // this.ctx.fillStyle = "rgb(51, 118, 36)";
     // this.ctx.fillRect(550, a.yPos + 310, 200, 50);
+
     var xOffset=(a.timer %3) * 75;
     var yOffset=Math.floor(a.timer / 3) * 75;
     for (var i = 0; i < 4; i++) {
-      this.ctx.drawImage(this.explosionImage, xOffset, yOffset, 75, 75, 530 + i*60, a.yPos -130, 75, 75 );
+      this.ctx.drawImage(this.explosionImage, xOffset, yOffset, 75, 75, -50 + i*60, a.yPos -130, 75, 75 );
 
     }
 
@@ -104,7 +111,7 @@ class PairsSeshDrivingScreen extends React.Component {
 
   addNewSentence() {
     var a = this.sentences.length - 1;
-    var newYpos = this.sentences[a].yPos + this.lineSpacing;
+    var newYpos = this.sentences[a].yPos + this.lineSpacing();
 
     this.sentences.push(
       {text: this.sentences[0].text, exploded: false, done: false, active: false, yPos: newYpos}

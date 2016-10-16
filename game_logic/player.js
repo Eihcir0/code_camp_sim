@@ -26,7 +26,6 @@ class Player {
     this.happiness = obj ? obj.happiness : 100;
     this.focus = obj ? obj.focus : this.sleepBank;
     this.score = obj ? obj.score : 0;
-    this.chanceForFireOffset = 0; //delete me
 
     this.currentPos = obj ? obj.currentPos : 0;
     this.lastCurrentPos = obj ? obj.lastCurrentPos : -1;
@@ -37,9 +36,6 @@ class Player {
     this.talkingToCandanessa = false;
     this.askedOutCandanessa = false;
 
-    this.eatingLunch = false; //these should be in the day
-    this.ateLunch = false;
-    this.noLunchPenalty = 1;// (0.5 cuts it in half)
     this.strikes = obj ? obj.strikes : "";
     this.session = obj ? obj.session : 0; //
     this.pos = obj ? obj.pos : [280,300];
@@ -94,10 +90,16 @@ class Player {
 
   workstationGo(playerAnim) {
    var now = this.clock.tickCounter;
+   if (this.weekDay == 5 && !(this.day.workingLateOnFridaySucks) && this.day.clock.isBetween([21,0],[24,0])) {
+     this.happiness -= 10;
+     this.tempMessage = "Working late on Friday sucks!";
+   }
    //frequency driven by speed of clock:
    if (now - this.clock.lastIconTickerCount < (100 / this.clock.relativeSpeed)) {
      return false;
    }
+
+   this.day.chanceForFireOffset += 0.0001;
    this.clock.lastIconTickerCount = this.clock.tickCounter;
   //scoreDivisor - adjust to increase/decrease chance of something
   //so scoreDivsor set to 50,000 with score is 5% chance plus offset
@@ -109,8 +111,8 @@ class Player {
 
     //onFire -- for now just score /1000000 * 50% (so 100k = 5%) + offset <== for testing
 
-    var chanceForFire = (((this.score) / 1000000) * 0.05) + this.chanceForFireOffset;
-    if (this.onFire) {chanceForFire = 0;}
+    var chanceForFire = (((this.score) / 1000000) * 0.10) + this.day.chanceForFireOffset;
+    if (this.onFire || this.day.fireCounter <= 0) {chanceForFire = 0;}
 
     // out of 1000 so /1000 to convert to % then /2
     var chanceForBug = ((1- (this.skills[this.currentSkill]/1000)) / 2);
@@ -130,6 +132,8 @@ class Player {
 
   newOnFire() {
     this.onFire=true;
+    this.day.fireCounter -= 1;
+    this.day.chanceForFireOffset = 0;
     window.setTimeout(()=> {
       this.fireOff();
     },(3000 * (1 + this.score / 500000)) + (4000*Math.random())  );
@@ -146,7 +150,7 @@ class Player {
   }
 
   newBug() {
-    this.happiness -=0.5;
+    this.happiness -=0.6;
     this.skills[this.currentSkill] +=0.20;
     if (this.sleepBank>30) {
       this.newFace = (this.sleepBank>70) ?

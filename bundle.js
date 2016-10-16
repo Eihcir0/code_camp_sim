@@ -21577,7 +21577,7 @@
 	  }, {
 	    key: 'handleLeaving',
 	    value: function handleLeaving() {
-	      this.player.tempMessage = 'Your current rank is ' + this.player.scoreTitle() + '.  Here are the results of the day.';
+	      this.player.tempMessage = '  Your current rank is ' + this.player.scoreTitle() + '.  Here are the results of the day.';
 	      //handle strikes for leaving early
 	      //handle slept in office
 	      //handle weekend
@@ -21602,7 +21602,7 @@
 	        if (this.player.clock.is(["9", "00", "am"])) {
 	          if (this.player.talkingToCandanessa) {
 	            this.player.talkingToCandanessa = false;
-	            this.player.eatingLunch = false;
+	            this.player.day.eatingLunch = false;
 	            this.player.currentPos = 0;
 	          }
 	          this.player.newStrike = { message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9, 1], newPos: this.player.currentPos, newClockSpeed: this.player.defaultClockSpeed };
@@ -21617,9 +21617,9 @@
 	
 	      if (this.player.clock.is(["1", "30", "pm"])) {
 	        if (this.player.currentPos !== 11) {
-	          if (this.player.eatingLunch) {
-	            this.player.eatingLunch = false;
-	            this.player.ateLunch = true;
+	          if (this.player.day.eatingLunch) {
+	            this.player.day.eatingLunch = false;
+	            this.player.day.ateLunch = true;
 	          }
 	          this.checkAteLunch();
 	          this.player.newStrike = { message: "You received a strike for not being seated at your workstation by 1:30pm for pair programming. ", newTime: [13, 30], newClockSpeed: this.player.defaultClockSpeed, newSession: 3, newPos: 11 };
@@ -21634,12 +21634,12 @@
 	    key: 'checkAteLunch',
 	    value: function checkAteLunch() {
 	      //if the player hasnt eaten lunch then they get a penalty for rest of day on max energy...launch a new warning.
-	      if (!this.player.ateLunch) {
+	      if (!this.player.day.ateLunch) {
 	        //ADD A WARNING SCREEN
 	        this.player.message = "BECAUSE YOU DIDN'T TAKE A LUNCH BREAK YOU ARE LIMITED TO HALF ENERGY FOR THE DAY";
 	
-	        this.player.noLunchPenalty = 0.5;
-	        var maxEnergy = this.player.sleepBank * this.player.noLunchPenalty;
+	        this.player.day.noLunchPenalty = 0.5;
+	        var maxEnergy = this.player.sleepBank * this.player.day.noLunchPenalty;
 	        if (this.player.focus > maxEnergy) {
 	          this.player.focus = maxEnergy;
 	        }
@@ -21650,7 +21650,7 @@
 	    value: function updateAttributes(dt) {
 	      //REDO THIS SOON
 	      //use helper methods for each attribute
-	      var maxEnergy = this.player.sleepBank * this.player.noLunchPenalty;
+	      var maxEnergy = this.player.sleepBank * this.player.day.noLunchPenalty;
 	      var realMax = Math.max(this.player.focus, maxEnergy);
 	      if (this.player.working()) {
 	        this.player.focus -= 0.5;
@@ -21983,7 +21983,6 @@
 	    this.happiness = obj ? obj.happiness : 100;
 	    this.focus = obj ? obj.focus : this.sleepBank;
 	    this.score = obj ? obj.score : 0;
-	    this.chanceForFireOffset = 0; //delete me
 	
 	    this.currentPos = obj ? obj.currentPos : 0;
 	    this.lastCurrentPos = obj ? obj.lastCurrentPos : -1;
@@ -21994,9 +21993,6 @@
 	    this.talkingToCandanessa = false;
 	    this.askedOutCandanessa = false;
 	
-	    this.eatingLunch = false; //these should be in the day
-	    this.ateLunch = false;
-	    this.noLunchPenalty = 1; // (0.5 cuts it in half)
 	    this.strikes = obj ? obj.strikes : "";
 	    this.session = obj ? obj.session : 0; //
 	    this.pos = obj ? obj.pos : [280, 300];
@@ -22082,10 +22078,16 @@
 	    key: 'workstationGo',
 	    value: function workstationGo(playerAnim) {
 	      var now = this.clock.tickCounter;
+	      if (this.weekDay == 5 && !this.day.workingLateOnFridaySucks && this.day.clock.isBetween([21, 0], [24, 0])) {
+	        this.happiness -= 10;
+	        this.tempMessage = "Working late on Friday sucks!";
+	      }
 	      //frequency driven by speed of clock:
 	      if (now - this.clock.lastIconTickerCount < 100 / this.clock.relativeSpeed) {
 	        return false;
 	      }
+	
+	      this.day.chanceForFireOffset += 0.0001;
 	      this.clock.lastIconTickerCount = this.clock.tickCounter;
 	      //scoreDivisor - adjust to increase/decrease chance of something
 	      //so scoreDivsor set to 50,000 with score is 5% chance plus offset
@@ -22098,8 +22100,8 @@
 	
 	      //onFire -- for now just score /1000000 * 50% (so 100k = 5%) + offset <== for testing
 	
-	      var chanceForFire = this.score / 1000000 * 0.05 + this.chanceForFireOffset;
-	      if (this.onFire) {
+	      var chanceForFire = this.score / 1000000 * 0.10 + this.day.chanceForFireOffset;
+	      if (this.onFire || this.day.fireCounter <= 0) {
 	        chanceForFire = 0;
 	      }
 	
@@ -22124,6 +22126,8 @@
 	      var _this = this;
 	
 	      this.onFire = true;
+	      this.day.fireCounter -= 1;
+	      this.day.chanceForFireOffset = 0;
 	      window.setTimeout(function () {
 	        _this.fireOff();
 	      }, 3000 * (1 + this.score / 500000) + 4000 * Math.random());
@@ -22142,7 +22146,7 @@
 	  }, {
 	    key: 'newBug',
 	    value: function newBug() {
-	      this.happiness -= 0.5;
+	      this.happiness -= 0.6;
 	      this.skills[this.currentSkill] += 0.20;
 	      if (this.sleepBank > 30) {
 	        this.newFace = this.sleepBank > 70 ? { filename: "rested_teeth", duration: 10 } : { filename: "tired_teeth", duration: 10 };
@@ -22926,7 +22930,7 @@
 	    _classCallCheck(this, Week);
 	
 	    this.player = player;
-	    this.day = new _day2.default(this.player, ["8", "30", "am"]); //change this to new arrival time
+	    this.day = new _day2.default(this.player, ["1", "20", "pm"]); //change this to new arrival time
 	    this.material = this.materials();
 	  }
 	
@@ -22963,11 +22967,11 @@
 	      var now = this.player.clock.time();
 	
 	      var diff = this.player.clock.diff(["10", "00", "pm"]) / 60;
-	      if (this.player.day.lastCoffee[2] === "pm" && parseInt(this.player.day.lastCoffee[0]) > 8) {
+	      if (this.player.clock.diff([20, 0], this.player.day.lastCoffee) > 0) {
 	        diff += 3;
 	      }
-	      console.log(diff);
-	      this.player.sleepBank -= diff * 5;
+	
+	      this.player.sleepBank -= diff * 10;
 	      if (this.player.sleepBank < 20) {
 	        this.player.sleepBank = 20;
 	      }
@@ -23027,10 +23031,15 @@
 	    this.player.ateDonut = false;
 	    this.lastCoffee = [6, 0];
 	    this.talkedToCandanessa = false;
-	
-	    this.player.ateLunch = false;
+	    this.workingLateOnFridaySucks = false;
+	    this.fireCounter = Math.floor(this.player.score / 100000) + 1 + Math.floor(Math.random() * 3);
+	    this.eatingLunch = false; //these should be in the day
+	    this.noLunchPenalty = 1; // (0.5 cuts it in half)
+	    this.ateLunch = false;
 	    this.player.lastIconTickerCount = 0;
 	    this.beginningScore = this.player.score;
+	    this.chanceForFireOffset = 0; //delete me
+	    this.workstationStartTime = undefined; //delete me
 	
 	    this.beginningSkillPoints = this.player.skills[this.player.currentSkill] ? this.player.skills[this.player.currentSkill] : 0;
 	    this.beginningHappiness = this.player.happiness;
@@ -23643,7 +23652,7 @@
 	      if (this.player.clock.is(["2", "00", "am"])) {
 	        this.handleLeave();
 	      }
-	      if (this.player.eatingLunch) {
+	      if (this.player.day.eatingLunch) {
 	        if (this.player.clock.diff(this.lunchTime) > this.lunchMinutes) {
 	          this.endLunch();
 	        }
@@ -23797,6 +23806,7 @@
 	      var _this3 = this;
 	
 	      this.playerAnim.soundTyping.pause();
+	      this.player.day.chanceForFireOffset = 0;
 	      if (this.player.onFire) {
 	        this.player.fireOff();
 	      }
@@ -23808,10 +23818,10 @@
 	    key: 'kitchenButtons',
 	    value: function kitchenButtons() {
 	      var eatButton = null;
-	      if (this.player.eatingLunch) {
+	      if (this.player.day.eatingLunch) {
 	        return null;
 	      }
-	      if (!this.player.ateLunch && this.player.clock.isBetween([12, 1], [13, 26])) {
+	      if (!this.player.day.ateLunch && this.player.clock.isBetween([12, 1], [13, 26])) {
 	        eatButton = _react2.default.createElement(
 	          'button',
 	          { className: 'middle-button5',
@@ -23882,7 +23892,7 @@
 	      this.player.tempMessage = this.getCandanessaMessage();
 	      this.player.happiness += 3;
 	      var now = this.player.clock.time();
-	      this.player.eatingLunch = true;
+	      this.player.day.eatingLunch = true;
 	      this.lunchTime = now;
 	      this.lunchMinutes = 15;
 	      this.player.clock = new _clock2.default(now, this.player.defaultClockSpeed * 4);
@@ -23954,12 +23964,12 @@
 	    value: function eatsLunch() {
 	      var _this5 = this;
 	
-	      if (!this.player.ateLunch) {
+	      if (!this.player.day.ateLunch) {
 	        this.microwaveSound = new Audio("./app/assets/sounds/microwave_start.wav");
 	        window.setTimeout(function () {
 	          return _this5.microwaveSound.play();
 	        }, 100);
-	        this.player.eatingLunch = true;
+	        this.player.day.eatingLunch = true;
 	        this.player.tempMessage = "TAKING LUNCH BREAK";
 	        this.player.focus = 100;
 	        this.player.happiness += 2;
@@ -23978,12 +23988,12 @@
 	      if (this.player.talkingToCandanessa) {
 	        this.player.talkingToCandanessa = false;
 	        this.player.day.talkedToCandanessa = true;
-	        this.player.eatingLunch = false; //should rename this
+	        this.player.day.eatingLunch = false; //should rename this
 	      } else {
 	        this.microwaveSound.pause();
 	        this.microwaveSound = undefined;
-	        this.player.eatingLunch = false;
-	        this.player.ateLunch = true;
+	        this.player.day.eatingLunch = false;
+	        this.player.day.ateLunch = true;
 	        this.player.tempMessage = "";
 	        this.player.message = "Be sure you're seated at your workstation at 1:30pm for pair programming!";
 	        var lunch = new _food_anim2.default({ canvas: this.canvas, ctx: this.ctx }, "lunch");
@@ -23998,7 +24008,7 @@
 	    value: function quadrants() {
 	      var _this6 = this;
 	
-	      if (this.player.eatingLunch || this.leavingTime) {
+	      if (this.player.day.eatingLunch || this.leavingTime) {
 	        return null;
 	      }
 	      var candanessa = null;
@@ -24177,9 +24187,7 @@
 	      if (this.player.focus > 0) {
 	        return;
 	      }
-	      if (!(this.player.message === "You can't focus any longer.  Take a break.")) {
-	        this.player.oldMessage = this.player.message;
-	      }
+	      this.player.tempMessage === "You can't focus any longer.  Take a break.";
 	      this.handleGetOffComputer();
 	    }
 	  }, {
@@ -25504,6 +25512,10 @@
 	
 	    _this.player = _this.props.player;
 	    _this.player.clock.pause();
+	    if (_this.player.clock.diff([20, 0], _this.player.day.lastCoffee) > 0) {
+	      _this.player.tempMessage = "YOU DRANK COFFEE TOO LATE!  It will be tough to sleep tonight.  " + _this.player.tempMessage;
+	    }
+	
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.ticker = 0;
 	    _this.sound = new Audio("./app/assets/sounds/typing.wav");
@@ -25627,7 +25639,7 @@
 	      }
 	      clearInterval(this.interval);
 	      var newClockSpeed;
-	      //cancel interval
+	
 	      if (this.done === false) {
 	        return;
 	      }
@@ -25724,6 +25736,7 @@
 	    _this.handleOpenClick = _this.handleOpenClick.bind(_this);
 	    _this.sesh = _this.sesh.bind(_this);
 	    _this.newSwitch = _this.newSwitch.bind(_this);
+	    _this.totalSwitches = _this.totalSwitches.bind(_this);
 	    _this.current = 0;
 	    _this.stopDriving = false;
 	    _this.stopNav = true;
@@ -25775,6 +25788,11 @@
 	      }
 	    }
 	  }, {
+	    key: 'totalSwitches',
+	    value: function totalSwitches() {
+	      return this.goodSwitches + this.badSwitches;
+	    }
+	  }, {
 	    key: 'handleOpenClick',
 	    value: function handleOpenClick() {
 	      this.props.player.clock.unpause();
@@ -25815,12 +25833,14 @@
 	            this.current === 1 ? " DRIVING" : " NAVIGATING"
 	          ),
 	          _react2.default.createElement(_pairs_sesh_driving_screen2.default, {
+	            switches: this.totalSwitches(),
 	            sentences: this.drivingSentences,
 	            drivingLines: this.drivingLines,
 	            stopped: this.stopDriving,
 	            current: this.current,
 	            player: this.props.player }),
 	          _react2.default.createElement(_pairs_sesh_navigating_screen2.default, {
+	            switches: this.totalSwitches(),
 	            sentences: this.navigatingSentences,
 	            navigatingLines: this.navigatingLines,
 	            stopped: this.stopNav,
@@ -25910,9 +25930,9 @@
 	    _this.updateExplosions = _this.updateExplosions.bind(_this);
 	    _this.pairsLines = _this.pairsLines.bind(_this);
 	    _this.findActive = _this.findActive.bind(_this);
+	    _this.lineSpacing = _this.lineSpacing.bind(_this);
 	    _this.over = false;
 	    _this.yPosIncrement = 2;
-	    _this.lineSpacing = 100;
 	    _this.explosionImage = new Image();
 	    _this.explosionImage.src = "./app/assets/images/line_explosion.jpg";
 	    if (_this.sentences.length === 0) {
@@ -25936,12 +25956,18 @@
 	      this.el = document.getElementById("pairs-input");
 	    }
 	  }, {
+	    key: 'lineSpacing',
+	    value: function lineSpacing() {
+	      return Math.max(150 - this.props.switches * 10, 80);
+	    }
+	  }, {
 	    key: 'initializeSentences',
 	    value: function initializeSentences() {
 	      var _this3 = this;
 	
+	      var yOffset = this.lineSpacing();
 	      this.sentenceTexts.forEach(function (el, idx) {
-	        _this3.sentences.push({ id: idx, text: el, active: idx === 0 ? true : false, exploded: false, yPos: 500 + idx * 100 });
+	        _this3.sentences.push({ id: idx, text: el, active: idx === 0 ? true : false, exploded: false, yPos: 500 + idx * yOffset });
 	      });
 	    }
 	  }, {
@@ -25992,17 +26018,18 @@
 	    value: function renderExplosion(a) {
 	      // this.ctx.fillStyle = "rgb(51, 118, 36)";
 	      // this.ctx.fillRect(550, a.yPos + 310, 200, 50);
+	
 	      var xOffset = a.timer % 3 * 75;
 	      var yOffset = Math.floor(a.timer / 3) * 75;
 	      for (var i = 0; i < 4; i++) {
-	        this.ctx.drawImage(this.explosionImage, xOffset, yOffset, 75, 75, 530 + i * 60, a.yPos - 130, 75, 75);
+	        this.ctx.drawImage(this.explosionImage, xOffset, yOffset, 75, 75, -50 + i * 60, a.yPos - 130, 75, 75);
 	      }
 	    }
 	  }, {
 	    key: 'addNewSentence',
 	    value: function addNewSentence() {
 	      var a = this.sentences.length - 1;
-	      var newYpos = this.sentences[a].yPos + this.lineSpacing;
+	      var newYpos = this.sentences[a].yPos + this.lineSpacing();
 	
 	      this.sentences.push({ text: this.sentences[0].text, exploded: false, done: false, active: false, yPos: newYpos });
 	    }
@@ -26306,9 +26333,10 @@
 	    _this.updateExplosions = _this.updateExplosions.bind(_this);
 	    _this.pairsLines = _this.pairsLines.bind(_this);
 	    _this.findActive = _this.findActive.bind(_this);
+	    _this.lineSpacing = _this.lineSpacing.bind(_this);
+	
 	    _this.over = false;
 	    _this.yPosIncrement = 2;
-	    _this.lineSpacing = 100;
 	    _this.explosionImage = new Image();
 	    _this.explosionImage.src = "./app/assets/images/line_explosion.jpg";
 	    if (_this.sentences.length === 0) {
@@ -26323,7 +26351,7 @@
 	    value: function componentDidMount() {
 	      var _this2 = this;
 	
-	      this.canvas = document.getElementById('canvas2');
+	      this.canvas = document.getElementById('canvas1');
 	      this.canvas.height = 500;
 	      this.canvas.width = 800;
 	      this.ctx = this.canvas.getContext("2d");
@@ -26334,12 +26362,18 @@
 	      }, 50);
 	    }
 	  }, {
+	    key: 'lineSpacing',
+	    value: function lineSpacing() {
+	      return Math.max(150 - this.props.switches * 10, 80);
+	    }
+	  }, {
 	    key: 'initializeSentences',
 	    value: function initializeSentences() {
 	      var _this3 = this;
 	
+	      var yOffset = this.lineSpacing();
 	      this.sentenceTexts.forEach(function (el, idx) {
-	        _this3.sentences.push({ id: idx, error: _this3.errorTexts[idx], text: el, active: idx === 0 ? true : false, done: false, exploded: false, yPos: 500 + idx * 100 });
+	        _this3.sentences.push({ id: idx, error: _this3.errorTexts[idx], text: el, active: idx === 0 ? true : false, done: false, exploded: false, yPos: 500 + idx * yOffset });
 	      });
 	    }
 	  }, {
@@ -26390,6 +26424,7 @@
 	    value: function renderExplosion(a) {
 	      // this.ctx.fillStyle = "rgb(51, 118, 36)";
 	      // this.ctx.fillRect(550, a.yPos + 310, 200, 50);
+	      // this.ctx.fillRect(0, 0, 500, 500);
 	      var xOffset = a.timer % 3 * 75;
 	      var yOffset = Math.floor(a.timer / 3) * 75;
 	      for (var i = 0; i < 4; i++) {
@@ -26400,7 +26435,7 @@
 	    key: 'addNewSentence',
 	    value: function addNewSentence() {
 	      var a = this.sentences.length - 1;
-	      var newYpos = this.sentences[a].yPos + this.lineSpacing;
+	      var newYpos = this.sentences[a].yPos + this.lineSpacing();
 	      var firstOne = this.sentences[0];
 	      this.sentences.push({ error: firstOne.error,
 	        text: this.sentenceTexts[firstOne.id],
@@ -26515,7 +26550,7 @@
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'pairs-navigating-sesh', style: this.showing() },
-	        _react2.default.createElement('canvas', { id: 'canvas2',
+	        _react2.default.createElement('canvas', { id: 'canvas1',
 	          width: '800',
 	          height: '520' }),
 	        _react2.default.createElement('img', { src: './app/assets/images/computer_screen2.png', className: 'pairs-computer-screen-nav' }),
@@ -26935,7 +26970,7 @@
 	      _this.props.player.onFire = false;
 	    }
 	    _this.props.player.strikes = _this.props.player.strikes + "X";
-	    _this.props.player.happiness -= 15;
+	    _this.props.player.happiness -= 20;
 	    _this.props.player.tempMessage = _this.strike.message + ('  You now have ' + _this.props.player.strikes.length + '\n    strike' + (_this.props.player.strikes.length > 1 ? "s" : "") + '!');
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.props.player.newFace = { filename: "tired_angry", duration: 10000 };

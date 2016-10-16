@@ -72,7 +72,7 @@ class GameMain extends React.Component {
   }
 
   handleLeaving() {
-    this.player.tempMessage = `Your current rank is ${this.player.scoreTitle()}.  Here are the results of the day.`;
+    this.player.tempMessage = `  Your current rank is ${this.player.scoreTitle()}.  Here are the results of the day.`;
     //handle strikes for leaving early
     //handle slept in office
     //handle weekend
@@ -98,7 +98,7 @@ class GameMain extends React.Component {
       if (this.player.clock.is(["9","00","am"])) {
        if (this.player.talkingToCandanessa) {
          this.player.talkingToCandanessa = false;
-         this.player.eatingLunch = false;
+         this.player.day.eatingLunch = false;
          this.player.currentPos = 0;
        }
        this.player.newStrike = {message: "You received a strike for tardiness to morning lecture.  Get to the lecture area immediately or you will receive another strike for missing the lecture!", newTime: [9,1], newPos: this.player.currentPos, newClockSpeed: this.player.defaultClockSpeed };
@@ -114,9 +114,9 @@ class GameMain extends React.Component {
 
     if (this.player.clock.is(["1","30","pm"])) {
       if (this.player.currentPos !== 11) {
-        if (this.player.eatingLunch) {
-          this.player.eatingLunch =false;
-          this.player.ateLunch=true;}
+        if (this.player.day.eatingLunch) {
+          this.player.day.eatingLunch =false;
+          this.player.day.ateLunch=true;}
         this.checkAteLunch();
         this.player.newStrike = {message: "You received a strike for not being seated at your workstation by 1:30pm for pair programming. ", newTime: [13,30], newClockSpeed: this.player.defaultClockSpeed, newSession: 3, newPos: 11};
       }
@@ -130,12 +130,12 @@ class GameMain extends React.Component {
 
   checkAteLunch() {
     //if the player hasnt eaten lunch then they get a penalty for rest of day on max energy...launch a new warning.
-    if (!(this.player.ateLunch)) {
+    if (!(this.player.day.ateLunch)) {
       //ADD A WARNING SCREEN
       this.player.message = "BECAUSE YOU DIDN'T TAKE A LUNCH BREAK YOU ARE LIMITED TO HALF ENERGY FOR THE DAY";
 
-      this.player.noLunchPenalty = 0.5;
-      var maxEnergy = this.player.sleepBank*this.player.noLunchPenalty;
+      this.player.day.noLunchPenalty = 0.5;
+      var maxEnergy = this.player.sleepBank*this.player.day.noLunchPenalty;
       if (this.player.focus>maxEnergy) {this.player.focus=maxEnergy;}
 
     }
@@ -143,7 +143,7 @@ class GameMain extends React.Component {
 
   updateAttributes(dt) { //REDO THIS SOON
     //use helper methods for each attribute
-      var maxEnergy = this.player.sleepBank*this.player.noLunchPenalty;
+      var maxEnergy = this.player.sleepBank*this.player.day.noLunchPenalty;
       var realMax = Math.max(this.player.focus, maxEnergy);
       if (this.player.working()) {
         this.player.focus -=0.5;

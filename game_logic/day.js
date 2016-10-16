@@ -12,10 +12,15 @@ class Day {
     this.player.ateDonut = false;
     this.lastCoffee = [6,0];
     this.talkedToCandanessa = false;
-
-    this.player.ateLunch = false;
+    this.workingLateOnFridaySucks = false;
+    this.fireCounter = Math.floor(this.player.score / 100000) + 1 + Math.floor(Math.random()*3);
+    this.eatingLunch = false; //these should be in the day
+    this.noLunchPenalty = 1;// (0.5 cuts it in half)
+    this.ateLunch = false;
     this.player.lastIconTickerCount = 0;
     this.beginningScore = this.player.score;
+    this.chanceForFireOffset = 0; //delete me
+    this.workstationStartTime = undefined; //delete me
 
     this.beginningSkillPoints =
     this.player.skills[this.player.currentSkill] ? this.player.skills[this.player.currentSkill] : 0;
