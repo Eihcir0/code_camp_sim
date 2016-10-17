@@ -40,20 +40,14 @@ class Clock {
     let elapsed = (this.tickCounter /1000);
     let newTime = [];
     let hours = this.start[0] + Math.floor((this.start[1] + elapsed) / 60);
-    if (hours > 11 && hours < 24) {newTime[2] = "pm";}
-    else {newTime[2] = "am";}
-    hours = (hours > 12) ? hours - 12 : hours;
-    hours = (hours > 12) ? hours - 12 : hours;
-    newTime[0] = hours.toString();
     let minutes = Math.floor((this.start[1]+elapsed) % 60);
-    if (minutes< 10) {newTime[1] = "0"+minutes;}
-    else {newTime[1] = minutes.toString();}
+    newTime = this.convertToAmPm([hours,minutes]);
     this.lastTime = newTime;
     return newTime;
   }
   convertToMilitaryTime(timeX) {
     if (timeX.length === 2) {
-      if (timeX[0] < 6) {
+      if (timeX[0] <= 7) {
         timeX[0] += 24;
       }
       return timeX;}
@@ -66,8 +60,31 @@ class Clock {
       ) {
           hour += 12;
         }
-    if (hour < 6) {hour += 24;}
+    if (hour <= 7) {hour += 24;}
     return [hour,minute];
+  }
+
+  convertToAmPm(time) {
+    if (time[2]) {return time;}
+    time[0] = parseInt(time[0]);
+    time[1] = parseInt(time[1]);
+    if (time[1]< 10) {time[1] = "0"+time[1];}
+    else {time[1] = time[1].toString();}
+    var ampm = (time[0] > 11 && time[0] < 24) ? "pm" : "am";
+    switch (true) {
+      case (time[0] == 24):
+        time[0] = 24;
+        break;
+      case (time[0] > 24):
+        time[0] -= 24;
+        break;
+      case (time[0] > 12 && time[0] < 24):
+        time[0] -= 12;
+        break;
+      default:
+        break;
+    }
+    return [time[0].toString(),time[1],ampm];
   }
 
   is(time) { //AMPM time only
@@ -78,13 +95,15 @@ class Clock {
   }
 
 
-  diff(lastTime, target = this.time()) { // target - lastTime in minutes
 
-    var currentTime = this.convertToMilitaryTime(target);
+
+  diff(timeA, timeB = this.time()) { // returns timeB - timeA in minutes
+
+    var currentTime = this.convertToMilitaryTime(timeB);
     var currentHour = currentTime[0];
     var currentMinute = currentTime[1];
 
-    var startTime = this.convertToMilitaryTime(lastTime);
+    var startTime = this.convertToMilitaryTime(timeA);
     var startHour = startTime[0];
     var startMinute = startTime[1];
 
@@ -116,6 +135,48 @@ class Clock {
     return (currentTotal<=endTotal && currentTotal>=startTotal);
 
   }
+
+  isAfter(startTime, target = this.time()) { //exclusive
+
+
+    var targetTime = this.convertToMilitaryTime(target);
+    var targetHour = targetTime[0];
+    var targetMinute = targetTime[1];
+
+    var startTime = this.convertToMilitaryTime(startTime);
+    var startHour = startTime[0];
+    var startMinute = startTime[1];
+
+    var startTotal = startHour*60 + startMinute;
+
+    var targetTotal = targetHour*60 + targetMinute;
+    return (startTotal > targetTotal);
+
+  }
+
+  add(minutesToAdd, start = this.time()) { //returns Military Time
+
+    var startTime = this.convertToMilitaryTime(start);
+    var startHour = startTime[0];
+    var startMinute = startTime[1];
+    var totalStartMinutes = startHour * 60 + startMinute;
+    var totalMinutes = totalStartMinutes + minutesToAdd;
+    return [Math.floor(totalMinutes / 60), totalMinutes % 60];
+  }
+
+
+  subtract(minutesToSubtract, start = this.time()) { //returns Military Time
+
+    var startTime = this.convertToMilitaryTime(start);
+    var startHour = startTime[0];
+    var startMinute = startTime[1];
+    var totalStartMinutes = startHour * 60 + startMinute;
+    var totalMinutes = totalStartMinutes - minutesToSubtract;
+    return [Math.floor(totalMinutes / 60), totalMinutes % 60];
+  }
+
+
+
 
   pause() {
     this.paused = true;

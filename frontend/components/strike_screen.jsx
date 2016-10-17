@@ -46,6 +46,7 @@ class StrikeScreen extends React.Component {
     return (
       <div className="strike" onClick={this.handleClick}>
         <span className="x">X</span>
+        <img src="./app/assets/images/ned1.png" className="strike-teacher-image"/>
       </div>
     );
   }

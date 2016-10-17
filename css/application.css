@@ -284,9 +284,9 @@ button {
 	width: 752px;
 	background: black;
 	color: green;
-	font-size: 72px;
+	font-size: 48px;
 	padding-top: 200px;
-	margin-left: 100px;
+	margin-left: 313px;
 }
 
 .faint-meter-bar {
@@ -299,6 +299,22 @@ button {
     width: 158px;
     top: 400px;
     left: 715px;
+}
+
+.strike-teacher-image {
+	position: absolute;
+	width: 158px;
+	top: 375px;
+	left: 612px;
+	width: 216px;
+}
+
+.congrats-teacher-image {
+	position: absolute;
+	width: 158px;
+	top: 237px;
+	left: 126px;
+	width: 212px;
 }
 
 .middle-button {
@@ -795,4 +811,9 @@ height: 140px;
     color: white;
     padding: 50px;
     font-size: 100px;
+}
+
+.results-screen2 {
+    line-height: 50px;
+    padding: 50px;
 }

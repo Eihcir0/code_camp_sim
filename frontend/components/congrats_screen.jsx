@@ -4,16 +4,19 @@ import Clock from './../../game_logic/clock.js';
 class CongratsScreen extends React.Component {
   constructor (props) {
     super(props);
-    this.congrats = this.props.player.newCongrats;
+    this.player = this.props.player;
+    this.congrats = this.player.newCongrats;
     this.startTime = Date.now();
     this.buzzerSound = new Audio("./app/assets/sounds/congrats-ding.wav");
     this.buzzerSound.play();
-    this.props.player.happiness += 5;
-    this.props.player.skills[this.props.player.currentSkill] += 50;
-    this.props.player.tempMessage =
-    this.congrats.message;
+    this.player.happiness += 5;
+
+    this.skill = this.player.currentSkill;
+    this.skillCapitalized = this.skill.charAt(0).toUpperCase() + this.skill.slice(1);
+    this.player.skills[this.skill] += 50;
+    this.player.tempMessage = "========= Happiness: +5  " + this.skillCapitalized + " " + " skill: +5%  ========= " + this.congrats.message;
     this.handleClick = this.handleClick.bind(this);
-    this.props.player.newFace = {filename: "super_happy", duration: 30};
+    this.player.newFace = {filename: "super_happy", duration: 30};
 
     // this.main = this.main.bind(this);
 
@@ -27,22 +30,24 @@ class CongratsScreen extends React.Component {
       if (this.congrats.newClockSpeed) {
         newClockSpeed = this.congrats.newClockSpeed;
       } else {
-        newClockSpeed = this.props.player.defaultClockSpeed;
+        newClockSpeed = this.player.defaultClockSpeed;
       }
-      this.props.player.clock = new Clock (this.congrats.newTime, newClockSpeed);
+      this.player.clock = new Clock (this.congrats.newTime, newClockSpeed);
       if (!(this.congrats.newPos===undefined)) {
-        this.props.player.currentPos = this.congrats.newPos;
+        this.player.currentPos = this.congrats.newPos;
       }
       if (this.congrats.newSession) {
-        this.props.player.session = this.congrats.newSession;
+        this.player.session = this.congrats.newSession;
       }
-      this.props.player.newCongrats = false;}
+      this.player.newCongrats = false;}
 
   }
 
   render () {
     return (
       <div className="congrats" onClick={this.handleClick}>  CONGRATULATIONS!!!
+        <img src="./app/assets/images/ned2.png" className="congrats-teacher-image"/>
+
       </div>
     );
   }

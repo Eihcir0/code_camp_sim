@@ -22101,7 +22101,7 @@
 	      //onFire -- for now just score /1000000 * 50% (so 100k = 5%) + offset <== for testing
 	
 	      var chanceForFire = this.score / 1000000 * 0.10 + this.day.chanceForFireOffset;
-	      if (this.onFire || this.day.fireCounter <= 0) {
+	      if (this.onFire || this.day.fireCounter <= 0 || this.focus < 5) {
 	        chanceForFire = 0;
 	      }
 	
@@ -22259,20 +22259,8 @@
 	      var elapsed = this.tickCounter / 1000;
 	      var newTime = [];
 	      var hours = this.start[0] + Math.floor((this.start[1] + elapsed) / 60);
-	      if (hours > 11 && hours < 24) {
-	        newTime[2] = "pm";
-	      } else {
-	        newTime[2] = "am";
-	      }
-	      hours = hours > 12 ? hours - 12 : hours;
-	      hours = hours > 12 ? hours - 12 : hours;
-	      newTime[0] = hours.toString();
 	      var minutes = Math.floor((this.start[1] + elapsed) % 60);
-	      if (minutes < 10) {
-	        newTime[1] = "0" + minutes;
-	      } else {
-	        newTime[1] = minutes.toString();
-	      }
+	      newTime = this.convertToAmPm([hours, minutes]);
 	      this.lastTime = newTime;
 	      return newTime;
 	    }
@@ -22280,7 +22268,7 @@
 	    key: "convertToMilitaryTime",
 	    value: function convertToMilitaryTime(timeX) {
 	      if (timeX.length === 2) {
-	        if (timeX[0] < 6) {
+	        if (timeX[0] <= 7) {
 	          timeX[0] += 24;
 	        }
 	        return timeX;
@@ -22291,10 +22279,39 @@
 	      if (timeX[0] !== "12" && ampm === "pm" || timeX[0] === "12" && ampm === "am") {
 	        hour += 12;
 	      }
-	      if (hour < 6) {
+	      if (hour <= 7) {
 	        hour += 24;
 	      }
 	      return [hour, minute];
+	    }
+	  }, {
+	    key: "convertToAmPm",
+	    value: function convertToAmPm(time) {
+	      if (time[2]) {
+	        return time;
+	      }
+	      time[0] = parseInt(time[0]);
+	      time[1] = parseInt(time[1]);
+	      if (time[1] < 10) {
+	        time[1] = "0" + time[1];
+	      } else {
+	        time[1] = time[1].toString();
+	      }
+	      var ampm = time[0] > 11 && time[0] < 24 ? "pm" : "am";
+	      switch (true) {
+	        case time[0] == 24:
+	          time[0] = 24;
+	          break;
+	        case time[0] > 24:
+	          time[0] -= 24;
+	          break;
+	        case time[0] > 12 && time[0] < 24:
+	          time[0] -= 12;
+	          break;
+	        default:
+	          break;
+	      }
+	      return [time[0].toString(), time[1], ampm];
 	    }
 	  }, {
 	    key: "is",
@@ -22305,15 +22322,15 @@
 	    }
 	  }, {
 	    key: "diff",
-	    value: function diff(lastTime) {
-	      var target = arguments.length <= 1 || arguments[1] === undefined ? this.time() : arguments[1];
-	      // target - lastTime in minutes
+	    value: function diff(timeA) {
+	      var timeB = arguments.length <= 1 || arguments[1] === undefined ? this.time() : arguments[1];
+	      // returns timeB - timeA in minutes
 	
-	      var currentTime = this.convertToMilitaryTime(target);
+	      var currentTime = this.convertToMilitaryTime(timeB);
 	      var currentHour = currentTime[0];
 	      var currentMinute = currentTime[1];
 	
-	      var startTime = this.convertToMilitaryTime(lastTime);
+	      var startTime = this.convertToMilitaryTime(timeA);
 	      var startHour = startTime[0];
 	      var startMinute = startTime[1];
 	
@@ -22345,6 +22362,52 @@
 	      var endTotal = endHour * 60 + endMinute;
 	      var currentTotal = currentHour * 60 + currentMinute;
 	      return currentTotal <= endTotal && currentTotal >= startTotal;
+	    }
+	  }, {
+	    key: "isAfter",
+	    value: function isAfter(startTime) {
+	      var target = arguments.length <= 1 || arguments[1] === undefined ? this.time() : arguments[1];
+	      //exclusive
+	
+	
+	      var targetTime = this.convertToMilitaryTime(target);
+	      var targetHour = targetTime[0];
+	      var targetMinute = targetTime[1];
+	
+	      var startTime = this.convertToMilitaryTime(startTime);
+	      var startHour = startTime[0];
+	      var startMinute = startTime[1];
+	
+	      var startTotal = startHour * 60 + startMinute;
+	
+	      var targetTotal = targetHour * 60 + targetMinute;
+	      return startTotal > targetTotal;
+	    }
+	  }, {
+	    key: "add",
+	    value: function add(minutesToAdd) {
+	      var start = arguments.length <= 1 || arguments[1] === undefined ? this.time() : arguments[1];
+	      //returns Military Time
+	
+	      var startTime = this.convertToMilitaryTime(start);
+	      var startHour = startTime[0];
+	      var startMinute = startTime[1];
+	      var totalStartMinutes = startHour * 60 + startMinute;
+	      var totalMinutes = totalStartMinutes + minutesToAdd;
+	      return [Math.floor(totalMinutes / 60), totalMinutes % 60];
+	    }
+	  }, {
+	    key: "subtract",
+	    value: function subtract(minutesToSubtract) {
+	      var start = arguments.length <= 1 || arguments[1] === undefined ? this.time() : arguments[1];
+	      //returns Military Time
+	
+	      var startTime = this.convertToMilitaryTime(start);
+	      var startHour = startTime[0];
+	      var startMinute = startTime[1];
+	      var totalStartMinutes = startHour * 60 + startMinute;
+	      var totalMinutes = totalStartMinutes - minutesToSubtract;
+	      return [Math.floor(totalMinutes / 60), totalMinutes % 60];
 	    }
 	  }, {
 	    key: "pause",
@@ -22930,7 +22993,7 @@
 	    _classCallCheck(this, Week);
 	
 	    this.player = player;
-	    this.day = new _day2.default(this.player, ["1", "20", "pm"]); //change this to new arrival time
+	    this.day = new _day2.default(this.player, ["10", "20", "pm"]); //change this to new arrival time
 	    this.material = this.materials();
 	  }
 	
@@ -22956,7 +23019,7 @@
 	    }
 	  }, {
 	    key: "advanceDay",
-	    value: function advanceDay() {
+	    value: function advanceDay(arrivalTime) {
 	      //NOTE NEED TO HANDLE CHECK FOR WEEKEND IN GAME_MAIN
 	
 	      // get alarm, calc new stats and arrival time within session(nighttime)
@@ -22964,23 +23027,8 @@
 	      if ([6, 7].includes(this.currentWeekDay())) {
 	        this.weekend();
 	      }
-	      var now = this.player.clock.time();
 	
-	      var diff = this.player.clock.diff(["10", "00", "pm"]) / 60;
-	      if (this.player.clock.diff([20, 0], this.player.day.lastCoffee) > 0) {
-	        diff += 3;
-	      }
-	
-	      this.player.sleepBank -= diff * 10;
-	      if (this.player.sleepBank < 20) {
-	        this.player.sleepBank = 20;
-	      }
-	      if (this.player.sleepBank > 100) {
-	        this.player.sleepBank = 100;
-	      }
-	      this.player.focus = this.player.sleepBank;
-	      var day = new _day2.default(this.player, [8, 30]);
-	      this.player.day = day;
+	      this.player.day = new _day2.default(this.player, arrivalTime);
 	      this.player.session = 0;
 	    }
 	  }, {
@@ -23029,7 +23077,7 @@
 	    this.player.currentPos = 0;
 	    this.player.leaving = false;
 	    this.player.ateDonut = false;
-	    this.lastCoffee = [6, 0];
+	    this.lastCoffee = [7, 1];
 	    this.talkedToCandanessa = false;
 	    this.workingLateOnFridaySucks = false;
 	    this.fireCounter = Math.floor(this.player.score / 100000) + 1 + Math.floor(Math.random() * 3);
@@ -23072,8 +23120,8 @@
 	          "> def my_each", ">  i = 0", ">  while i < self.length", ">   yield self[i]", ">   i += 1", ">  end", ">  self[0]", "> end"]];
 	        case 2:
 	          return [[//0
-	          "Q: Is Ruby a statically typed or a ", "dynamically typed language?", "", "", "Q: Is everything in Ruby an object?"], [//1
-	          "Q: Is Ruby a statically typed or a ", "dynamically typed language?", "A: Dynamically typed since type checking is done at runtime.", "", "Q: Is everything in Ruby an object?", "A: Methods are not objects. Blocks are not objects. ", "Keywords are not objects. However, there are", "Method objects and Proc objects."], [//2
+	          "Ruby methods: Public, Private, Protected", "", "Public methods can be called by everyone - no access control is", "enforced. They do not belong only to one object.  Every instance", "of the class can call them.  A class's instance methods are ", "public by default."], [//1
+	          "Private methods cannot be called with an explicit receiver - ", "the receiver is always self. This means that private ", "methods can be called only in the context of", "the current object.", "", "Protected methods can be invoked only by objects of the", "defining class and its subclasses. "], [//2
 	          "Symbols in Ruby", "Symbols are immutable.  Because of this,", "symbols are instantiated faster than strings", "and some operations like comparing two symbols", "are also faster.", "", "General rule of thumb:", "Use symbols when you need internal identifiers."], [//3
 	          "Q: When would you not want to use symbols?", "(actual interview question)", "A: In older version of Ruby (prior to 2.2)", "symbols were not garbage collected and hence", "were a source of memory leaks.", "", "Now, let's look at the next example carefully."], [//4
 	          "> class Fred", ">   $f1 = :Fred", "> end", "> Fred = 1", "> $f2 = :Fred", "> $f1.object_id   #=> 2514190", "> $f2.object_id   #=> 2514190"]];
@@ -25056,6 +25104,10 @@
 	    } else {
 	      startTime = _this.player.clock.time();
 	    }
+	    _this.openingSound = new Audio("./app/assets/sounds/opening_lecture.wav");
+	    window.setTimeout(function () {
+	      return _this.openingSound.play();
+	    }, 10);
 	    _this.player.clock = new _clock2.default(startTime, _this.player.defaultClockSpeed);
 	    _this.startingFocus = _this.player.focus;
 	    _this.eyesClosedTimer = 0;
@@ -25512,20 +25564,34 @@
 	
 	    _this.player = _this.props.player;
 	    _this.player.clock.pause();
-	    if (_this.player.clock.diff([20, 0], _this.player.day.lastCoffee) > 0) {
-	      _this.player.tempMessage = "YOU DRANK COFFEE TOO LATE!  It will be tough to sleep tonight.  " + _this.player.tempMessage;
-	    }
+	    var clock = _this.player.clock;
+	    _this.now = clock.time();
+	    _this.minutesToGetToSchool = 60 + Math.floor(Math.random() * 30 + 1);
+	    var minutesBeforeBed = 60 + Math.floor(Math.random() * 30 + 1);
 	
-	    _this.handleClick = _this.handleClick.bind(_this);
+	    var minutesSinceLastCoffee = clock.diff(_this.player.day.lastCoffee, _this.now);
+	    var coffeePenalty = Math.max(180 - minutesSinceLastCoffee, 0);
+	    var bedTime = clock.add(coffeePenalty + minutesBeforeBed, _this.now);
+	    _this.bedTime = clock.convertToAmPm(bedTime);
+	    _this.coffeePenaltyMessage = coffeePenalty <= 0 ? null : "Late coffee -- couldn't fall asleep right away!!";
+	
+	    _this.handleClickScreen = _this.handleClickScreen.bind(_this);
+	    _this.screen = _this.screen.bind(_this);
+	    _this.alarmClock = _this.alarmClock.bind(_this);
+	    _this.setAlarm = _this.setAlarm.bind(_this);
 	    _this.ticker = 0;
+	    _this.alarmTime = ["7", "00", "am"];
 	    _this.sound = new Audio("./app/assets/sounds/typing.wav");
 	    window.setTimeout(_this.sound.play(), 1);
 	    _this.redStyle = { color: "red" };
 	    _this.greenStyle = { color: "green" };
-	    _this.done = false;
+	    _this.screen1Done = false;
+	    _this.screen2Done = false;
 	    _this.interval = window.setInterval(function () {
 	      return _this.ticker++;
 	    }, 100);
+	    _this.screenCounter = 1;
+	
 	    return _this;
 	  }
 	
@@ -25617,7 +25683,7 @@
 	          'HAPPINESS '
 	        );
 	      } else {
-	        this.done = true;
+	        this.screen1Done = true;
 	        return _react2.default.createElement(
 	          'div',
 	          null,
@@ -25632,45 +25698,154 @@
 	      }
 	    }
 	  }, {
-	    key: 'handleClick',
-	    value: function handleClick() {
-	      if (this.ticker < 60) {
-	        return;
+	    key: 'setAlarm',
+	    value: function setAlarm() {
+	      var alarm = document.getElementById("alarm").value;
+	      switch (alarm) {
+	        case "1":
+	          this.alarmTime = ["6", "00", "am"];
+	          break;
+	        case "2":
+	          this.alarmTime = ["6", "30", "am"];
+	          break;
+	        case "3":
+	          this.alarmTime = ["7", "00", "am"];
+	          break;
+	        case "4":
+	          this.alarmTime = ["7", "30", "am"];
+	          break;
+	        default:
+	          break;
 	      }
+	      debugger;
+	      var wakeupTime;
+	      var arrivalTime;
+	      var alarmDiff = this.player.clock.diff(this.now, this.alarmTime);
+	      if (alarmDiff > 270) {
+	        wakeupTime = this.alarmTime;
+	        arrivalTime = this.player.clock.add(this.minutesToGetToSchool, wakeupTime);
+	        if (this.player.clock.isAfter(arrivalTime, [8, 59])) {
+	          arrivalTime = [8, 59];
+	          this.player.arriveLate = "SWEATY STRIKE! You ran to school but didn't make it in time.  You get a strike for coming late to lecture.";
+	        }
+	      } else {
+	        wakeupTime = [8, 0];
+	        arrivalTime = [8, 59];
+	        this.player.arriveLate = "You overslept your alarm and showed up late for lecture!";
+	      }
+	
 	      clearInterval(this.interval);
-	      var newClockSpeed;
 	
-	      if (this.done === false) {
-	        return;
+	      var diff = this.player.clock.diff(wakeupTime, this.now) - 450;
+	      this.player.sleepBank -= diff / 60 * 10;
+	      if (this.player.sleepBank < 20) {
+	        this.player.sleepBank = 20;
 	      }
+	      if (this.player.sleepBank > 100) {
+	        this.player.sleepBank = 100;
+	      }
+	      this.player.focus = this.player.sleepBank;
+	      this.player.week.advanceDay(arrivalTime);
+	    }
+	  }, {
+	    key: 'alarmClock',
+	    value: function alarmClock() {
 	
-	      this.player.week.advanceDay();
-	      this.player.session = 0;
+	      //NOTE WILL TAKE AT LEAST 1 hour to get to school
+	      var options = ["6:00am", "6:30am", "7:00am", "7:30am"];
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'set-alarm-form' },
+	        'Set alarm:',
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'select',
+	          { id: 'alarm',
+	            className: 'set-alarm',
+	            defaultValue: '3' },
+	          _react2.default.createElement(
+	            'option',
+	            { value: '1' },
+	            options[0]
+	          ),
+	          _react2.default.createElement(
+	            'option',
+	            { value: '2' },
+	            options[1]
+	          ),
+	          _react2.default.createElement(
+	            'option',
+	            { value: '3' },
+	            options[2]
+	          ),
+	          _react2.default.createElement(
+	            'option',
+	            { value: '4' },
+	            options[3]
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          { className: 'sleep-button', onClick: this.setAlarm },
+	          'GO TO SLEEP!'
+	        )
+	      );
+	    }
+	  }, {
+	    key: 'screen',
+	    value: function screen() {
+	      if (this.screenCounter === 1) {
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'results-screen1' },
+	          _react2.default.createElement('br', null),
+	          this.scoreChange(),
+	          this.skillChange(),
+	          this.happinessChange()
+	        );
+	      } else if (this.screenCounter === 2) {
+	
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'results-screen2' },
+	          'LEFT SCHOOL  : ',
+	          this.now[0] + ':' + this.now[1] + this.now[2],
+	          ' ',
+	          _react2.default.createElement('br', null),
+	          'READY FOR BED: ',
+	          this.bedTime[0] + ':' + this.bedTime[1] + this.bedTime[2],
+	          ' ',
+	          _react2.default.createElement('br', null),
+	          this.coffeePenaltyMessage,
+	          ' ',
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          this.alarmClock(),
+	          ' ',
+	          _react2.default.createElement('br', null)
+	        );
+	      }
+	    }
+	  }, {
+	    key: 'handleClickScreen',
+	    value: function handleClickScreen() {
+	      if (this.screenCounter === 1) {
+	        if (this.screen1Done) {
+	          this.screenCounter = 2;
+	        } else {
+	          this.ticker += 60;
+	        }
+	      }
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'day-results', onClick: this.handleClick },
-	        _react2.default.createElement('br', null),
-	        this.scoreChange(),
-	        this.skillChange(),
-	        this.happinessChange()
+	        { className: 'day-results', onClick: this.handleClickScreen },
+	        this.screen()
 	      );
 	    }
-	
-	    // render () {   OLD ONE
-	    //   return (
-	    //     <div className="pairs-results" onClick={this.handleClick}>
-	    //       driving lines:{this.props.drivingLines[0]} out of {this.props.drivingLines[1]} <br/>
-	    // navigating lines:{this.props.navigatingLines[0]} out of {this.props.navigatingLines[1]} <br/>
-	    //     good switches: {this.props.goodSwitches} <br/>
-	    //   bad Switches: {this.props.badSwitches} <br/>
-	    //     </div>
-	    //   );
-	    // }
-	
 	  }]);
 	
 	  return NightSeshScreen;
@@ -25967,7 +26142,7 @@
 	
 	      var yOffset = this.lineSpacing();
 	      this.sentenceTexts.forEach(function (el, idx) {
-	        _this3.sentences.push({ id: idx, text: el, active: idx === 0 ? true : false, exploded: false, yPos: 500 + idx * yOffset });
+	        _this3.sentences.push({ id: idx, text: el, active: idx === 0 ? true : false, exploded: false, yPos: 500 + idx * (yOffset - 10) });
 	      });
 	    }
 	  }, {
@@ -26022,7 +26197,7 @@
 	      var xOffset = a.timer % 3 * 75;
 	      var yOffset = Math.floor(a.timer / 3) * 75;
 	      for (var i = 0; i < 4; i++) {
-	        this.ctx.drawImage(this.explosionImage, xOffset, yOffset, 75, 75, -50 + i * 60, a.yPos - 130, 75, 75);
+	        this.ctx.drawImage(this.explosionImage, xOffset, yOffset, 75, 75, 5 + i * 60, a.yPos - 130, 75, 75);
 	      }
 	    }
 	  }, {
@@ -26373,7 +26548,7 @@
 	
 	      var yOffset = this.lineSpacing();
 	      this.sentenceTexts.forEach(function (el, idx) {
-	        _this3.sentences.push({ id: idx, error: _this3.errorTexts[idx], text: el, active: idx === 0 ? true : false, done: false, exploded: false, yPos: 500 + idx * yOffset });
+	        _this3.sentences.push({ id: idx, error: _this3.errorTexts[idx], text: el, active: idx === 0 ? true : false, done: false, exploded: false, yPos: 500 + idx * (yOffset - 10) });
 	      });
 	    }
 	  }, {
@@ -27011,7 +27186,8 @@
 	          'span',
 	          { className: 'x' },
 	          'X'
-	        )
+	        ),
+	        _react2.default.createElement('img', { src: './app/assets/images/ned1.png', className: 'strike-teacher-image' })
 	      );
 	    }
 	  }]);
@@ -27131,15 +27307,19 @@
 	
 	    var _this = _possibleConstructorReturn(this, (CongratsScreen.__proto__ || Object.getPrototypeOf(CongratsScreen)).call(this, props));
 	
-	    _this.congrats = _this.props.player.newCongrats;
+	    _this.player = _this.props.player;
+	    _this.congrats = _this.player.newCongrats;
 	    _this.startTime = Date.now();
 	    _this.buzzerSound = new Audio("./app/assets/sounds/congrats-ding.wav");
 	    _this.buzzerSound.play();
-	    _this.props.player.happiness += 5;
-	    _this.props.player.skills[_this.props.player.currentSkill] += 50;
-	    _this.props.player.tempMessage = _this.congrats.message;
+	    _this.player.happiness += 5;
+	
+	    _this.skill = _this.player.currentSkill;
+	    _this.skillCapitalized = _this.skill.charAt(0).toUpperCase() + _this.skill.slice(1);
+	    _this.player.skills[_this.skill] += 50;
+	    _this.player.tempMessage = "========= Happiness: +5  " + _this.skillCapitalized + " " + " skill: +5%  ========= " + _this.congrats.message;
 	    _this.handleClick = _this.handleClick.bind(_this);
-	    _this.props.player.newFace = { filename: "super_happy", duration: 30 };
+	    _this.player.newFace = { filename: "super_happy", duration: 30 };
 	
 	    // this.main = this.main.bind(this);
 	
@@ -27157,16 +27337,16 @@
 	        if (this.congrats.newClockSpeed) {
 	          newClockSpeed = this.congrats.newClockSpeed;
 	        } else {
-	          newClockSpeed = this.props.player.defaultClockSpeed;
+	          newClockSpeed = this.player.defaultClockSpeed;
 	        }
-	        this.props.player.clock = new _clock2.default(this.congrats.newTime, newClockSpeed);
+	        this.player.clock = new _clock2.default(this.congrats.newTime, newClockSpeed);
 	        if (!(this.congrats.newPos === undefined)) {
-	          this.props.player.currentPos = this.congrats.newPos;
+	          this.player.currentPos = this.congrats.newPos;
 	        }
 	        if (this.congrats.newSession) {
-	          this.props.player.session = this.congrats.newSession;
+	          this.player.session = this.congrats.newSession;
 	        }
-	        this.props.player.newCongrats = false;
+	        this.player.newCongrats = false;
 	      }
 	    }
 	  }, {
@@ -27175,7 +27355,8 @@
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'congrats', onClick: this.handleClick },
-	        '  CONGRATULATIONS!!!'
+	        '  CONGRATULATIONS!!!',
+	        _react2.default.createElement('img', { src: './app/assets/images/ned2.png', className: 'congrats-teacher-image' })
 	      );
 	    }
 	  }]);

@@ -112,7 +112,7 @@ class Player {
     //onFire -- for now just score /1000000 * 50% (so 100k = 5%) + offset <== for testing
 
     var chanceForFire = (((this.score) / 1000000) * 0.10) + this.day.chanceForFireOffset;
-    if (this.onFire || this.day.fireCounter <= 0) {chanceForFire = 0;}
+    if (this.onFire || this.day.fireCounter <= 0 || this.focus < 5) {chanceForFire = 0;}
 
     // out of 1000 so /1000 to convert to % then /2
     var chanceForBug = ((1- (this.skills[this.currentSkill]/1000)) / 2);

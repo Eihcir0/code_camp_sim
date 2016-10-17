@@ -7,18 +7,35 @@ class NightSeshScreen extends React.Component {
       super(props);
       this.player = this.props.player;
       this.player.clock.pause();
-      if (this.player.clock.diff([20,0],this.player.day.lastCoffee) > 0) {
-            this.player.tempMessage =  "YOU DRANK COFFEE TOO LATE!  It will be tough to sleep tonight.  " + this.player.tempMessage;
-          }
+      var clock = this.player.clock;
+      this.now = clock.time();
+      this.minutesToGetToSchool = 60 + Math.floor(Math.random() * 30 +1);
+      var minutesBeforeBed = 60 + Math.floor(Math.random() * 30 +1);
 
-      this.handleClick = this.handleClick.bind(this);
+      var minutesSinceLastCoffee =
+      clock.diff(this.player.day.lastCoffee, this.now);
+      var coffeePenalty = Math.max(180 - minutesSinceLastCoffee, 0);
+      var bedTime =
+      clock.add(coffeePenalty + minutesBeforeBed, this.now);
+      this.bedTime = clock.convertToAmPm(bedTime);
+      this.coffeePenaltyMessage = coffeePenalty <= 0 ? null :
+      "Late coffee -- couldn't fall asleep right away!!";
+
+      this.handleClickScreen = this.handleClickScreen.bind(this);
+      this.screen = this.screen.bind(this);
+      this.alarmClock = this.alarmClock.bind(this);
+      this.setAlarm = this.setAlarm.bind(this);
       this.ticker = 0;
+      this.alarmTime = ["7","00","am"];
       this.sound = new Audio("./app/assets/sounds/typing.wav");
       window.setTimeout(this.sound.play(),1);
       this.redStyle={color: "red"};
       this.greenStyle={color: "green"};
-      this.done=false;
+      this.screen1Done =false;
+      this.screen2Done =false;
       this.interval = window.setInterval(()=>this.ticker++,100);
+      this.screenCounter = 1;
+
       }
 
 
@@ -85,7 +102,7 @@ class NightSeshScreen extends React.Component {
           <div><br/>HAPPINESS </div>
         );
       } else {
-        this.done = true;
+        this.screen1Done = true;
         return (
 
           <div>
@@ -99,40 +116,108 @@ class NightSeshScreen extends React.Component {
 
     }
 
-    handleClick() {
-      if (this.ticker<60) {return;}
+    setAlarm() {
+      var alarm = document.getElementById("alarm").value;
+      switch (alarm) {
+        case "1":
+          this.alarmTime = ["6","00","am"];
+          break;
+        case "2":
+          this.alarmTime = ["6","30","am"];
+          break;
+        case "3":
+          this.alarmTime = ["7","00","am"];
+          break;
+        case "4":
+          this.alarmTime = ["7","30","am"];
+          break;
+        default:
+          break;
+      }
+      debugger;
+      var wakeupTime;
+      var arrivalTime;
+      var alarmDiff = this.player.clock.diff(this.now, this.alarmTime);
+      if (alarmDiff > 270) {
+        wakeupTime = this.alarmTime;
+        arrivalTime = this.player.clock.add(this.minutesToGetToSchool, wakeupTime);
+        if (this.player.clock.isAfter(arrivalTime, [8,59])) {
+          arrivalTime = [8,59];
+          this.player.arriveLate = "SWEATY STRIKE! You ran to school but didn't make it in time.  You get a strike for coming late to lecture.";
+        }
+      } else {
+        wakeupTime = [8,0];
+        arrivalTime = [8,59];
+        this.player.arriveLate = "You overslept your alarm and showed up late for lecture!";
+      }
+
       clearInterval(this.interval);
-      var newClockSpeed;
 
-      if (this.done===false) {return;}
+      var diff = this.player.clock.diff(wakeupTime, this.now) - 450;
+      this.player.sleepBank -= (diff / 60 )*10;
+      if (this.player.sleepBank<20) {this.player.sleepBank=20;}
+      if (this.player.sleepBank>100) {this.player.sleepBank=100;}
+      this.player.focus = this.player.sleepBank;
+      this.player.week.advanceDay(arrivalTime);
 
-      this.player.week.advanceDay();
-      this.player.session = 0;
+    }
 
+    alarmClock() {
 
+      //NOTE WILL TAKE AT LEAST 1 hour to get to school
+      var options = ["6:00am", "6:30am", "7:00am", "7:30am"];
+      return (
+        <div className = "set-alarm-form">
+          Set alarm:<br/>
+          <select id="alarm"
+            className="set-alarm"
+            defaultValue="3">
+            <option value="1">{options[0]}</option>
+            <option value="2">{options[1]}</option>
+            <option value="3">{options[2]}</option>
+            <option value="4">{options[3]}</option>
+          </select>
+          <button className="sleep-button" onClick={this.setAlarm}>GO TO SLEEP!</button>
+        </div>);
+    }
+
+    screen() {
+      if (this.screenCounter ===1){
+         return (
+           <div className="results-screen1">
+             <br/>
+             {this.scoreChange()}
+             {this.skillChange()}
+             {this.happinessChange()}
+           </div>
+           );
+      } else if (this.screenCounter===2) {
+
+        return (
+          <div className="results-screen2">
+              LEFT SCHOOL  : {`${this.now[0]}:${this.now[1]}${this.now[2]}`} <br/>
+            READY FOR BED: {`${this.bedTime[0]}:${this.bedTime[1]}${this.bedTime[2]}`} <br/>
+          {this.coffeePenaltyMessage} <br/><br/>
+          {this.alarmClock()} <br/>
+          </div>
+        );
+      }
+    }
+
+    handleClickScreen() {
+      if (this.screenCounter===1) {
+        if (this.screen1Done) {this.screenCounter = 2;}
+        else {this.ticker += 60;}
+      }
     }
 
     render() {
       return (
-        <div className="day-results" onClick={this.handleClick}>
-          <br/>
-          {this.scoreChange()}
-          {this.skillChange()}
-          {this.happinessChange()}
+        <div className="day-results" onClick={this.handleClickScreen}>
+          {this.screen()}
         </div>
       );
     }
-
-    // render () {   OLD ONE
-    //   return (
-    //     <div className="pairs-results" onClick={this.handleClick}>
-    //       driving lines:{this.props.drivingLines[0]} out of {this.props.drivingLines[1]} <br/>
-    // navigating lines:{this.props.navigatingLines[0]} out of {this.props.navigatingLines[1]} <br/>
-    //     good switches: {this.props.goodSwitches} <br/>
-    //   bad Switches: {this.props.badSwitches} <br/>
-    //     </div>
-    //   );
-    // }
 
   }//end component
 

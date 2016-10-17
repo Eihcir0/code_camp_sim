@@ -51,7 +51,7 @@ class PairsSeshDrivingScreen extends React.Component {
     var yOffset = this.lineSpacing();
     this.sentenceTexts.forEach((el,idx) => {
       this.sentences.push(
-        {id: idx, text: el, active: (idx===0 ? true : false), exploded: false, yPos: (500 + (idx * yOffset))}
+        {id: idx, text: el, active: (idx===0 ? true : false), exploded: false, yPos: (500 + (idx * (yOffset - 10)))}
       );
     });
 
@@ -103,7 +103,7 @@ class PairsSeshDrivingScreen extends React.Component {
     var xOffset=(a.timer %3) * 75;
     var yOffset=Math.floor(a.timer / 3) * 75;
     for (var i = 0; i < 4; i++) {
-      this.ctx.drawImage(this.explosionImage, xOffset, yOffset, 75, 75, -50 + i*60, a.yPos -130, 75, 75 );
+      this.ctx.drawImage(this.explosionImage, xOffset, yOffset, 75, 75, 5 + i*60, a.yPos -130, 75, 75 );
 
     }
 

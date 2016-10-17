@@ -54,7 +54,7 @@ class PairsSeshNavigatingScreen extends React.Component {
     var yOffset = this.lineSpacing();
     this.sentenceTexts.forEach((el,idx) => {
       this.sentences.push(
-        {id: idx, error: this.errorTexts[idx], text: el, active: (idx===0 ? true : false), done: false, exploded: false, yPos: 500 + (idx * yOffset)}
+        {id: idx, error: this.errorTexts[idx], text: el, active: (idx===0 ? true : false), done: false, exploded: false, yPos: 500 + (idx * (yOffset - 10))}
       );
     });
 

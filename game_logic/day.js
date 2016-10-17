@@ -10,7 +10,7 @@ class Day {
     this.player.currentPos = 0;
     this.player.leaving=false;
     this.player.ateDonut = false;
-    this.lastCoffee = [6,0];
+    this.lastCoffee = [7,1];
     this.talkedToCandanessa = false;
     this.workingLateOnFridaySucks = false;
     this.fireCounter = Math.floor(this.player.score / 100000) + 1 + Math.floor(Math.random()*3);
@@ -84,21 +84,21 @@ class Day {
       case 2:
         return [
                   [       //0
-                    "Q: Is Ruby a statically typed or a ",
-                    "dynamically typed language?",
+                    "Ruby methods: Public, Private, Protected",
                     "",
-                    "",
-                    "Q: Is everything in Ruby an object?",
+                    "Public methods can be called by everyone - no access control is",
+                    "enforced. They do not belong only to one object.  Every instance",
+                    "of the class can call them.  A class's instance methods are ",
+                    "public by default."
                   ],
                   [       //1
-                    "Q: Is Ruby a statically typed or a ",
-                    "dynamically typed language?",
-                    "A: Dynamically typed since type checking is done at runtime.",
+                    "Private methods cannot be called with an explicit receiver - ",
+                    "the receiver is always self. This means that private ",
+                    "methods can be called only in the context of",
+                    "the current object.",
                     "",
-                    "Q: Is everything in Ruby an object?",
-                    "A: Methods are not objects. Blocks are not objects. ",
-                    "Keywords are not objects. However, there are",
-                    "Method objects and Proc objects."
+                    "Protected methods can be invoked only by objects of the",
+                    "defining class and its subclasses. "
                   ],
                   [       //2
                     "Symbols in Ruby",
