@@ -6,13 +6,14 @@ class FoodAnim extends StudyIcon {
     super(obj);
     this.foodType = type;
     this.pos = [92, 180];
+    this.animSettings();
     this.animationOn = false;
     this.movementOn = false;
-    this.animSettings();
     this.imageReady = false;
     this.image = new Image();
     this.image.src = this.getImage();
-    window.setTimeout( ()=>this.sound.play(),100 );
+    this.sound.autoplay = true;
+    this.sound.load();
     this.moves = 0;
     this.sunset = (Math.floor(Math.random()*2)-0.5) > 0 ? -1 : 1;
     this.done = false;

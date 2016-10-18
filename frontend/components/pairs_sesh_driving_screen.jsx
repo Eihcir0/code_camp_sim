@@ -16,6 +16,7 @@ class PairsSeshDrivingScreen extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.sentences = this.props.sentences;
     this.showing = this.showing.bind(this);
+    this.tick = this.tick.bind(this);
     this.initializeSentences = this.initializeSentences.bind(this);
     this.updateSentences = this.updateSentences.bind(this);
     this.addNewSentence = this.addNewSentence.bind(this);

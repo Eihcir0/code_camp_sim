@@ -37,6 +37,7 @@ class Player {
     this.askedOutCandanessa = false;
 
     this.strikes = obj ? obj.strikes : "";
+    this.assessments = [];
     this.session = obj ? obj.session : 0; //
     this.pos = obj ? obj.pos : [280,300];
     // 0 = morning
@@ -47,22 +48,46 @@ class Player {
     // 5 = night
     this.session = obj ? obj.session : 0;
     this.weekNum = Math.floor(this.dayNum / 7) + 1;
-    this.weekDay = this.day % 7;
+    this.weekDay = this.dayNum % 7;
+
     this.skills = obj ? obj.skill : {
       ruby: 0,
-      Rails: 0,
-      SQL: 0,
-      JavaScript: 0,
-      React: 0,
-      Redux: 0
+      rails: 0,
+      sql: 0,
+      javaScript: 0,
+      react: 0,
+      redux: 0
     };
     this.currentSkill = Object.keys(this.skills)[this.weekNum - 1];
     this.fireOff = this.fireOff.bind(this);
     this.newOnFire = this.newOnFire.bind(this);
+    this.weekDayText = this.weekDayText.bind(this);
     this.day = undefined;
     this.week = undefined;
 
   } // end constructor
+
+  weekDayText() {
+    switch (this.weekDay) {
+      case 1:
+        return "Monday";
+      case 2:
+        return "Tuesday";
+      case 3:
+        return "Wednesday";
+      case 4:
+        return "Thursday";
+      case 5:
+        return "Friday";
+      case 6:
+        return "Saturday";
+      case 7:
+        return "Sunday";
+      default:
+        break;
+      }
+
+  }
 
   working() {
     //
@@ -103,7 +128,7 @@ class Player {
    this.clock.lastIconTickerCount = this.clock.tickCounter;
   //scoreDivisor - adjust to increase/decrease chance of something
   //so scoreDivsor set to 50,000 with score is 5% chance plus offset
-    var scoreDivisor = 35000;
+    var scoreDivisor = 25000;
     var scoreOffset = 100000;
     var gotSomething = (Math.random() <
     (((((this.score+scoreOffset) /scoreDivisor))/100) * (this.onFire ? 4 : 1)) );
@@ -150,7 +175,7 @@ class Player {
   }
 
   newBug() {
-    this.happiness -=0.6;
+    this.happiness -=0.8;
     this.skills[this.currentSkill] +=0.20;
     if (this.sleepBank>30) {
       this.newFace = (this.sleepBank>70) ?
@@ -161,8 +186,8 @@ class Player {
   }
 
   newSkillIncrease() {
-    this.skills[this.currentSkill]+=0.75;
-    if (this.skills[this.currentSkill]<800) {this.skills[this.currentSkill]+=0.75;}
+    this.skills[this.currentSkill]+=0.4;
+    if (this.skills[this.currentSkill]<800) {this.skills[this.currentSkill]+=0.4;}
     this.happiness += 0.1;
     if (this.sleepBank>30) {
       this.newFace = (this.sleepBank>70) ?

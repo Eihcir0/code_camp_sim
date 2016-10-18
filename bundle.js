@@ -21577,19 +21577,16 @@
 	  }, {
 	    key: 'handleLeaving',
 	    value: function handleLeaving() {
-	      this.player.tempMessage = '  Your current rank is ' + this.player.scoreTitle() + '.  Here are the results of the day.';
+	      this.player.clock.pause();
+	      if (this.player.clock.is([2, 0])) {
+	        this.player.tempMessage = '  You\'re exhausted.  Must go home now....Your current rank is ' + this.player.scoreTitle() + '.  Here are the results of the day.';
+	      } else {
+	        this.player.tempMessage = '  Your current rank is ' + this.player.scoreTitle() + '.  Here are the results of the day.';
+	      }
 	      //handle strikes for leaving early
 	      //handle slept in office
-	      //handle weekend
-	      this.player.session = 5;
-	      //steps:
-	      // handle normal leave with default alarm set to 7am
-	      //     after setting the alarm, it will calc the wakeup time and pass to new day
-	      //    set new attributes and reset player
-	      //    be sure to set this.currentSesh to 0;
-	
-	      //add alarm
 	      //add option to go out
+	      this.player.session = 5;
 	    }
 	  }, {
 	    key: 'updateSession',
@@ -21681,18 +21678,17 @@
 	  }, {
 	    key: 'handleOpen',
 	    value: function handleOpen() {
-	      var _this2 = this;
-	
 	      this.player.clock.unpause();
 	      this.player.loading = false;
-	      this.interval = window.setInterval(function () {
-	        return _this2.tick();
-	      }, this.intervalTime);
+	      this.interval = window.setInterval(this.tick, this.intervalTime);
 	    }
 	  }, {
 	    key: 'gameOver',
 	    value: function gameOver() {
+	
 	      switch (true) {
+	        case this.player.assessments.includes("FAIL"):
+	          return "You failed an assessment.  You've been asked to leave the program.";
 	        case this.player.happiness <= 0:
 	          return "You're happiness is at 0.  You don't have the motivation to continue with the program.";
 	        case this.player.sleepBank <= 0:
@@ -21730,12 +21726,8 @@
 	      } else if (this.player.session === 3) {
 	        return _react2.default.createElement(_pairs_sesh_screen2.default, { player: this.player });
 	      } else if (this.player.currentPos === 12) {
-	        if (this.player.dayNum % 7 === 1 && this.player.dayNum !== 1) {
-	          console.log("ASSESSMENT");
-	        } else {
-	          return _react2.default.createElement(_lecture_sesh_screen2.default, { className: 'lecture-sesh',
-	            player: this.player });
-	        }
+	        return _react2.default.createElement(_lecture_sesh_screen2.default, { className: 'lecture-sesh',
+	          player: this.player });
 	      } else if ([0, 2, 4].includes(this.player.session)) {
 	        return _react2.default.createElement(_open_sesh_screen2.default, { className: 'open-sesh',
 	          player: this.player,
@@ -21783,16 +21775,21 @@
 	            { className: 'game-right-side' },
 	            _react2.default.createElement(
 	              'div',
-	              null,
-	              'w',
+	              { className: 'clock-area' },
+	              this.player.weekDayText(),
+	              ' w',
 	              this.player.weekNum,
 	              'd',
 	              this.player.dayNum,
-	              '    ',
-	              this.state.clock[0],
-	              ':',
-	              this.state.clock[1],
-	              this.state.clock[2]
+	              _react2.default.createElement('br', null),
+	              _react2.default.createElement(
+	                'span',
+	                { className: 'clock' },
+	                this.state.clock[0],
+	                ':',
+	                this.state.clock[1],
+	                this.state.clock[2]
+	              )
 	            ),
 	            _react2.default.createElement(
 	              'div',
@@ -21822,6 +21819,7 @@
 	              _react2.default.createElement(
 	                'span',
 	                { className: 'current-subject' },
+	                'SKILLS:',
 	                _react2.default.createElement('img', { className: 'icon', src: './app/assets/images/ruby.png' }),
 	                this.state.ruby,
 	                '% ',
@@ -21835,8 +21833,6 @@
 	                _react2.default.createElement('br', null),
 	                this.player.strikes
 	              ),
-	              _react2.default.createElement('br', null),
-	              _react2.default.createElement('br', null),
 	              _react2.default.createElement('br', null),
 	              _react2.default.createElement('br', null),
 	              _react2.default.createElement(
@@ -21994,6 +21990,7 @@
 	    this.askedOutCandanessa = false;
 	
 	    this.strikes = obj ? obj.strikes : "";
+	    this.assessments = [];
 	    this.session = obj ? obj.session : 0; //
 	    this.pos = obj ? obj.pos : [280, 300];
 	    // 0 = morning
@@ -22004,23 +22001,47 @@
 	    // 5 = night
 	    this.session = obj ? obj.session : 0;
 	    this.weekNum = Math.floor(this.dayNum / 7) + 1;
-	    this.weekDay = this.day % 7;
+	    this.weekDay = this.dayNum % 7;
+	
 	    this.skills = obj ? obj.skill : {
 	      ruby: 0,
-	      Rails: 0,
-	      SQL: 0,
-	      JavaScript: 0,
-	      React: 0,
-	      Redux: 0
+	      rails: 0,
+	      sql: 0,
+	      javaScript: 0,
+	      react: 0,
+	      redux: 0
 	    };
 	    this.currentSkill = Object.keys(this.skills)[this.weekNum - 1];
 	    this.fireOff = this.fireOff.bind(this);
 	    this.newOnFire = this.newOnFire.bind(this);
+	    this.weekDayText = this.weekDayText.bind(this);
 	    this.day = undefined;
 	    this.week = undefined;
 	  } // end constructor
 	
 	  _createClass(Player, [{
+	    key: 'weekDayText',
+	    value: function weekDayText() {
+	      switch (this.weekDay) {
+	        case 1:
+	          return "Monday";
+	        case 2:
+	          return "Tuesday";
+	        case 3:
+	          return "Wednesday";
+	        case 4:
+	          return "Thursday";
+	        case 5:
+	          return "Friday";
+	        case 6:
+	          return "Saturday";
+	        case 7:
+	          return "Sunday";
+	        default:
+	          break;
+	      }
+	    }
+	  }, {
 	    key: 'working',
 	    value: function working() {
 	      //
@@ -22091,7 +22112,7 @@
 	      this.clock.lastIconTickerCount = this.clock.tickCounter;
 	      //scoreDivisor - adjust to increase/decrease chance of something
 	      //so scoreDivsor set to 50,000 with score is 5% chance plus offset
-	      var scoreDivisor = 35000;
+	      var scoreDivisor = 25000;
 	      var scoreOffset = 100000;
 	      var gotSomething = Math.random() < (this.score + scoreOffset) / scoreDivisor / 100 * (this.onFire ? 4 : 1);
 	      if (!gotSomething) {
@@ -22146,7 +22167,7 @@
 	  }, {
 	    key: 'newBug',
 	    value: function newBug() {
-	      this.happiness -= 0.6;
+	      this.happiness -= 0.8;
 	      this.skills[this.currentSkill] += 0.20;
 	      if (this.sleepBank > 30) {
 	        this.newFace = this.sleepBank > 70 ? { filename: "rested_teeth", duration: 10 } : { filename: "tired_teeth", duration: 10 };
@@ -22156,9 +22177,9 @@
 	  }, {
 	    key: 'newSkillIncrease',
 	    value: function newSkillIncrease() {
-	      this.skills[this.currentSkill] += 0.75;
+	      this.skills[this.currentSkill] += 0.4;
 	      if (this.skills[this.currentSkill] < 800) {
-	        this.skills[this.currentSkill] += 0.75;
+	        this.skills[this.currentSkill] += 0.4;
 	      }
 	      this.happiness += 0.1;
 	      if (this.sleepBank > 30) {
@@ -22226,12 +22247,14 @@
 	    //60 => 1 real second / 1 game minute or 60 real seconds for 1 gm hr
 	    this.relativeSpeed = relativeSpeed; // 1 => 1 real sec / game minute
 	    this.speed = this.relativeSpeed * 60;
-	
 	    this.ticksPerSecond = 100; //based on Game_Main class
 	    this.tickFraction = 1000 / this.ticksPerSecond;
 	    this.paused = false;
 	    this.time = this.time.bind(this);
 	    this.tick = this.tick.bind(this);
+	    this.is = this.is.bind(this);
+	    this.convertToAmPm = this.convertToAmPm.bind(this);
+	    this.convertToMilitaryTime = this.convertToMilitaryTime.bind(this);
 	    this.lastTime = [];
 	    this.tickCounter = 0;
 	    this.lastTickerCount = this.tickCounter + 5 - 5;
@@ -22251,6 +22274,7 @@
 	  }, {
 	    key: "time",
 	    value: function time() {
+	      //returns in am/pm
 	
 	      if (this.paused) {
 	        return this.lastTime;
@@ -22268,55 +22292,48 @@
 	    key: "convertToMilitaryTime",
 	    value: function convertToMilitaryTime(timeX) {
 	      if (timeX.length === 2) {
-	        if (timeX[0] <= 7) {
-	          timeX[0] += 24;
-	        }
 	        return timeX;
 	      }
 	      var hour = parseInt(timeX[0]);
 	      var minute = parseInt(timeX[1]);
 	      var ampm = timeX[2];
-	      if (timeX[0] !== "12" && ampm === "pm" || timeX[0] === "12" && ampm === "am") {
+	      if (timeX[0] !== "12" && ampm === "pm") {
 	        hour += 12;
 	      }
-	      if (hour <= 7) {
-	        hour += 24;
+	      if (timeX[0] == "12" && ampm === "am") {
+	        hour -= 12;
 	      }
 	      return [hour, minute];
 	    }
 	  }, {
 	    key: "convertToAmPm",
 	    value: function convertToAmPm(time) {
+	
 	      if (time[2]) {
 	        return time;
 	      }
-	      time[0] = parseInt(time[0]);
-	      time[1] = parseInt(time[1]);
-	      if (time[1] < 10) {
-	        time[1] = "0" + time[1];
+	      var newTime = [0, 0];
+	      newTime[0] = parseInt(time[0]) % 24;
+	      newTime[1] = parseInt(time[1]);
+	      if (newTime[1] < 10) {
+	        newTime[1] = "0" + newTime[1];
 	      } else {
-	        time[1] = time[1].toString();
+	        newTime[1] = newTime[1].toString();
 	      }
-	      var ampm = time[0] > 11 && time[0] < 24 ? "pm" : "am";
-	      switch (true) {
-	        case time[0] == 24:
-	          time[0] = 24;
-	          break;
-	        case time[0] > 24:
-	          time[0] -= 24;
-	          break;
-	        case time[0] > 12 && time[0] < 24:
-	          time[0] -= 12;
-	          break;
-	        default:
-	          break;
+	      var ampm = newTime[0] > 11 && newTime[0] < 24 ? "pm" : "am";
+	      if (newTime[0] > 12) {
+	        newTime[0] -= 12;
 	      }
-	      return [time[0].toString(), time[1], ampm];
+	      if (newTime[0] === 0) {
+	        newTime[0] = 12;
+	      }
+	      return [newTime[0].toString(), newTime[1], ampm];
 	    }
 	  }, {
 	    key: "is",
 	    value: function is(time) {
 	      //AMPM time only
+	      time = this.convertToAmPm(time);
 	      var currentTime = this.time();
 	      return time[0] === currentTime[0] && time[1] === currentTime[1] && time[2] === currentTime[2];
 	    }
@@ -22344,7 +22361,6 @@
 	    value: function isBetween(startTime, endTime) {
 	      var target = arguments.length <= 2 || arguments[2] === undefined ? this.time() : arguments[2];
 	      //inclusive
-	
 	
 	      var currentTime = this.convertToMilitaryTime(target);
 	      var currentHour = currentTime[0];
@@ -22382,6 +22398,26 @@
 	
 	      var targetTotal = targetHour * 60 + targetMinute;
 	      return startTotal > targetTotal;
+	    }
+	  }, {
+	    key: "isBefore",
+	    value: function isBefore(startTime) {
+	      var target = arguments.length <= 1 || arguments[1] === undefined ? this.time() : arguments[1];
+	      //exclusive
+	
+	
+	      var targetTime = this.convertToMilitaryTime(target);
+	      var targetHour = targetTime[0];
+	      var targetMinute = targetTime[1];
+	
+	      var startTime = this.convertToMilitaryTime(startTime);
+	      var startHour = startTime[0];
+	      var startMinute = startTime[1];
+	
+	      var startTotal = startHour * 60 + startMinute;
+	
+	      var targetTotal = targetHour * 60 + targetMinute;
+	      return startTotal < targetTotal;
 	    }
 	  }, {
 	    key: "add",
@@ -22990,10 +23026,12 @@
 	
 	var Week = function () {
 	  function Week(player) {
+	    var arrivalTime = arguments.length <= 1 || arguments[1] === undefined ? ["8", "30", "am"] : arguments[1];
+	
 	    _classCallCheck(this, Week);
 	
 	    this.player = player;
-	    this.day = new _day2.default(this.player, ["10", "20", "pm"]); //change this to new arrival time
+	    this.day = new _day2.default(this.player, arrivalTime); //change this to new arrival time
 	    this.material = this.materials();
 	  }
 	
@@ -23037,8 +23075,7 @@
 	      //get player priorities for weekend;
 	      //perform accordingly
 	      //only advance day until Sunday - will advance once more in Game.advanceWeek
-	      console.log("weekend!!");
-	      this.player.dayNum += 1;
+	      this.player.dayNum += 2;
 	    }
 	  }]);
 	
@@ -23077,7 +23114,7 @@
 	    this.player.currentPos = 0;
 	    this.player.leaving = false;
 	    this.player.ateDonut = false;
-	    this.lastCoffee = [7, 1];
+	    this.lastCoffee = undefined;
 	    this.talkedToCandanessa = false;
 	    this.workingLateOnFridaySucks = false;
 	    this.fireCounter = Math.floor(this.player.score / 100000) + 1 + Math.floor(Math.random() * 3);
@@ -23091,7 +23128,7 @@
 	
 	    this.beginningSkillPoints = this.player.skills[this.player.currentSkill] ? this.player.skills[this.player.currentSkill] : 0;
 	    this.beginningHappiness = this.player.happiness;
-	
+	    this.pairsDone = false;
 	    this.lectureNotes = this.getDaysLectureNotes(this.player.dayNum);
 	  }
 	
@@ -23266,6 +23303,8 @@
 	    _this.imageSeated = new Image();
 	    _this.imageSeated.src = "./app/assets/images/hero_seated_spritesheet.png";
 	    _this.soundTyping = new Audio("./app/assets/sounds/typing.wav");
+	    _this.soundTyping.autoplay = true;
+	    _this.soundTyping.load();
 	    _this.animationOn = true;
 	    _this.speed = 100;
 	    _this.updateAnimSet();
@@ -23694,10 +23733,12 @@
 	    key: 'main',
 	    value: function main() {
 	      //refactor!
-	      if (this.player.clock.is(["12", "00", "am"])) {
+	      if (this.player.clock.is([24, 0])) {
 	        this.handle1159();
 	      }
 	      if (this.player.clock.is(["2", "00", "am"])) {
+	        this.player.clock.pause();
+	
 	        this.handleLeave();
 	      }
 	      if (this.player.day.eatingLunch) {
@@ -23954,7 +23995,10 @@
 	
 	        this.player.newStrike = { message: "You receive a strike for violating the code of conduct.  If you ask someone out and they say they're not interested, you cannot ask again.    No means no.", newTime: this.player.clock.time(), newClockSpeed: this.player.defaultClockSpeed, newPos: 0 };
 	      } else {
-	        this.player.tempMessage = 'No, thank you.  I\'m not interested.';
+	        this.player.message = 'No, thank you.  I\'m not interested.';
+	        window.setTimeout(function () {
+	          _this4.player.message = "";
+	        }, 2000);
 	        this.player.askedOutCandanessa = true;
 	        this.playerAnim.moveTo(0, function () {
 	          _this4.player.currentPos = 0;
@@ -23986,11 +24030,17 @@
 	    value: function drinksCoffee() {
 	      if (Math.random() * 5 < 1) {
 	        this.player.day.lastCoffee = this.player.clock.time();
+	        if (this.player.clock.isBetween([0, 0], [2, 0])) {
+	          this.player.day.lastCoffee[0] += 24;
+	        }
 	      }
-	      if (this.player.clock.diff(this.player.day.lastCoffee) < 30) {
+	      if (this.player.day.lastCoffee !== undefined && this.player.clock.diff(this.player.day.lastCoffee) < 30) {
 	        this.player.tempMessage = "COFFEE BREWING...";
 	      } else {
 	        this.player.day.lastCoffee = this.player.clock.time();
+	        if (this.player.clock.isBetween([0, 0], [2, 0])) {
+	          this.player.day.lastCoffee[0] += 24;
+	        }
 	        this.player.focus += 35;
 	        var coffee = new _food_anim2.default({ canvas: this.canvas, ctx: this.ctx }, "coffee");
 	        this.sprites.push(coffee);
@@ -24276,7 +24326,7 @@
 	      this.sprites.forEach(function (sprite) {
 	        if (sprite.type !== "study icon" && sprite.type !== "student") {
 	          _this11.ctx.drawImage(sprite.image, sprite.pos[0], sprite.pos[1]);
-	        } else if (sprite.type === "student" && sprite.number !== 1 && !_this11.player.clock.isBetween([9, 1], [11, 59]) && !_this11.player.clock.isBetween([24, 0], [30, 0])) {
+	        } else if (sprite.type === "student" && sprite.number !== 1 && !_this11.player.clock.isBetween([9, 1], [11, 59]) && !_this11.player.clock.isBetween([0, 0], [2, 0])) {
 	          sprite.render();
 	          if (sprite.number !== 1 && _this11.player.clock.isBetween([20, 0], [24, 0])) {
 	            if (Math.random() * 3000 < 1) {
@@ -24819,15 +24869,14 @@
 	
 	    _this.foodType = type;
 	    _this.pos = [92, 180];
+	    _this.animSettings();
 	    _this.animationOn = false;
 	    _this.movementOn = false;
-	    _this.animSettings();
 	    _this.imageReady = false;
 	    _this.image = new Image();
 	    _this.image.src = _this.getImage();
-	    window.setTimeout(function () {
-	      return _this.sound.play();
-	    }, 100);
+	    _this.sound.autoplay = true;
+	    _this.sound.load();
 	    _this.moves = 0;
 	    _this.sunset = Math.floor(Math.random() * 2) - 0.5 > 0 ? -1 : 1;
 	    _this.done = false;
@@ -25075,6 +25124,10 @@
 	
 	var _sleep_minigame2 = _interopRequireDefault(_sleep_minigame);
 	
+	var _assessment_sesh = __webpack_require__(207);
+	
+	var _assessment_sesh2 = _interopRequireDefault(_assessment_sesh);
+	
 	var _clock = __webpack_require__(175);
 	
 	var _clock2 = _interopRequireDefault(_clock);
@@ -25097,6 +25150,7 @@
 	    var _this = _possibleConstructorReturn(this, (LectureSeshScreen.__proto__ || Object.getPrototypeOf(LectureSeshScreen)).call(this, props));
 	
 	    _this.player = _this.props.player;
+	    _this.player.tempMessage = "";
 	    _this.player.focus = 100;
 	    var startTime;
 	    if (_this.player.clock.time()[0] === "8") {
@@ -25112,6 +25166,7 @@
 	    _this.startingFocus = _this.player.focus;
 	    _this.eyesClosedTimer = 0;
 	    _this.startTime = _this.player.clock.tickCounter;
+	    _this.faintMeterBarStyle = {};
 	    _this.state = {
 	      currentSlide: 1,
 	      eyesClosed: false,
@@ -25140,9 +25195,7 @@
 	    _this.sleepSound = new Audio("./app/assets/sounds/Rock-a-bye Baby.mp3");
 	    _this.faintSound = new Audio("./app/assets/sounds/trippy.wav");
 	    _this.faintSoundOn = false;
-	    _this.xxinterval = setInterval(function () {
-	      return _this.tick();
-	    }, 50);
+	    _this.xxinterval = setInterval(_this.tick, 50);
 	    _this.lectureNotes = _this.player.day.lectureNotes;
 	    return _this;
 	  }
@@ -25174,7 +25227,7 @@
 	        this.faintSound = "";
 	        this.sleepSound = "";
 	        this.xxinterval = undefined;
-	        this.player.newCongrats = { message: 'CONGRATULATIONS!!! You made it through lecture without sleeping!', newTime: [12, 0], newClockSpeed: this.player.defaultClockSpeed, newPos: 0, newSession: 2 };
+	        this.player.newCongrats = { message: 'You made it through lecture without sleeping!', newTime: [12, 0], newClockSpeed: this.player.defaultClockSpeed, newPos: 0, newSession: 2 };
 	      }
 	    }
 	  }, {
@@ -25301,7 +25354,11 @@
 	  }, {
 	    key: 'lectureSlide',
 	    value: function lectureSlide() {
-	      if (!this.state.eyesClosed) {
+	      if (this.player.dayNum % 7 === 1 && this.player.dayNum !== 1) {
+	        clearInterval(this.xxinterval);
+	        this.faintMeterBarStyle = { display: "none" };
+	        return _react2.default.createElement(_assessment_sesh2.default, { player: this.player });
+	      } else if (!this.state.eyesClosed) {
 	        if (this.player.focus <= 50) {
 	          var shadow = '0 0 ' + (50 - this.player.focus) + 'px rgba(0,0,0,0.5)';
 	          var raysStyle = { opacity: this.state.faintMeter / 100 };
@@ -25438,7 +25495,7 @@
 	        'div',
 	        { onClick: this.handleClick, className: 'lecture-slide-container' },
 	        this.lectureSlide(),
-	        _react2.default.createElement('meter', { className: 'faint-meter-bar', value: this.state.faintMeter, min: '0', max: this.faintMeterMax, low: this.faintMeterMax - 1, high: this.faintMeterMax - 0.5, optimum: this.faintMeterMax }),
+	        _react2.default.createElement('meter', { style: this.faintMeterBarStyle, className: 'faint-meter-bar', value: this.state.faintMeter, min: '0', max: this.faintMeterMax, low: this.faintMeterMax - 1, high: this.faintMeterMax - 0.5, optimum: this.faintMeterMax }),
 	        _react2.default.createElement(
 	          'div',
 	          null,
@@ -25563,26 +25620,41 @@
 	    var _this = _possibleConstructorReturn(this, (NightSeshScreen.__proto__ || Object.getPrototypeOf(NightSeshScreen)).call(this, props));
 	
 	    _this.player = _this.props.player;
+	
+	    _this.skill = _this.player.currentSkill;
+	    _this.skillCapitalized = _this.skill.charAt(0).toUpperCase() + _this.skill.slice(1);
+	
 	    _this.player.clock.pause();
 	    var clock = _this.player.clock;
 	    _this.now = clock.time();
+	
+	    if (clock.isBefore(_this.now, [6, 0])) {
+	      _this.now = clock.add(24 * 60), _this.now;
+	    } //add 24 hours if after midnight
 	    _this.minutesToGetToSchool = 60 + Math.floor(Math.random() * 30 + 1);
 	    var minutesBeforeBed = 60 + Math.floor(Math.random() * 30 + 1);
 	
-	    var minutesSinceLastCoffee = clock.diff(_this.player.day.lastCoffee, _this.now);
+	    var minutesSinceLastCoffee = clock.diff(_this.player.day.lastCoffee || [12, 0], _this.now);
 	    var coffeePenalty = Math.max(180 - minutesSinceLastCoffee, 0);
-	    var bedTime = clock.add(coffeePenalty + minutesBeforeBed, _this.now);
-	    _this.bedTime = clock.convertToAmPm(bedTime);
+	
+	    _this.bedTime = clock.add(coffeePenalty + minutesBeforeBed, _this.now);
+	
 	    _this.coffeePenaltyMessage = coffeePenalty <= 0 ? null : "Late coffee -- couldn't fall asleep right away!!";
+	
+	    _this.state = { messages: [] };
 	
 	    _this.handleClickScreen = _this.handleClickScreen.bind(_this);
 	    _this.screen = _this.screen.bind(_this);
 	    _this.alarmClock = _this.alarmClock.bind(_this);
 	    _this.setAlarm = _this.setAlarm.bind(_this);
+	    _this.resultsScreen = _this.resultsScreen.bind(_this);
+	    _this.alarmScreen = _this.alarmScreen.bind(_this);
+	    _this.weekendSetter = _this.weekendSetter.bind(_this);
+	    _this.startWeekend = _this.startWeekend.bind(_this);
 	    _this.ticker = 0;
-	    _this.alarmTime = ["7", "00", "am"];
-	    _this.sound = new Audio("./app/assets/sounds/typing.wav");
-	    window.setTimeout(_this.sound.play(), 1);
+	    _this.alarmTime = [31, 0];
+	    // this.sound = new Audio("./app/assets/sounds/typing.wav");
+	    // window.setTimeout(this.sound.play(),1);
 	    _this.redStyle = { color: "red" };
 	    _this.greenStyle = { color: "green" };
 	    _this.screen1Done = false;
@@ -25591,6 +25663,7 @@
 	      return _this.ticker++;
 	    }, 100);
 	    _this.screenCounter = 1;
+	    _this.weekendMessages = [];
 	
 	    return _this;
 	  }
@@ -25703,41 +25776,38 @@
 	      var alarm = document.getElementById("alarm").value;
 	      switch (alarm) {
 	        case "1":
-	          this.alarmTime = ["6", "00", "am"];
+	          this.alarmTime = [30, 0];
 	          break;
 	        case "2":
-	          this.alarmTime = ["6", "30", "am"];
+	          this.alarmTime = [30, 30];
 	          break;
 	        case "3":
-	          this.alarmTime = ["7", "00", "am"];
+	          this.alarmTime = [31, 0];
 	          break;
 	        case "4":
-	          this.alarmTime = ["7", "30", "am"];
+	          this.alarmTime = [31, 30];
 	          break;
 	        default:
 	          break;
 	      }
-	      debugger;
 	      var wakeupTime;
 	      var arrivalTime;
-	      var alarmDiff = this.player.clock.diff(this.now, this.alarmTime);
+	      var alarmDiff = this.player.clock.diff(this.bedTime, this.alarmTime);
 	      if (alarmDiff > 270) {
 	        wakeupTime = this.alarmTime;
-	        arrivalTime = this.player.clock.add(this.minutesToGetToSchool, wakeupTime);
-	        if (this.player.clock.isAfter(arrivalTime, [8, 59])) {
-	          arrivalTime = [8, 59];
+	        arrivalTime = this.player.clock.add(this.minutesToGetToSchool, wakeupTime); //24*60 adjust for new day
+	        if (this.player.clock.isAfter(arrivalTime, [32, 57])) {
+	          arrivalTime = [32, 59];
 	          this.player.arriveLate = "SWEATY STRIKE! You ran to school but didn't make it in time.  You get a strike for coming late to lecture.";
 	        }
 	      } else {
-	        wakeupTime = [8, 0];
-	        arrivalTime = [8, 59];
+	        wakeupTime = [32, 0];
+	        arrivalTime = [32, 59];
 	        this.player.arriveLate = "You overslept your alarm and showed up late for lecture!";
 	      }
-	
 	      clearInterval(this.interval);
-	
-	      var diff = this.player.clock.diff(wakeupTime, this.now) - 450;
-	      this.player.sleepBank -= diff / 60 * 10;
+	      var diff = this.player.clock.diff(this.bedTime, wakeupTime) - 450; //450 = 7.5 hours min sleep requirement
+	      this.player.sleepBank += diff / 60 * 10;
 	      if (this.player.sleepBank < 20) {
 	        this.player.sleepBank = 20;
 	      }
@@ -25745,7 +25815,81 @@
 	        this.player.sleepBank = 100;
 	      }
 	      this.player.focus = this.player.sleepBank;
-	      this.player.week.advanceDay(arrivalTime);
+	      this.player.week.advanceDay(this.player.clock.convertToAmPm(arrivalTime));
+	    }
+	  }, {
+	    key: 'increaseAttributes',
+	    value: function increaseAttributes(value, id) {
+	      switch (value) {
+	        case "1":
+	          //sleep
+	          this.player.sleepBank += 25;
+	          return _react2.default.createElement(
+	            'span',
+	            { key: id },
+	            _react2.default.createElement('br', null),
+	            'You got some zzzz\'s ==> SleepBank +20 ',
+	            _react2.default.createElement('br', null)
+	          );
+	        case "2":
+	          //study
+	          this.player.skills[this.skill] += 100;
+	          return _react2.default.createElement(
+	            'span',
+	            { key: id },
+	            _react2.default.createElement('br', null),
+	            'You hit the books. ==> ',
+	            this.skillCapitalized,
+	            ' skill +10%',
+	            _react2.default.createElement('br', null)
+	          );
+	        case "3":
+	          //have fun
+	          this.player.happiness += 20;
+	          return _react2.default.createElement(
+	            'span',
+	            { key: id },
+	            _react2.default.createElement('br', null),
+	            'You had fun! ==> Happiness +20 ',
+	            _react2.default.createElement('br', null)
+	          );
+	        default:
+	          break;
+	      }
+	
+	      //display then window timeout to change screen
+	    }
+	  }, {
+	    key: 'startWeekend',
+	    value: function startWeekend() {
+	      var _this2 = this;
+	
+	      var wk1 = document.getElementById("weekend1").value;
+	      var wk2 = document.getElementById("weekend2").value;
+	      var wk3 = document.getElementById("weekend3").value;
+	
+	      this.weekendMessages.push(this.increaseAttributes(wk1, 1));
+	      this.weekendMessages.push(this.increaseAttributes(wk2, 2));
+	      this.weekendMessages.push(this.increaseAttributes(wk3, 3));
+	      this.setState({ messages: this.weekendMessages });
+	      var arrivalTime = [8, 30];
+	
+	      clearInterval(this.interval);
+	      if (this.player.sleepBank < 20) {
+	        this.player.sleepBank = 20;
+	      }
+	      if (this.player.sleepBank > 100) {
+	        this.player.sleepBank = 100;
+	      }
+	
+	      this.player.focus = this.player.sleepBank;
+	
+	      window.setTimeout(function () {
+	        _this2.player.week.weekEnd();
+	        var week = new _week2.default(_this2.player, arrivalTime);
+	        _this2.player.week = week;
+	        _this2.player.week.advanceDay(_this2.player.clock.convertToAmPm(arrivalTime));
+	      }, 5000);
 	    }
 	  }, {
 	    key: 'alarmClock',
@@ -25792,38 +25936,162 @@
 	      );
 	    }
 	  }, {
+	    key: 'weekendSetter',
+	    value: function weekendSetter() {
+	
+	      //NOTE WILL TAKE AT LEAST 1 hour to get to school
+	      var options = ["SLEEP", "STUDY", "HAVE FUN"];
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'set-weekend-form' },
+	        _react2.default.createElement(
+	          'select',
+	          { id: 'weekend1',
+	            className: 'set-weekend',
+	            defaultValue: '1' },
+	          _react2.default.createElement(
+	            'option',
+	            { value: '1' },
+	            options[0]
+	          ),
+	          _react2.default.createElement(
+	            'option',
+	            { value: '2' },
+	            options[1]
+	          ),
+	          _react2.default.createElement(
+	            'option',
+	            { value: '3' },
+	            options[2]
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'select',
+	          { id: 'weekend2',
+	            className: 'set-weekend',
+	            defaultValue: '2' },
+	          _react2.default.createElement(
+	            'option',
+	            { value: '1' },
+	            options[0]
+	          ),
+	          _react2.default.createElement(
+	            'option',
+	            { value: '2' },
+	            options[1]
+	          ),
+	          _react2.default.createElement(
+	            'option',
+	            { value: '3' },
+	            options[2]
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'select',
+	          { id: 'weekend3',
+	            className: 'set-weekend',
+	            defaultValue: '3' },
+	          _react2.default.createElement(
+	            'option',
+	            { value: '1' },
+	            options[0]
+	          ),
+	          _react2.default.createElement(
+	            'option',
+	            { value: '2' },
+	            options[1]
+	          ),
+	          _react2.default.createElement(
+	            'option',
+	            { value: '3' },
+	            options[2]
+	          )
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'button',
+	          { className: 'weekend-button', onClick: this.startWeekend },
+	          'GO WEEKEND!'
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'weekend-messages' },
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement('br', null),
+	          this.state.messages
+	        )
+	      );
+	    }
+	  }, {
+	    key: 'resultsScreen',
+	    value: function resultsScreen() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'results-screen1' },
+	        _react2.default.createElement('br', null),
+	        this.scoreChange(),
+	        this.skillChange(),
+	        this.happinessChange()
+	      );
+	    }
+	  }, {
+	    key: 'alarmScreen',
+	    value: function alarmScreen() {
+	      var bedTime = this.player.clock.convertToAmPm(this.bedTime);
+	      var nowAmPm = this.player.clock.convertToAmPm(this.now);
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'results-screen2' },
+	        'LEFT SCHOOL  : ',
+	        nowAmPm[0] + ':' + nowAmPm[1] + nowAmPm[2],
+	        ' ',
+	        _react2.default.createElement('br', null),
+	        'READY FOR BED: ',
+	        bedTime[0] + ':' + bedTime[1] + bedTime[2],
+	        ' ',
+	        _react2.default.createElement('br', null),
+	        this.coffeePenaltyMessage,
+	        ' ',
+	        _react2.default.createElement('br', null),
+	        this.alarmClock(),
+	        ' ',
+	        _react2.default.createElement('br', null)
+	      );
+	    }
+	  }, {
+	    key: 'weekendScreen',
+	    value: function weekendScreen() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'weekend-screen' },
+	        _react2.default.createElement('br', null),
+	        'THE WEEKEND IS HERE!',
+	        _react2.default.createElement('br', null),
+	        'CHOOSE 3 AREAS TO FOCUS ON THIS WEEKEND',
+	        _react2.default.createElement('br', null),
+	        ' ',
+	        _react2.default.createElement('br', null),
+	        '(you can choose the same category more than once!)',
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        this.weekendSetter(),
+	        ' ',
+	        _react2.default.createElement('br', null)
+	      );
+	    }
+	  }, {
 	    key: 'screen',
 	    value: function screen() {
 	      if (this.screenCounter === 1) {
-	        return _react2.default.createElement(
-	          'div',
-	          { className: 'results-screen1' },
-	          _react2.default.createElement('br', null),
-	          this.scoreChange(),
-	          this.skillChange(),
-	          this.happinessChange()
-	        );
+	        return this.resultsScreen();
 	      } else if (this.screenCounter === 2) {
-	
-	        return _react2.default.createElement(
-	          'div',
-	          { className: 'results-screen2' },
-	          'LEFT SCHOOL  : ',
-	          this.now[0] + ':' + this.now[1] + this.now[2],
-	          ' ',
-	          _react2.default.createElement('br', null),
-	          'READY FOR BED: ',
-	          this.bedTime[0] + ':' + this.bedTime[1] + this.bedTime[2],
-	          ' ',
-	          _react2.default.createElement('br', null),
-	          this.coffeePenaltyMessage,
-	          ' ',
-	          _react2.default.createElement('br', null),
-	          _react2.default.createElement('br', null),
-	          this.alarmClock(),
-	          ' ',
-	          _react2.default.createElement('br', null)
-	        );
+	        if (this.player.dayNum % 7 === 5) {
+	          return this.weekendScreen();
+	        } else {
+	          return this.alarmScreen();
+	        }
 	      }
 	    }
 	  }, {
@@ -26097,6 +26365,7 @@
 	    _this.handleSubmit = _this.handleSubmit.bind(_this);
 	    _this.sentences = _this.props.sentences;
 	    _this.showing = _this.showing.bind(_this);
+	    _this.tick = _this.tick.bind(_this);
 	    _this.initializeSentences = _this.initializeSentences.bind(_this);
 	    _this.updateSentences = _this.updateSentences.bind(_this);
 	    _this.addNewSentence = _this.addNewSentence.bind(_this);
@@ -26388,7 +26657,6 @@
 	      currentInput: ""
 	    };
 	    _this.line = _this.line.bind(_this);
-	    //  this.zzinterval = setInterval(()=>this.tick(),50);
 	    return _this;
 	  }
 	
@@ -26500,6 +26768,7 @@
 	    _this.handleSubmit = _this.handleSubmit.bind(_this);
 	    _this.sentences = _this.props.sentences;
 	    _this.showing = _this.showing.bind(_this);
+	    _this.tick = _this.tick.bind(_this);
 	    _this.initializeSentences = _this.initializeSentences.bind(_this);
 	    _this.updateSentences = _this.updateSentences.bind(_this);
 	    _this.addNewSentence = _this.addNewSentence.bind(_this);
@@ -26524,17 +26793,13 @@
 	  _createClass(PairsSeshNavigatingScreen, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      var _this2 = this;
-	
 	      this.canvas = document.getElementById('canvas1');
 	      this.canvas.height = 500;
 	      this.canvas.width = 800;
 	      this.ctx = this.canvas.getContext("2d");
 	      this.setState({ currentInput: this.sentences[0].error });
 	      this.el = document.getElementById("pairs-input-nav");
-	      this.navigatingInterval = setInterval(function () {
-	        return _this2.tick();
-	      }, 50);
+	      this.navigatingInterval = setInterval(this.tick, 50);
 	    }
 	  }, {
 	    key: 'lineSpacing',
@@ -26544,16 +26809,17 @@
 	  }, {
 	    key: 'initializeSentences',
 	    value: function initializeSentences() {
-	      var _this3 = this;
+	      var _this2 = this;
 	
 	      var yOffset = this.lineSpacing();
 	      this.sentenceTexts.forEach(function (el, idx) {
-	        _this3.sentences.push({ id: idx, error: _this3.errorTexts[idx], text: el, active: idx === 0 ? true : false, done: false, exploded: false, yPos: 500 + idx * (yOffset - 10) });
+	        _this2.sentences.push({ id: idx, error: _this2.errorTexts[idx], text: el, active: idx === 0 ? true : false, done: false, exploded: false, yPos: 500 + idx * (yOffset - 10) });
 	      });
 	    }
 	  }, {
 	    key: 'tick',
 	    value: function tick() {
+	
 	      if (this.props.player.day.pairsDone) {
 	        this.clearInt();
 	        return;
@@ -26623,23 +26889,23 @@
 	  }, {
 	    key: 'update',
 	    value: function update(field) {
-	      var _this4 = this;
+	      var _this3 = this;
 	
 	      return function (e) {
-	        _this4.setState(_defineProperty({}, field, e.currentTarget.value));
+	        _this3.setState(_defineProperty({}, field, e.currentTarget.value));
 	      };
 	    }
 	  }, {
 	    key: 'updateSentences',
 	    value: function updateSentences() {
-	      var _this5 = this;
+	      var _this4 = this;
 	
 	      if (this.state.currentInput === "bbr") {
 	        this.setState({ currentInput: this.findActive().text });
 	        return;
 	      }
 	      this.sentences.forEach(function (sentence) {
-	        sentence.yPos -= _this5.yPosIncrement;
+	        sentence.yPos -= _this4.yPosIncrement;
 	      });
 	      if (this.sentences[0].yPos <= 200) {
 	        if (!this.sentences[0].exploded && !this.sentences[0].done) {
@@ -26698,14 +26964,14 @@
 	  }, {
 	    key: 'pairsLines',
 	    value: function pairsLines() {
-	      var _this6 = this;
+	      var _this5 = this;
 	
 	      var results = [];
 	      this.sentences.forEach(function (sentence, idx) {
 	        if (sentence.yPos < 450) {
 	          results.push(_react2.default.createElement(
 	            'div',
-	            { key: ++_this6.counter, className: 'pairs-navigating-line', style: sentence.exploded ? { display: "none" } : { top: sentence.yPos + "px" } },
+	            { key: ++_this5.counter, className: 'pairs-navigating-line', style: sentence.exploded ? { display: "none" } : { top: sentence.yPos + "px" } },
 	            sentence.text
 	          ));
 	        }
@@ -27080,18 +27346,6 @@
 	        this.grade()
 	      );
 	    }
-	
-	    // render () {   OLD ONE
-	    //   return (
-	    //     <div className="pairs-results" onClick={this.handleClick}>
-	    //       driving lines:{this.props.drivingLines[0]} out of {this.props.drivingLines[1]} <br/>
-	    // navigating lines:{this.props.navigatingLines[0]} out of {this.props.navigatingLines[1]} <br/>
-	    //     good switches: {this.props.goodSwitches} <br/>
-	    //   bad Switches: {this.props.badSwitches} <br/>
-	    //     </div>
-	    //   );
-	    // }
-	
 	  }]);
 	
 	  return PairsSeshResults;
@@ -27136,19 +27390,25 @@
 	
 	    var _this = _possibleConstructorReturn(this, (StrikeScreen.__proto__ || Object.getPrototypeOf(StrikeScreen)).call(this, props));
 	
-	    _this.strike = _this.props.player.newStrike;
+	    _this.player = _this.props.player;
+	
+	    _this.strike = _this.player.newStrike;
 	
 	    _this.startTime = Date.now();
 	    _this.buzzerSound = new Audio("./app/assets/sounds/buzzer.mp3");
 	    _this.buzzerSound.play();
-	    if (_this.props.player.onFire) {
-	      _this.props.player.onFire = false;
+	    if (_this.player.onFire) {
+	      _this.player.onFire = false;
 	    }
-	    _this.props.player.strikes = _this.props.player.strikes + "X";
-	    _this.props.player.happiness -= 20;
-	    _this.props.player.tempMessage = _this.strike.message + ('  You now have ' + _this.props.player.strikes.length + '\n    strike' + (_this.props.player.strikes.length > 1 ? "s" : "") + '!');
+	    _this.player.strikes = _this.player.strikes + "X";
+	    _this.player.happiness -= 20;
+	    if (_this.player.arriveLate != undefined) {
+	      _this.strike.message = _this.player.arriveLate;
+	      _this.player.arriveLate = undefined;
+	    }
+	    _this.player.tempMessage = _this.strike.message + ('  You now have ' + _this.player.strikes.length + '\n    strike' + (_this.player.strikes.length > 1 ? "s" : "") + '!');
 	    _this.handleClick = _this.handleClick.bind(_this);
-	    _this.props.player.newFace = { filename: "tired_angry", duration: 10000 };
+	    _this.player.newFace = { filename: "tired_angry", duration: 10000 };
 	
 	    return _this;
 	  }
@@ -27163,17 +27423,17 @@
 	        if (this.strike.newClockSpeed) {
 	          newClockSpeed = this.strike.newClockSpeed;
 	        } else {
-	          newClockSpeed = this.props.player.defaultClockSpeed;
+	          newClockSpeed = this.player.defaultClockSpeed;
 	        }
-	        this.props.player.newFace = false;
-	        this.props.player.clock = new _clock2.default(this.strike.newTime, newClockSpeed);
+	        this.player.newFace = false;
+	        this.player.clock = new _clock2.default(this.strike.newTime, newClockSpeed);
 	        if (this.strike.newPos !== false) {
-	          this.props.player.currentPos = this.strike.newPos;
+	          this.player.currentPos = this.strike.newPos;
 	        }
 	        if (this.strike.newSession) {
-	          this.props.player.session = this.strike.newSession;
+	          this.player.session = this.strike.newSession;
 	        }
-	        this.props.player.newStrike = false;
+	        this.player.newStrike = false;
 	      }
 	    }
 	  }, {
@@ -27317,7 +27577,7 @@
 	    _this.skill = _this.player.currentSkill;
 	    _this.skillCapitalized = _this.skill.charAt(0).toUpperCase() + _this.skill.slice(1);
 	    _this.player.skills[_this.skill] += 50;
-	    _this.player.tempMessage = "========= Happiness: +5  " + _this.skillCapitalized + " " + " skill: +5%  ========= " + _this.congrats.message;
+	    _this.player.tempMessage = "=========== Happiness: +5  " + _this.skillCapitalized + " " + " skill: +5%  =========== " + _this.congrats.message;
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.player.newFace = { filename: "super_happy", duration: 30 };
 	
@@ -27415,11 +27675,7 @@
 	  _createClass(FaceAnim, [{
 	    key: "componentDidMount",
 	    value: function componentDidMount() {
-	      var _this2 = this;
-	
-	      this.interval = window.setInterval(function () {
-	        return _this2.getFace();
-	      }, 100);
+	      this.interval = window.setInterval(this.getFace, 100);
 	    }
 	  }, {
 	    key: "getDiv",
@@ -27568,6 +27824,249 @@
 	}(_react2.default.Component); //end class
 	
 	exports.default = FaceAnim;
+
+/***/ },
+/* 207 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _clock = __webpack_require__(175);
+	
+	var _clock2 = _interopRequireDefault(_clock);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var AssessmentSesh = function (_React$Component) {
+	  _inherits(AssessmentSesh, _React$Component);
+	
+	  function AssessmentSesh(props) {
+	    _classCallCheck(this, AssessmentSesh);
+	
+	    var _this = _possibleConstructorReturn(this, (AssessmentSesh.__proto__ || Object.getPrototypeOf(AssessmentSesh)).call(this, props));
+	
+	    _this.player = _this.props.player;
+	    _this.skill = _this.player.currentSkill;
+	    _this.skillCapitalized = _this.skill.charAt(0).toUpperCase() + _this.skill.slice(1);
+	    _this.assessmentNum = Math.floor(_this.player.dayNum / 7);
+	    var possiblePoints = 100;
+	    _this.state = {
+	      possiblePoints: possiblePoints,
+	      score: null,
+	      median: null,
+	      mean: null,
+	      passingScore: null,
+	      yourScoreStyle: {}
+	    };
+	    _this.passSound = new Audio("./app/assets/sounds/congrats-ding.wav");
+	    // this.passSound.load();
+	    _this.failSound = new Audio("./app/assets/sounds/buzzer.mp3");
+	    // this.failSound.load();
+	    _this.explosionSound = new Audio("./app/assets/sounds/explosion.wav");
+	    _this.ticker = 0;
+	    _this.done = false;
+	    _this.tick = _this.tick.bind(_this);
+	    _this.handleDone = _this.handleDone.bind(_this);
+	    _this.button = _this.button.bind(_this);
+	    _this.interval = window.setInterval(_this.tick, 20);
+	
+	    return _this;
+	  }
+	
+	  _createClass(AssessmentSesh, [{
+	    key: 'tick',
+	    value: function tick() {
+	      this.ticker++;
+	      var rand;
+	      if (this.ticker < 350) {
+	        //*********PLAYER SCORE
+	        rand = Math.floor(Math.random() * 99 + 1);
+	        this.setState({ score: rand });
+	      }
+	      if (this.ticker === 350) {
+	        var score = 1; //
+	        this.explosionSound = "";
+	        this.explosionSound = new Audio("./app/assets/sounds/explosion.wav");
+	        this.explosionSound.autoplay = true;
+	        this.explosionSound.autoplay = true;
+	
+	        this.setState({ score: score });
+	      }
+	      if (this.ticker < 450) {
+	        //*********MEDIAN
+	        rand = Math.floor(Math.random() * 99 + 1);
+	        this.setState({ median: rand });
+	      }
+	      if (this.ticker === 450) {
+	        this.explosionSound = "";
+	        this.explosionSound = new Audio("./app/assets/sounds/explosion.wav");
+	        this.explosionSound.autoplay = true;
+	        this.setState({ median: this.state.possiblePoints });
+	      }
+	      if (this.ticker < 550) {
+	        //********* MEAN
+	        rand = Math.floor(Math.random() * 99 + 1);
+	        this.setState({ mean: rand });
+	      }
+	      if (this.ticker === 550) {
+	        this.explosionSound = "";
+	        this.explosionSound = new Audio("./app/assets/sounds/explosion.wav");
+	        this.explosionSound.autoplay = true;
+	        rand = (Math.floor(Math.random() * 20 + 1) + 70) / 100 * this.state.possiblePoints;
+	        this.setState({ mean: rand });
+	      }
+	      if (this.ticker < 650) {
+	        // ********** PASSING SCORE
+	
+	        rand = Math.floor(Math.random() * 99 + 1);
+	        this.setState({ passingScore: rand });
+	      }
+	      if (this.ticker === 650) {
+	        this.explosionSound = "";
+	        this.explosionSound = new Audio("./app/assets/sounds/explosion.wav");
+	        this.explosionSound.autoplay = true;
+	        rand = (Math.floor(Math.random() * 20 + 1) + 75) / 100 * this.state.possiblePoints;
+	        this.setState({ passingScore: rand });
+	        if (this.state.score >= this.state.passingScore) {
+	          this.setState({ yourScoreStyle: { color: "green" } });
+	        } else {
+	          this.setState({ yourScoreStyle: { color: "green" } });
+	        }
+	        this.done = true;
+	        this.player.clock.pause();
+	      }
+	    }
+	  }, {
+	    key: 'handleDone',
+	    value: function handleDone() {
+	      if (this.state.score >= this.state.passingScore) {
+	        this.player.assessments.push("PASS");
+	        this.player.happiness += 20;
+	        var clock = new _clock2.default([12, 1]);
+	        this.player.currentPos = 0;
+	        this.player.clock = clock;
+	      } else {
+	        this.player.assessments.push("FAIL");
+	        var clock = new _clock2.default([12, 1]);
+	        debugger;
+	        this.player.currentPos = 0;
+	        this.player.clock = clock;
+	      }
+	    }
+	  }, {
+	    key: 'button',
+	    value: function button() {
+	      if (!this.done) {
+	        return null;
+	      }
+	
+	      return _react2.default.createElement(
+	        'button',
+	        { onClick: this.handleDone, className: 'assessment-button' },
+	        'continue'
+	      );
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'assessment-results' },
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text' },
+	          'TODAY IS ASSESSMENT DAY!  HOPE YOU STUDIED'
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text' },
+	          'ASSESSMENT #',
+	          this.assessmentNum,
+	          ' ',
+	          this.skillCapitalized
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text' },
+	          'POSSIBLE POINTS: ',
+	          this.state.possiblePoints
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        'YOU SCORED:',
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text', style: this.state.yourScoreStyle },
+	          ' ',
+	          this.state.score
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text' },
+	          'CLASS MEDIAN: ',
+	          this.state.median
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text' },
+	          'CLASS AVERAGE: ',
+	          this.state.mean
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text' },
+	          'PASSING SCORE: ',
+	          this.state.passingScore
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text' },
+	          '[🚧 Assessment feature currently in development...ACTUAL CODE CHALLENGES COMING SOON! 🚧]'
+	        ),
+	        this.button()
+	      );
+	    }
+	  }]);
+	
+	  return AssessmentSesh;
+	}(_react2.default.Component); //end component
+	
+	
+	exports.default = AssessmentSesh;
 
 /***/ }
 /******/ ]);

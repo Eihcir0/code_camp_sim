@@ -72,19 +72,15 @@ class GameMain extends React.Component {
   }
 
   handleLeaving() {
-    this.player.tempMessage = `  Your current rank is ${this.player.scoreTitle()}.  Here are the results of the day.`;
+    this.player.clock.pause();
+    if (this.player.clock.is([2,0])) {
+        this.player.tempMessage = `  You're exhausted.  Must go home now....Your current rank is ${this.player.scoreTitle()}.  Here are the results of the day.`;
+    } else {
+      this.player.tempMessage = `  Your current rank is ${this.player.scoreTitle()}.  Here are the results of the day.`;}
     //handle strikes for leaving early
     //handle slept in office
-    //handle weekend
-    this.player.session = 5;
-    //steps:
-    // handle normal leave with default alarm set to 7am
-    //     after setting the alarm, it will calc the wakeup time and pass to new day
-    //    set new attributes and reset player
-    //    be sure to set this.currentSesh to 0;
-
-    //add alarm
     //add option to go out
+    this.player.session = 5;
   }
 
 
@@ -163,11 +159,14 @@ class GameMain extends React.Component {
     handleOpen() {
       this.player.clock.unpause();
       this.player.loading = false;
-      this.interval = window.setInterval(()=>this.tick(),this.intervalTime);
+      this.interval = window.setInterval(this.tick,this.intervalTime);
     }
 
   gameOver() {
+    
     switch (true) {
+      case (this.player.assessments.includes("FAIL")):
+        return "You failed an assessment.  You've been asked to leave the program.";
       case (this.player.happiness <= 0):
         return "You're happiness is at 0.  You don't have the motivation to continue with the program.";
       case (this.player.sleepBank <= 0):
@@ -211,14 +210,11 @@ class GameMain extends React.Component {
     }
 
     else if (this.player.currentPos === 12){
-      if (this.player.dayNum % 7 === 1 && this.player.dayNum !== 1) {
-        console.log("ASSESSMENT");
-      } else {
         return (
           <LectureSeshScreen className="lecture-sesh"
             player={this.player}/>
           );
-        }
+
     } else if ([0,2,4].includes(this.player.session)) {
         return (
           <OpenSeshScreen className="open-sesh"
@@ -259,8 +255,12 @@ class GameMain extends React.Component {
         <div className="game-middle-container">
           {this.sesh()}
           <div className="game-right-side">
-            <div>
-              w{this.player.weekNum}d{this.player.dayNum}    {this.state.clock[0]}:{this.state.clock[1]}{this.state.clock[2]}</div>
+            <div className="clock-area">
+              {this.player.weekDayText()} w{this.player.weekNum}d{this.player.dayNum}<br/>
+
+              <span className="clock">{this.state.clock[0]}:{this.state.clock[1]}{this.state.clock[2]}</span>
+
+            </div>
             <div className="stats-bar">
               <meter value={this.player.sleepBank} min="0" max="100" low="30" high="70" optimum="100"/>
               <img className="icon" src="./app/assets/images/bed.png" />
@@ -274,6 +274,7 @@ class GameMain extends React.Component {
               </span>
               <br/><br/>
               <span className="current-subject">
+                SKILLS:
                 <img className="icon" src="./app/assets/images/ruby.png" />
                  {this.state.ruby}% <br/>
               </span>
@@ -281,8 +282,6 @@ class GameMain extends React.Component {
                 STRIKES:  <br/>
               {this.player.strikes}
               </span>
-              <br/>
-              <br/>
               <br/>
               <br/>
 

@@ -10,7 +10,6 @@ class PairsLine extends React.Component {
       currentInput: ""
     };
     this.line = this.line.bind(this);
-  //  this.zzinterval = setInterval(()=>this.tick(),50);
   }
 
   line() {

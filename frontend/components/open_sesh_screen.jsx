@@ -84,8 +84,11 @@ class OpenSesh extends React.Component {
 
 
   main() { //refactor!
-    if (this.player.clock.is(["12","00","am"])) {this.handle1159();}
-    if (this.player.clock.is(["2","00","am"])) {this.handleLeave();}
+    if (this.player.clock.is([24,0])) {this.handle1159();}
+    if (this.player.clock.is(["2","00","am"])) {
+      this.player.clock.pause();
+
+      this.handleLeave();}
     if (this.player.day.eatingLunch) {
       if (this.player.clock.diff(this.lunchTime) > this.lunchMinutes) {
         this.endLunch();
@@ -286,7 +289,9 @@ class OpenSesh extends React.Component {
 
        this.player.newStrike = {message: "You receive a strike for violating the code of conduct.  If you ask someone out and they say they're not interested, you cannot ask again.    No means no.", newTime: this.player.clock.time(), newClockSpeed: this.player.defaultClockSpeed, newPos: 0};
      } else {
-       this.player.tempMessage = `No, thank you.  I'm not interested.`;
+       this.player.message = `No, thank you.  I'm not interested.`;
+       window.setTimeout(()=>{
+         this.player.message = "";},2000);
        this.player.askedOutCandanessa = true;
        this.playerAnim.moveTo(0, ()=> {
          this.player.currentPos=0;
@@ -316,11 +321,17 @@ class OpenSesh extends React.Component {
   drinksCoffee() {
     if ((Math.random()*5)< 1) {
       this.player.day.lastCoffee = this.player.clock.time();
+      if (this.player.clock.isBetween([0,0],[2,0])) {
+        this.player.day.lastCoffee[0] += 24;
+      }
     }
-    if (this.player.clock.diff(this.player.day.lastCoffee) < 30) {
+    if (this.player.day.lastCoffee !== undefined && this.player.clock.diff(this.player.day.lastCoffee) < 30) {
       this.player.tempMessage = "COFFEE BREWING...";
     } else {
       this.player.day.lastCoffee = this.player.clock.time();
+      if (this.player.clock.isBetween([0,0],[2,0])) {
+        this.player.day.lastCoffee[0] += 24;
+      }
       this.player.focus+=35;
       var coffee = new FoodAnim({canvas: this.canvas, ctx: this.ctx},
         "coffee");
@@ -541,7 +552,7 @@ class OpenSesh extends React.Component {
   }
   checkFocus() {
     if (this.player.focus>0) {return;}
-    this.player.tempMessage === "You can't focus any longer.  Take a break."
+    this.player.tempMessage === "You can't focus any longer.  Take a break.";
     this.handleGetOffComputer();
   }
 
@@ -578,7 +589,7 @@ class OpenSesh extends React.Component {
         sprite.type==="student" &&
         sprite.number !== 1 &&
         (!(this.player.clock.isBetween([9,1],[11,59]))) &&
-        (!(this.player.clock.isBetween([24,0],[30,0])))) {
+        (!(this.player.clock.isBetween([0,0],[2,0])))) {
         sprite.render();
         if (sprite.number !== 1 && this.player.clock.isBetween([20,0],[24,0])) {
           if (Math.random()*3000 < 1) {

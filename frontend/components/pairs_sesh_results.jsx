@@ -182,17 +182,6 @@ class PairsSeshResults extends React.Component {
       );
     }
 
-    // render () {   OLD ONE
-    //   return (
-    //     <div className="pairs-results" onClick={this.handleClick}>
-    //       driving lines:{this.props.drivingLines[0]} out of {this.props.drivingLines[1]} <br/>
-    // navigating lines:{this.props.navigatingLines[0]} out of {this.props.navigatingLines[1]} <br/>
-    //     good switches: {this.props.goodSwitches} <br/>
-    //   bad Switches: {this.props.badSwitches} <br/>
-    //     </div>
-    //   );
-    // }
-
   }//end component
 
 

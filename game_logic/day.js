@@ -10,7 +10,7 @@ class Day {
     this.player.currentPos = 0;
     this.player.leaving=false;
     this.player.ateDonut = false;
-    this.lastCoffee = [7,1];
+    this.lastCoffee = undefined;
     this.talkedToCandanessa = false;
     this.workingLateOnFridaySucks = false;
     this.fireCounter = Math.floor(this.player.score / 100000) + 1 + Math.floor(Math.random()*3);
@@ -25,7 +25,7 @@ class Day {
     this.beginningSkillPoints =
     this.player.skills[this.player.currentSkill] ? this.player.skills[this.player.currentSkill] : 0;
     this.beginningHappiness = this.player.happiness;
-
+    this.pairsDone = false;
     this.lectureNotes = this.getDaysLectureNotes(this.player.dayNum);
 
   }

@@ -36,6 +36,8 @@ class PlayerAnim extends Moveable {
     this.imageSeated.src =
     "./app/assets/images/hero_seated_spritesheet.png";
     this.soundTyping = new Audio("./app/assets/sounds/typing.wav");
+    this.soundTyping.autoplay = true;
+    this.soundTyping.load();
     this.animationOn = true;
     this.speed=100;
     this.updateAnimSet();

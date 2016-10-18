@@ -17,7 +17,7 @@ class FaceAnim extends React.Component {
   }
 
   componentDidMount() {
-    this.interval = window.setInterval(()=>this.getFace(),100);
+    this.interval = window.setInterval(this.getFace,100);
   }
 
   getDiv(filename) {

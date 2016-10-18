@@ -17,6 +17,7 @@ class PairsSeshNavigatingScreen extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.sentences = this.props.sentences;
     this.showing = this.showing.bind(this);
+    this.tick = this.tick.bind(this);
     this.initializeSentences = this.initializeSentences.bind(this);
     this.updateSentences = this.updateSentences.bind(this);
     this.addNewSentence = this.addNewSentence.bind(this);
@@ -42,7 +43,7 @@ class PairsSeshNavigatingScreen extends React.Component {
     this.ctx = this.canvas.getContext("2d");
     this.setState({currentInput: this.sentences[0].error});
     this.el = document.getElementById("pairs-input-nav");
-    this.navigatingInterval = setInterval(()=>this.tick(),50);
+    this.navigatingInterval = setInterval(this.tick,50);
 
   }
 
@@ -61,6 +62,7 @@ class PairsSeshNavigatingScreen extends React.Component {
   }
 
   tick() {
+
     if (this.props.player.day.pairsDone) {
       this.clearInt();
       return;

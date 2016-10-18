@@ -14,7 +14,7 @@ class CongratsScreen extends React.Component {
     this.skill = this.player.currentSkill;
     this.skillCapitalized = this.skill.charAt(0).toUpperCase() + this.skill.slice(1);
     this.player.skills[this.skill] += 50;
-    this.player.tempMessage = "========= Happiness: +5  " + this.skillCapitalized + " " + " skill: +5%  ========= " + this.congrats.message;
+    this.player.tempMessage = "=========== Happiness: +5  " + this.skillCapitalized + " " + " skill: +5%  =========== " + this.congrats.message;
     this.handleClick = this.handleClick.bind(this);
     this.player.newFace = {filename: "super_happy", duration: 30};
 

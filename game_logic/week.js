@@ -2,9 +2,9 @@ import Day from './day.js';
 //
 
 class Week {
-  constructor (player) {
+  constructor (player, arrivalTime = ["8","30","am"]) {
     this.player = player;
-    this.day = new Day (this.player, ["10","20","pm"]); //change this to new arrival time
+    this.day = new Day (this.player, arrivalTime); //change this to new arrival time
     this.material = this.materials();
   }
 
@@ -39,8 +39,7 @@ class Week {
     //get player priorities for weekend;
     //perform accordingly
     //only advance day until Sunday - will advance once more in Game.advanceWeek
-    console.log("weekend!!");
-    this.player.dayNum +=1;
+    this.player.dayNum +=2;
   }
 } //end class
 

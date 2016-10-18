@@ -148,7 +148,7 @@ table {
 	overflow: hidden;
 	height: 455px;
   display: inline-block;
-	margin-left: 20px;
+	margin-left: 8px;
 }
 .icon {
   display: inline-block;
@@ -160,12 +160,10 @@ table {
 .score {
   font-size: 36px;
   display: inline-block;
-  padding-top: 13px;
 }
 .player-title {
   display: inline-block;
   text-align: center;
-  margin-left: 5px
 }
 
 .player-pic {
@@ -343,7 +341,7 @@ button {
 .x {
 	margin-left: 100px;
 }
-.pairs-results, .day-results {
+.pairs-results, .day-results, .assessment-results {
 	width: 752px;
 	margin-left: 100px;
 	background: black;
@@ -666,6 +664,8 @@ span, .x, {
 
 meter {
 	vertical-align: middle;
+	width: 142px;
+	height: 19px;
 }
 
 .eyes {
@@ -816,4 +816,57 @@ height: 140px;
 .results-screen2 {
     line-height: 50px;
     padding: 50px;
+}
+
+#alarm {
+	width: 150px;
+	height: 50px;
+	font-size: 24px;
+	outline: none;
+	background-color: blanchedalmond;
+}
+
+#weekend1, #weekend2, #weekend3 {
+	width: 150px;
+	height: 50px;
+	font-size: 24px;
+	outline: none;
+	margin: 25px;
+}
+
+
+
+.sleep-button, .weekend-button {
+		background-color: blanchedalmond;
+    width: 200px;
+    height: 50px;
+    border-radius: 9px;
+    margin-left: 40px;
+    font-size: 24px;
+		font-family: 'Exo 2', sans-serif;
+		outline: none;
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		-o-user-select: none;
+		user-select: none;
+		outline: none;
+		cursor: pointer;
+	}
+
+.clock-area {
+	margin-left: 38px;
+}
+
+.clock {
+	padding: 10px;
+
+	font-size: 24px;
+	display: inline-block;
+}
+
+.assessment-results-text {
+	color: white;
 }

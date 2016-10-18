@@ -1,5 +1,6 @@
 import React from 'react';
 import SleepMinigame from './sleep_minigame.jsx';
+import AssessmentSesh from './assessment_sesh.jsx';
 import Clock from './../../game_logic/clock.js';
 
 class LectureSeshScreen extends React.Component {
@@ -7,6 +8,7 @@ class LectureSeshScreen extends React.Component {
     super(props);
     // this.main = this.main.bind(this);
     this.player = this.props.player;
+    this.player.tempMessage = "";
     this.player.focus = 100;
     var startTime;
     if (this.player.clock.time()[0]==="8") {
@@ -20,6 +22,7 @@ class LectureSeshScreen extends React.Component {
     this.startingFocus = this.player.focus;
     this.eyesClosedTimer = 0;
     this.startTime = this.player.clock.tickCounter;
+    this.faintMeterBarStyle = {};
     this.state= {
       currentSlide: 1,
       eyesClosed: false,
@@ -48,7 +51,7 @@ class LectureSeshScreen extends React.Component {
     this.sleepSound = new Audio("./app/assets/sounds/Rock-a-bye Baby.mp3");
     this.faintSound = new Audio("./app/assets/sounds/trippy.wav");
     this.faintSoundOn = false;
-    this.xxinterval = setInterval(()=>this.tick(),50);
+    this.xxinterval = setInterval(this.tick,50);
     this.lectureNotes = this.player.day.lectureNotes;
   }
 
@@ -75,7 +78,7 @@ class LectureSeshScreen extends React.Component {
         this.faintSound = "";
         this.sleepSound = "";
         this.xxinterval = undefined;
-        this.player.newCongrats = {message: `CONGRATULATIONS!!! You made it through lecture without sleeping!`, newTime: [12,0], newClockSpeed: this.player.defaultClockSpeed, newPos: 0, newSession: 2};
+        this.player.newCongrats = {message: `You made it through lecture without sleeping!`, newTime: [12,0], newClockSpeed: this.player.defaultClockSpeed, newPos: 0, newSession: 2};
     }
   }
 
@@ -190,7 +193,12 @@ class LectureSeshScreen extends React.Component {
   }
 
   lectureSlide() {
-    if (!(this.state.eyesClosed)) {
+    if (this.player.dayNum % 7 === 1 && this.player.dayNum !== 1) {
+      clearInterval(this.xxinterval);
+      this.faintMeterBarStyle = {display: "none"};
+      return <AssessmentSesh player={this.player}/>;
+    }
+    else if (!(this.state.eyesClosed)) {
       if (this.player.focus<=50) {
       var shadow = `0 0 ${50-this.player.focus}px rgba(0,0,0,0.5)`;
       var raysStyle = {opacity: (this.state.faintMeter)/100};
@@ -318,7 +326,7 @@ class LectureSeshScreen extends React.Component {
     return (
       <div onClick={this.handleClick} className="lecture-slide-container">
         {this.lectureSlide()}
-        <meter className="faint-meter-bar" value={this.state.faintMeter} min="0" max={this.faintMeterMax} low={this.faintMeterMax - 1} high={this.faintMeterMax -0.5} optimum={this.faintMeterMax} />
+        <meter style={this.faintMeterBarStyle}className="faint-meter-bar" value={this.state.faintMeter} min="0" max={this.faintMeterMax} low={this.faintMeterMax - 1} high={this.faintMeterMax -0.5} optimum={this.faintMeterMax} />
         <div>
           {this.button()}
         </div>
