@@ -13,7 +13,7 @@ import FireAnim from
 class Player {
   constructor(name, obj) {
     this.name = name || "Richie";
-    this.defaultClockSpeed = obj ? obj.defaultClockSpeed : 2;
+    this.defaultClockSpeed = obj ? obj.defaultClockSpeed : 3;
     this.clock = obj ? obj.clock : null;
     this.tempMessage =
       obj ? obj.tempMessage
@@ -48,7 +48,6 @@ class Player {
     // 5 = night
     this.session = obj ? obj.session : 0;
     this.weekNum = Math.floor(this.dayNum / 7) + 1;
-    this.weekDay = this.dayNum % 7;
 
     this.skills = obj ? obj.skill : {
       ruby: 0,
@@ -68,7 +67,7 @@ class Player {
   } // end constructor
 
   weekDayText() {
-    switch (this.weekDay) {
+    switch (this.dayNum % 7) {
       case 1:
         return "Monday";
       case 2:
@@ -115,7 +114,7 @@ class Player {
 
   workstationGo(playerAnim) {
    var now = this.clock.tickCounter;
-   if (this.weekDay == 5 && !(this.day.workingLateOnFridaySucks) && this.day.clock.isBetween([21,0],[24,0])) {
+   if ((this.dayNum % 7) == 5 && !(this.day.workingLateOnFridaySucks) && this.day.clock.isBetween([21,0],[24,0])) {
      this.happiness -= 10;
      this.tempMessage = "Working late on Friday sucks!";
    }

@@ -18,7 +18,7 @@ class LectureSeshScreen extends React.Component {
     }
     this.openingSound = new Audio("./app/assets/sounds/opening_lecture.wav");
     window.setTimeout(()=>this.openingSound.play(),10);
-    this.player.clock = new Clock(startTime, this.player.defaultClockSpeed);
+    this.player.clock = new Clock(startTime, this.player.defaultClockSpeed * (2 / 3.0));
     this.startingFocus = this.player.focus;
     this.eyesClosedTimer = 0;
     this.startTime = this.player.clock.tickCounter;

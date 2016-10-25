@@ -1,6 +1,5 @@
 class Clock {
   constructor (start, relativeSpeed = 1) {
-
     this.start = [0,0,0];
     //start can be military [18,30] or [6,30,"pm"]
     this.start[0] = parseInt(start[0]);

@@ -16031,7 +16031,8 @@
 	  if (x === y) {
 	    // Steps 1-5, 7-10
 	    // Steps 6.b-6.e: +0 != -0
-	    return x !== 0 || 1 / x === 1 / y;
+	    // Added the nonzero y check to make Flow happy, but it is redundant
+	    return x !== 0 || y !== 0 || 1 / x === 1 / y;
 	  } else {
 	    // Step 6.a: NaN == NaN
 	    return x !== x && y !== y;
@@ -21474,27 +21475,27 @@
 	
 	var _lecture_sesh_screen2 = _interopRequireDefault(_lecture_sesh_screen);
 	
-	var _night_sesh_screen = __webpack_require__(196);
+	var _night_sesh_screen = __webpack_require__(197);
 	
 	var _night_sesh_screen2 = _interopRequireDefault(_night_sesh_screen);
 	
-	var _pairs_sesh_screen = __webpack_require__(197);
+	var _pairs_sesh_screen = __webpack_require__(198);
 	
 	var _pairs_sesh_screen2 = _interopRequireDefault(_pairs_sesh_screen);
 	
-	var _strike_screen = __webpack_require__(203);
+	var _strike_screen = __webpack_require__(204);
 	
 	var _strike_screen2 = _interopRequireDefault(_strike_screen);
 	
-	var _game_over = __webpack_require__(204);
+	var _game_over = __webpack_require__(205);
 	
 	var _game_over2 = _interopRequireDefault(_game_over);
 	
-	var _congrats_screen = __webpack_require__(205);
+	var _congrats_screen = __webpack_require__(206);
 	
 	var _congrats_screen2 = _interopRequireDefault(_congrats_screen);
 	
-	var _face_anim = __webpack_require__(206);
+	var _face_anim = __webpack_require__(207);
 	
 	var _face_anim2 = _interopRequireDefault(_face_anim);
 	
@@ -21968,7 +21969,7 @@
 	    _classCallCheck(this, Player);
 	
 	    this.name = name || "Richie";
-	    this.defaultClockSpeed = obj ? obj.defaultClockSpeed : 2;
+	    this.defaultClockSpeed = obj ? obj.defaultClockSpeed : 3;
 	    this.clock = obj ? obj.clock : null;
 	    this.tempMessage = obj ? obj.tempMessage : "I'm the brains, you're the muscle!  Use your muscles to move the mouse!";
 	    this.currentEmotion = obj ? obj.currentEmotion : "excited";
@@ -22001,7 +22002,6 @@
 	    // 5 = night
 	    this.session = obj ? obj.session : 0;
 	    this.weekNum = Math.floor(this.dayNum / 7) + 1;
-	    this.weekDay = this.dayNum % 7;
 	
 	    this.skills = obj ? obj.skill : {
 	      ruby: 0,
@@ -22022,7 +22022,7 @@
 	  _createClass(Player, [{
 	    key: 'weekDayText',
 	    value: function weekDayText() {
-	      switch (this.weekDay) {
+	      switch (this.dayNum % 7) {
 	        case 1:
 	          return "Monday";
 	        case 2:
@@ -22099,7 +22099,7 @@
 	    key: 'workstationGo',
 	    value: function workstationGo(playerAnim) {
 	      var now = this.clock.tickCounter;
-	      if (this.weekDay == 5 && !this.day.workingLateOnFridaySucks && this.day.clock.isBetween([21, 0], [24, 0])) {
+	      if (this.dayNum % 7 == 5 && !this.day.workingLateOnFridaySucks && this.day.clock.isBetween([21, 0], [24, 0])) {
 	        this.happiness -= 10;
 	        this.tempMessage = "Working late on Friday sucks!";
 	      }
@@ -22231,7 +22231,7 @@
 	
 	var Clock = function () {
 	  function Clock(start) {
-	    var relativeSpeed = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
+	    var relativeSpeed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
 	
 	    _classCallCheck(this, Clock);
 	
@@ -22265,7 +22265,7 @@
 	  _createClass(Clock, [{
 	    key: "tick",
 	    value: function tick() {
-	      var n = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
+	      var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 	
 	      if (!this.paused) {
 	        this.tickCounter += n * this.tickFraction * this.relativeSpeed;
@@ -22340,7 +22340,7 @@
 	  }, {
 	    key: "diff",
 	    value: function diff(timeA) {
-	      var timeB = arguments.length <= 1 || arguments[1] === undefined ? this.time() : arguments[1];
+	      var timeB = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.time();
 	      // returns timeB - timeA in minutes
 	
 	      var currentTime = this.convertToMilitaryTime(timeB);
@@ -22359,7 +22359,7 @@
 	  }, {
 	    key: "isBetween",
 	    value: function isBetween(startTime, endTime) {
-	      var target = arguments.length <= 2 || arguments[2] === undefined ? this.time() : arguments[2];
+	      var target = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.time();
 	      //inclusive
 	
 	      var currentTime = this.convertToMilitaryTime(target);
@@ -22382,7 +22382,7 @@
 	  }, {
 	    key: "isAfter",
 	    value: function isAfter(startTime) {
-	      var target = arguments.length <= 1 || arguments[1] === undefined ? this.time() : arguments[1];
+	      var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.time();
 	      //exclusive
 	
 	
@@ -22402,7 +22402,7 @@
 	  }, {
 	    key: "isBefore",
 	    value: function isBefore(startTime) {
-	      var target = arguments.length <= 1 || arguments[1] === undefined ? this.time() : arguments[1];
+	      var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.time();
 	      //exclusive
 	
 	
@@ -22422,7 +22422,7 @@
 	  }, {
 	    key: "add",
 	    value: function add(minutesToAdd) {
-	      var start = arguments.length <= 1 || arguments[1] === undefined ? this.time() : arguments[1];
+	      var start = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.time();
 	      //returns Military Time
 	
 	      var startTime = this.convertToMilitaryTime(start);
@@ -22435,7 +22435,7 @@
 	  }, {
 	    key: "subtract",
 	    value: function subtract(minutesToSubtract) {
-	      var start = arguments.length <= 1 || arguments[1] === undefined ? this.time() : arguments[1];
+	      var start = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.time();
 	      //returns Military Time
 	
 	      var startTime = this.convertToMilitaryTime(start);
@@ -23026,7 +23026,7 @@
 	
 	var Week = function () {
 	  function Week(player) {
-	    var arrivalTime = arguments.length <= 1 || arguments[1] === undefined ? ["8", "30", "am"] : arguments[1];
+	    var arrivalTime = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ["8", "30", "am"];
 	
 	    _classCallCheck(this, Week);
 	
@@ -23915,7 +23915,7 @@
 	          'button',
 	          { className: 'middle-button5',
 	            onClick: this.eatsLunch },
-	          '🍲 ',
+	          '\uD83C\uDF72 ',
 	          _react2.default.createElement('br', null),
 	          'LUNCH BREAK'
 	        );
@@ -23925,7 +23925,7 @@
 	          'button',
 	          { className: 'middle-button5',
 	            onClick: this.eatsDonut },
-	          '🍩 ',
+	          '\uD83C\uDF69 ',
 	          _react2.default.createElement('br', null),
 	          'EAT DONUT'
 	        );
@@ -23938,7 +23938,7 @@
 	          'button',
 	          { className: 'middle-button4',
 	            onClick: this.drinksCoffee },
-	          '☕',
+	          '\u2615',
 	          _react2.default.createElement('br', null),
 	          'DRINK COFFEE'
 	        ),
@@ -25124,7 +25124,7 @@
 	
 	var _sleep_minigame2 = _interopRequireDefault(_sleep_minigame);
 	
-	var _assessment_sesh = __webpack_require__(207);
+	var _assessment_sesh = __webpack_require__(196);
 	
 	var _assessment_sesh2 = _interopRequireDefault(_assessment_sesh);
 	
@@ -25162,7 +25162,7 @@
 	    window.setTimeout(function () {
 	      return _this.openingSound.play();
 	    }, 10);
-	    _this.player.clock = new _clock2.default(startTime, _this.player.defaultClockSpeed);
+	    _this.player.clock = new _clock2.default(startTime, _this.player.defaultClockSpeed * (2 / 3.0));
 	    _this.startingFocus = _this.player.focus;
 	    _this.eyesClosedTimer = 0;
 	    _this.startTime = _this.player.clock.tickCounter;
@@ -25581,6 +25581,249 @@
 
 /***/ },
 /* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _clock = __webpack_require__(175);
+	
+	var _clock2 = _interopRequireDefault(_clock);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var AssessmentSesh = function (_React$Component) {
+	  _inherits(AssessmentSesh, _React$Component);
+	
+	  function AssessmentSesh(props) {
+	    _classCallCheck(this, AssessmentSesh);
+	
+	    var _this = _possibleConstructorReturn(this, (AssessmentSesh.__proto__ || Object.getPrototypeOf(AssessmentSesh)).call(this, props));
+	
+	    _this.player = _this.props.player;
+	    _this.skill = _this.player.currentSkill;
+	    _this.skillCapitalized = _this.skill.charAt(0).toUpperCase() + _this.skill.slice(1);
+	    _this.assessmentNum = Math.floor(_this.player.dayNum / 7);
+	    var possiblePoints = 100;
+	    _this.state = {
+	      possiblePoints: possiblePoints,
+	      score: null,
+	      median: null,
+	      mean: null,
+	      passingScore: null,
+	      yourScoreStyle: {}
+	    };
+	    _this.passSound = new Audio("./app/assets/sounds/congrats-ding.wav");
+	    // this.passSound.load();
+	    _this.failSound = new Audio("./app/assets/sounds/buzzer.mp3");
+	    // this.failSound.load();
+	    _this.explosionSound = new Audio("./app/assets/sounds/explosion.wav");
+	    _this.ticker = 0;
+	    _this.done = false;
+	    _this.tick = _this.tick.bind(_this);
+	    _this.handleDone = _this.handleDone.bind(_this);
+	    _this.button = _this.button.bind(_this);
+	    _this.interval = window.setInterval(_this.tick, 20);
+	
+	    return _this;
+	  }
+	
+	  _createClass(AssessmentSesh, [{
+	    key: 'tick',
+	    value: function tick() {
+	      this.ticker++;
+	      var rand;
+	      if (this.ticker < 350) {
+	        //*********PLAYER SCORE
+	        rand = Math.floor(Math.random() * 99 + 1);
+	        this.setState({ score: rand });
+	      }
+	      if (this.ticker === 350) {
+	        var score = 1; //
+	        this.explosionSound = "";
+	        this.explosionSound = new Audio("./app/assets/sounds/explosion.wav");
+	        this.explosionSound.autoplay = true;
+	        this.explosionSound.autoplay = true;
+	
+	        this.setState({ score: score });
+	      }
+	      if (this.ticker < 450) {
+	        //*********MEDIAN
+	        rand = Math.floor(Math.random() * 99 + 1);
+	        this.setState({ median: rand });
+	      }
+	      if (this.ticker === 450) {
+	        this.explosionSound = "";
+	        this.explosionSound = new Audio("./app/assets/sounds/explosion.wav");
+	        this.explosionSound.autoplay = true;
+	        this.setState({ median: this.state.possiblePoints });
+	      }
+	      if (this.ticker < 550) {
+	        //********* MEAN
+	        rand = Math.floor(Math.random() * 99 + 1);
+	        this.setState({ mean: rand });
+	      }
+	      if (this.ticker === 550) {
+	        this.explosionSound = "";
+	        this.explosionSound = new Audio("./app/assets/sounds/explosion.wav");
+	        this.explosionSound.autoplay = true;
+	        rand = (Math.floor(Math.random() * 20 + 1) + 70) / 100 * this.state.possiblePoints;
+	        this.setState({ mean: rand });
+	      }
+	      if (this.ticker < 650) {
+	        // ********** PASSING SCORE
+	
+	        rand = Math.floor(Math.random() * 99 + 1);
+	        this.setState({ passingScore: rand });
+	      }
+	      if (this.ticker === 650) {
+	        this.explosionSound = "";
+	        this.explosionSound = new Audio("./app/assets/sounds/explosion.wav");
+	        this.explosionSound.autoplay = true;
+	        rand = (Math.floor(Math.random() * 20 + 1) + 75) / 100 * this.state.possiblePoints;
+	        this.setState({ passingScore: rand });
+	        if (this.state.score >= this.state.passingScore) {
+	          this.setState({ yourScoreStyle: { color: "green" } });
+	        } else {
+	          this.setState({ yourScoreStyle: { color: "green" } });
+	        }
+	        this.done = true;
+	        this.player.clock.pause();
+	      }
+	    }
+	  }, {
+	    key: 'handleDone',
+	    value: function handleDone() {
+	      if (this.state.score >= this.state.passingScore) {
+	        this.player.assessments.push("PASS");
+	        this.player.happiness += 20;
+	        var clock = new _clock2.default([12, 1]);
+	        this.player.currentPos = 0;
+	        this.player.clock = clock;
+	      } else {
+	        this.player.assessments.push("FAIL");
+	        var clock = new _clock2.default([12, 1]);
+	        debugger;
+	        this.player.currentPos = 0;
+	        this.player.clock = clock;
+	      }
+	    }
+	  }, {
+	    key: 'button',
+	    value: function button() {
+	      if (!this.done) {
+	        return null;
+	      }
+	
+	      return _react2.default.createElement(
+	        'button',
+	        { onClick: this.handleDone, className: 'assessment-button' },
+	        'continue'
+	      );
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'assessment-results' },
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text' },
+	          'TODAY IS ASSESSMENT DAY!  HOPE YOU STUDIED'
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text' },
+	          'ASSESSMENT #',
+	          this.assessmentNum,
+	          ' ',
+	          this.skillCapitalized
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text' },
+	          'POSSIBLE POINTS: ',
+	          this.state.possiblePoints
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        'YOU SCORED:',
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text', style: this.state.yourScoreStyle },
+	          ' ',
+	          this.state.score
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text' },
+	          'CLASS MEDIAN: ',
+	          this.state.median
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text' },
+	          'CLASS AVERAGE: ',
+	          this.state.mean
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text' },
+	          'PASSING SCORE: ',
+	          this.state.passingScore
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'assessment-results-text' },
+	          '[\uD83D\uDEA7 Assessment feature currently in development...ACTUAL CODE CHALLENGES COMING SOON! \uD83D\uDEA7]'
+	        ),
+	        this.button()
+	      );
+	    }
+	  }]);
+	
+	  return AssessmentSesh;
+	}(_react2.default.Component); //end component
+	
+	
+	exports.default = AssessmentSesh;
+
+/***/ },
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26123,7 +26366,7 @@
 	exports.default = NightSeshScreen;
 
 /***/ },
-/* 197 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26138,19 +26381,19 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _pairs_sesh_driving_screen = __webpack_require__(198);
+	var _pairs_sesh_driving_screen = __webpack_require__(199);
 	
 	var _pairs_sesh_driving_screen2 = _interopRequireDefault(_pairs_sesh_driving_screen);
 	
-	var _pairs_sesh_navigating_screen = __webpack_require__(200);
+	var _pairs_sesh_navigating_screen = __webpack_require__(201);
 	
 	var _pairs_sesh_navigating_screen2 = _interopRequireDefault(_pairs_sesh_navigating_screen);
 	
-	var _pairs_sesh_open_screen = __webpack_require__(201);
+	var _pairs_sesh_open_screen = __webpack_require__(202);
 	
 	var _pairs_sesh_open_screen2 = _interopRequireDefault(_pairs_sesh_open_screen);
 	
-	var _pairs_sesh_results = __webpack_require__(202);
+	var _pairs_sesh_results = __webpack_require__(203);
 	
 	var _pairs_sesh_results2 = _interopRequireDefault(_pairs_sesh_results);
 	
@@ -26313,7 +26556,7 @@
 	exports.default = PairsSeshScreen;
 
 /***/ },
-/* 198 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26332,7 +26575,7 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _pairs_line = __webpack_require__(199);
+	var _pairs_line = __webpack_require__(200);
 	
 	var _pairs_line2 = _interopRequireDefault(_pairs_line);
 	
@@ -26616,7 +26859,7 @@
 	exports.default = PairsSeshDrivingScreen;
 
 /***/ },
-/* 199 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26718,7 +26961,7 @@
 	exports.default = PairsLine;
 
 /***/ },
-/* 200 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27020,7 +27263,7 @@
 	exports.default = PairsSeshNavigatingScreen;
 
 /***/ },
-/* 201 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27098,7 +27341,7 @@
 	exports.default = PairsSeshOpenScreen;
 
 /***/ },
-/* 202 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27117,7 +27360,7 @@
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _pairs_line = __webpack_require__(199);
+	var _pairs_line = __webpack_require__(200);
 	
 	var _pairs_line2 = _interopRequireDefault(_pairs_line);
 	
@@ -27355,7 +27598,7 @@
 	exports.default = PairsSeshResults;
 
 /***/ },
-/* 203 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27459,7 +27702,7 @@
 	exports.default = StrikeScreen;
 
 /***/ },
-/* 204 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -27532,7 +27775,7 @@
 	exports.default = GameOver;
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27628,7 +27871,7 @@
 	exports.default = CongratsScreen;
 
 /***/ },
-/* 206 */
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -27824,249 +28067,6 @@
 	}(_react2.default.Component); //end class
 	
 	exports.default = FaceAnim;
-
-/***/ },
-/* 207 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _clock = __webpack_require__(175);
-	
-	var _clock2 = _interopRequireDefault(_clock);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var AssessmentSesh = function (_React$Component) {
-	  _inherits(AssessmentSesh, _React$Component);
-	
-	  function AssessmentSesh(props) {
-	    _classCallCheck(this, AssessmentSesh);
-	
-	    var _this = _possibleConstructorReturn(this, (AssessmentSesh.__proto__ || Object.getPrototypeOf(AssessmentSesh)).call(this, props));
-	
-	    _this.player = _this.props.player;
-	    _this.skill = _this.player.currentSkill;
-	    _this.skillCapitalized = _this.skill.charAt(0).toUpperCase() + _this.skill.slice(1);
-	    _this.assessmentNum = Math.floor(_this.player.dayNum / 7);
-	    var possiblePoints = 100;
-	    _this.state = {
-	      possiblePoints: possiblePoints,
-	      score: null,
-	      median: null,
-	      mean: null,
-	      passingScore: null,
-	      yourScoreStyle: {}
-	    };
-	    _this.passSound = new Audio("./app/assets/sounds/congrats-ding.wav");
-	    // this.passSound.load();
-	    _this.failSound = new Audio("./app/assets/sounds/buzzer.mp3");
-	    // this.failSound.load();
-	    _this.explosionSound = new Audio("./app/assets/sounds/explosion.wav");
-	    _this.ticker = 0;
-	    _this.done = false;
-	    _this.tick = _this.tick.bind(_this);
-	    _this.handleDone = _this.handleDone.bind(_this);
-	    _this.button = _this.button.bind(_this);
-	    _this.interval = window.setInterval(_this.tick, 20);
-	
-	    return _this;
-	  }
-	
-	  _createClass(AssessmentSesh, [{
-	    key: 'tick',
-	    value: function tick() {
-	      this.ticker++;
-	      var rand;
-	      if (this.ticker < 350) {
-	        //*********PLAYER SCORE
-	        rand = Math.floor(Math.random() * 99 + 1);
-	        this.setState({ score: rand });
-	      }
-	      if (this.ticker === 350) {
-	        var score = 1; //
-	        this.explosionSound = "";
-	        this.explosionSound = new Audio("./app/assets/sounds/explosion.wav");
-	        this.explosionSound.autoplay = true;
-	        this.explosionSound.autoplay = true;
-	
-	        this.setState({ score: score });
-	      }
-	      if (this.ticker < 450) {
-	        //*********MEDIAN
-	        rand = Math.floor(Math.random() * 99 + 1);
-	        this.setState({ median: rand });
-	      }
-	      if (this.ticker === 450) {
-	        this.explosionSound = "";
-	        this.explosionSound = new Audio("./app/assets/sounds/explosion.wav");
-	        this.explosionSound.autoplay = true;
-	        this.setState({ median: this.state.possiblePoints });
-	      }
-	      if (this.ticker < 550) {
-	        //********* MEAN
-	        rand = Math.floor(Math.random() * 99 + 1);
-	        this.setState({ mean: rand });
-	      }
-	      if (this.ticker === 550) {
-	        this.explosionSound = "";
-	        this.explosionSound = new Audio("./app/assets/sounds/explosion.wav");
-	        this.explosionSound.autoplay = true;
-	        rand = (Math.floor(Math.random() * 20 + 1) + 70) / 100 * this.state.possiblePoints;
-	        this.setState({ mean: rand });
-	      }
-	      if (this.ticker < 650) {
-	        // ********** PASSING SCORE
-	
-	        rand = Math.floor(Math.random() * 99 + 1);
-	        this.setState({ passingScore: rand });
-	      }
-	      if (this.ticker === 650) {
-	        this.explosionSound = "";
-	        this.explosionSound = new Audio("./app/assets/sounds/explosion.wav");
-	        this.explosionSound.autoplay = true;
-	        rand = (Math.floor(Math.random() * 20 + 1) + 75) / 100 * this.state.possiblePoints;
-	        this.setState({ passingScore: rand });
-	        if (this.state.score >= this.state.passingScore) {
-	          this.setState({ yourScoreStyle: { color: "green" } });
-	        } else {
-	          this.setState({ yourScoreStyle: { color: "green" } });
-	        }
-	        this.done = true;
-	        this.player.clock.pause();
-	      }
-	    }
-	  }, {
-	    key: 'handleDone',
-	    value: function handleDone() {
-	      if (this.state.score >= this.state.passingScore) {
-	        this.player.assessments.push("PASS");
-	        this.player.happiness += 20;
-	        var clock = new _clock2.default([12, 1]);
-	        this.player.currentPos = 0;
-	        this.player.clock = clock;
-	      } else {
-	        this.player.assessments.push("FAIL");
-	        var clock = new _clock2.default([12, 1]);
-	        debugger;
-	        this.player.currentPos = 0;
-	        this.player.clock = clock;
-	      }
-	    }
-	  }, {
-	    key: 'button',
-	    value: function button() {
-	      if (!this.done) {
-	        return null;
-	      }
-	
-	      return _react2.default.createElement(
-	        'button',
-	        { onClick: this.handleDone, className: 'assessment-button' },
-	        'continue'
-	      );
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'assessment-results' },
-	        _react2.default.createElement(
-	          'span',
-	          { className: 'assessment-results-text' },
-	          'TODAY IS ASSESSMENT DAY!  HOPE YOU STUDIED'
-	        ),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement(
-	          'span',
-	          { className: 'assessment-results-text' },
-	          'ASSESSMENT #',
-	          this.assessmentNum,
-	          ' ',
-	          this.skillCapitalized
-	        ),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement(
-	          'span',
-	          { className: 'assessment-results-text' },
-	          'POSSIBLE POINTS: ',
-	          this.state.possiblePoints
-	        ),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement('br', null),
-	        'YOU SCORED:',
-	        _react2.default.createElement(
-	          'span',
-	          { className: 'assessment-results-text', style: this.state.yourScoreStyle },
-	          ' ',
-	          this.state.score
-	        ),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement(
-	          'span',
-	          { className: 'assessment-results-text' },
-	          'CLASS MEDIAN: ',
-	          this.state.median
-	        ),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement(
-	          'span',
-	          { className: 'assessment-results-text' },
-	          'CLASS AVERAGE: ',
-	          this.state.mean
-	        ),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement(
-	          'span',
-	          { className: 'assessment-results-text' },
-	          'PASSING SCORE: ',
-	          this.state.passingScore
-	        ),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement(
-	          'span',
-	          { className: 'assessment-results-text' },
-	          '[🚧 Assessment feature currently in development...ACTUAL CODE CHALLENGES COMING SOON! 🚧]'
-	        ),
-	        this.button()
-	      );
-	    }
-	  }]);
-	
-	  return AssessmentSesh;
-	}(_react2.default.Component); //end component
-	
-	
-	exports.default = AssessmentSesh;
 
 /***/ }
 /******/ ]);
