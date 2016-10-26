@@ -5,7 +5,7 @@
 
 I'm a recent App Academy bootcamp grad my goal in creating this was to share my experience.  Please note: This is **not** a game, this is a simulation!!  If it seems a little confusing at times or you're not sure what you should be doing, then I've done my job -- it's a feature ;)
 
-### Game vs. Real Life
+### Sim vs. Real Life
 
 - SLEEP: For me, managing sleep was the most important aspect of bootcamp.  In the game, as your sleep bank gets lower, it becomes more difficult to focus and harder not to fall asleep during the morning lectures.  (In reality, the lectures were very well done, but it was still difficult not to fall asleep during the end of the week!)
 
