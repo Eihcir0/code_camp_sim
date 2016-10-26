@@ -1,49 +1,48 @@
-## Code Camp Sim
+# Code Camp Sim
+### (technical README below)
 
-### Background
+### SUMMARY
 
-App Academy was an intense, unique, "once in a lifetime" experience that involved learning massive amounts of new material, careful time management, and all the while trying to have a little fun throughout the course.  CodeCampSim is an attempt to share this experience to those who are curious about what goes on in a bootcamp like this or candidates who might be wondering what the program is like.
+I'm a recent App Academy bootcamp grad my goal in creating this was to share my experience.  Please note: This is **not** a game, this is a simulation!!  If it seems a little confusing at times or you're not sure what you should be doing, then I've done my job -- it's a feature ;)
 
-### Functionality & MVP
+### Game vs. Real Life
 
-- [ ] Sleep, happiness, and concentration meters update realtime.
-- [ ] Code snippets for "homework" and "assessments" evaluated through API calls to the REPL.IT server
-- [ ] Users play mini-games such as: "don't fall asleep during lecture", "hyper tic-tac-toe", "myTowersOf Hanoi""pair-programming" and "debugger"
-- [ ] Users can login, save status, and make post comments on the forums.
+- SLEEP: For me, managing sleep was the most important aspect of bootcamp.  In the game, as your sleep bank gets lower, it becomes more difficult to focus and harder not to fall asleep during the morning lectures.  (In reality, the lectures were very well done, but it was still difficult not to fall asleep during the end of the week!)
 
+- HAPPINESS: We were all so focused on learning that it was difficult to remember to have fun once in a while.  Be sure to keep your happiness level up by being a good pair programmer and having fun on the weekend.
 
-### Wireframes
+- PAIR PROGRAMMING: This was something that was new for most of us.  We were told that the importance of the daily pair programming was to learn how to collaborate well with different people.  The coding practice was not as important as being a good pair.  Since we were new, we were instructed to switch automatically every so often. In Code Camp Sim you should focus more on switching every 30 minute!
 
-![wireframes](https://github.com/Eihcir0/code_camp_sim/blob/master/docs/wireframe.jpg)
+- COFFE: Yes, coffee got me through many days, but just like in real life, if you drink coffee too late you won't be able to sleep right when you get home.
 
-### Technologies & Technical Challenges
+- LUNCH: Don't forget to eat lunch!  You'll suffer a 50% reduction in focus for the rest of the day if you don't.  And just like at school, you're likely to get stuck in the microwave line, so go early! (1 microwave for 80+ students = average 20 minute wait)
 
-This simulation will be written mostly in React.js with some vanilla JavaScript components leveraging HTML5 Canvas.  The backend will be written in ruby on Rails with a SQLite database.  
+### Technical README
 
-The primary technical challenges will be:
+#### What I've learned
+This turned out to be a much more involved process than I originally thought.  I learned so much from the experience.  But, now that I've completed a working version, I feel depressed when I look back at the codebase.  I should have planned better.  I should have refactored more as I wrote.  As this is the most complex app I've written, I now see quite clearly the value of the Redux pattern, whereas before I knew how to implement it but did not realize it's importance.  It can get a little out of hand when there are 20 million components updating state at any given time.  I am currently developing Code Camp Sim 2.0, and this time I'm starting with the Redux cycle.  Whenever I want to update state an action is dispatched and the store is updated accordingly.  
 
-- Planning simulation logic, which is still far from complete as of the writing of this document.
-- Remembering how to create a backend in Rails.
-- Remembering how to use React.js.
-- Figuring out how to use the REPL.IT API.
+This simulation will be written mostly in React.js with some vanilla JavaScript components leveraging HTML5 Canvas.  For the backend (still in development) I am using Firebase, and I implemented a Redux cycle to handle save game / load game.
 
-### Implementation Timeline
+First, the following class modules were created in vanilla Javascript:
 
-**Day 1 Monday**: Continue planning and pseudocode for mini-games, game logic including class structure and components.  By the end of the day I should be ready to start coding.
-
-**Day 2 Tuesday**:
-I'm going to start with the main game loop logic completely in vanilla js.  Not writing any of the minigames this day.  By the end of the day, this should be a completed console log game (without the minigames)
-
-**Day 3 Wednesday**:
-Design the main screen and components for gameplay.  For now I will have buttons at the bottom that switch between Lecture / Pairs Programming / Assessments and Free Time.  By the end of the day I should have a main window component, with the center screen component, and a side bar.
+- player
+- clock
+- day
+- moveables
+  - player_anim
+  - students
+  - icons
 
 
-**Day 4 Thursday**:
-Write the lecture and open time logic and components.  
+Next, the following React Components were implemented next:
 
-**Day 5 Friday**: Write the pair-programming minigame and debugger minigame.
+- game_main
+- open_sesh
+- lecture_sesh
+- pairs-sesh
+- night-time
 
-
-**Day 6 Saturday**: Write Assessments minigame and debug.
-
-**Day 7 Sunday**: Create backend, post to heroku.
+Finally, the FirebaseDB was set up and the following components added:
+- login
+- game

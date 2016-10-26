@@ -1,21 +1,17 @@
-# Code Camp Sim
-### (technical README below)
+## Code Camp Sim
 
 ### Background
 
-I'm a recent App Academy bootcamp grad and this was my final project.  My goal in creating this is to share my experience - intense, challenging, and rewarding.  
+App Academy was an intense, unique, "once in a lifetime" experience that involved learning massive amounts of new material, careful time management, and all the while trying to have a little fun throughout the course.  CodeCampSim is an attempt to share this experience to those who are curious about what goes on in a bootcamp like this or candidates who might be wondering what the program is like.
 
-### Game vs. Real Life
+### Functionality & MVP
 
-- [ ] SLEEP: For me, managing sleep was the most important aspect of bootcamp.  In the game, as your sleep bank gets lower, it becomes more difficult to focus and harder not to fall asleep during the morning lectures.  (In reality, the lectures were very well done, but it was still difficult not to fall asleep during the end of the week!)
-
--[ ] HAPPINESS: We were all so focused on learning that it was difficult to
+- [ ] Sleep, happiness, and concentration meters update realtime.
 - [ ] Code snippets for "homework" and "assessments" evaluated through API calls to the REPL.IT server
+- [ ] Users play mini-games such as: "don't fall asleep during lecture", "hyper tic-tac-toe", "myTowersOf Hanoi""pair-programming" and "debugger"
 - [ ] Users can login, save status, and make post comments on the forums.
-- Microwave line
 
-NOT IN REAL LIFE:
-bugs usually last 5min to 2 hours
+
 ### Wireframes
 
 ![wireframes](https://github.com/Eihcir0/code_camp_sim/blob/master/docs/wireframe.jpg)
