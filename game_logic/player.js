@@ -114,7 +114,7 @@ class Player {
 
   workstationGo(playerAnim) {
    var now = this.clock.tickCounter;
-   if ((this.dayNum % 7) == 5 && !(this.day.workingLateOnFridaySucks) && this.day.clock.isBetween([21,0],[24,0])) {
+   if ((this.dayNum % 7) == 5 && !(this.day.workingLateOnFridaySucks) && this.clock.isBetween([21,0],[24,0])) {
      this.happiness -= 10;
      this.tempMessage = "Working late on Friday sucks!";
    }
